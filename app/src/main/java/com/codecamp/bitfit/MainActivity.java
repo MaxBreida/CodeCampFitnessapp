@@ -1,5 +1,6 @@
 package com.codecamp.bitfit;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import com.codecamp.bitfit.activities.ProfileFragment;
 import com.codecamp.bitfit.activities.PushUpFragment;
 import com.codecamp.bitfit.activities.RunFragment;
 import com.codecamp.bitfit.activities.SquatFragment;
+import com.codecamp.bitfit.intro.IntroActivity;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
 
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startActivity(new Intent(this, IntroActivity.class));
 
         initBottomNavigation();
     }
@@ -78,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        // set start tab
         bottomNavigation.setCurrentItem(0);
         HomeFragment homeFragment = HomeFragment.getInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
