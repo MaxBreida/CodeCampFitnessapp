@@ -1,11 +1,15 @@
 package com.codecamp.bitfit;
 
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.codecamp.bitfit.activities.HomeFragment;
+import com.codecamp.bitfit.activities.ProfileFragment;
+import com.codecamp.bitfit.activities.PushUpFragment;
+import com.codecamp.bitfit.activities.RunFragment;
+import com.codecamp.bitfit.activities.SquatFragment;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
 
@@ -40,25 +44,42 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.addItem(run);
         bottomNavigation.addItem(profile);
 
-        bottomNavigation.setCurrentItem(0);
-
-        BottomBarViewPager viewPager = new BottomBarViewPager(this, null);
-        viewPager.setPagingEnabled(false);
-
-        BottomBarAdapter adapter = new BottomBarAdapter(getSupportFragmentManager());
-
-        adapter.addFragment(HomeFragment.getInstance());
-
-        viewPager.setAdapter(adapter);
-
         // Set listeners
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                // Do something cool here...
+                // only select item if it wasn't selected before
+                if(!wasSelected) {
+                    switch(position) {
+                        case 0:
+                            HomeFragment homeFragment = HomeFragment.getInstance();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+                            break;
+                        case 1:
+                            PushUpFragment pushUpFragment = PushUpFragment.getInstance();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, pushUpFragment).commit();
+                            break;
+                        case 2:
+                            SquatFragment squatFragment = SquatFragment.getInstance();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
+                            break;
+                        case 3:
+                            RunFragment runFragment = RunFragment.getInstance();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, runFragment).commit();
+                            break;
+                        case 4:
+                            ProfileFragment profileFragment = ProfileFragment.getInstance();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, profileFragment).commit();
+                            break;
+                        default: break;
+                    }
+                }
                 return true;
             }
         });
 
+        bottomNavigation.setCurrentItem(0);
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
     }
 }
