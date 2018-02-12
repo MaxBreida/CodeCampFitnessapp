@@ -1,5 +1,6 @@
 package com.codecamp.bitfit;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -40,6 +41,24 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.addItem(profile);
 
         bottomNavigation.setCurrentItem(0);
+
+        BottomBarViewPager viewPager = new BottomBarViewPager(this, null);
+        viewPager.setPagingEnabled(false);
+
+        BottomBarAdapter adapter = new BottomBarAdapter(getSupportFragmentManager());
+
+        adapter.addFragment(HomeFragment.getInstance());
+
+        viewPager.setAdapter(adapter);
+
+        // Set listeners
+        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+            @Override
+            public boolean onTabSelected(int position, boolean wasSelected) {
+                // Do something cool here...
+                return true;
+            }
+        });
 
     }
 }
