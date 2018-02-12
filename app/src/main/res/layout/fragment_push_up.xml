@@ -1,13 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.codecamp.bitfit.activities.PushUpFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/push_up_tab" />
+        android:id="@+id/textview_pushup_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12:34"
+        android:textStyle="bold"
+        android:textSize="32sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:layout_alignParentTop="true"/>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/button_pushup"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/roundbuttonshape"
+        android:text="5"
+        android:textSize="64sp"/>
+
+    <Button
+        android:id="@+id/button_pushup_quit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quit"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/button_pushup"
+        android:layout_marginTop="32dp"/>
+
+</RelativeLayout>

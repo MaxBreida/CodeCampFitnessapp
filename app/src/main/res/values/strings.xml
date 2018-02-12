@@ -11,4 +11,5 @@
     <string name="finish">Fertig</string>
     <string name="lets_go">Jetzt kann\'s losgehen!</string>
     <string name="intro_start_text">Hey, zum Start brauchen wir ein paar Daten von dir!</string>
+    <string name="quit">Beenden</string>
 </resources>
