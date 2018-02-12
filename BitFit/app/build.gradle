@@ -27,4 +27,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     // Library to visualize statistics
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    // bottom navigation
+    compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
+    // icons
+    compile 'net.steamcrafted:materialiconlib:1.1.4'
 }

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BitFit</string>
+    <string name="home_tab">Home</string>
+    <string name="run_tab">Run</string>
+    <string name="push_up_tab">Push Ups</string>
+    <string name="squat_tab">Squats</string>
+    <string name="profile_tab">Profile</string>
 </resources>
