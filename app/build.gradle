@@ -21,10 +21,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
+    /*               ^ TODO: Fix:
+                    Error:(23, 20) All com.android.support libraries must use the exact same version
+                     specification (mixing versions can lead to runtime crashes). Found versions
+                     26.1.0, 25.3.1. Examples include `com.android.support:animated-vector-drawable:26.1.0`
+                     and `com.android.support:design:25.3.1`*/
+    // it wasn't me i swear :D ... it was like that wen i arrived here!
+
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    //google maps api
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
     // Library to visualize statistics
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     // bottom navigation
