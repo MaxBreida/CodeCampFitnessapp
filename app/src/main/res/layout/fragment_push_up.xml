@@ -5,24 +5,28 @@
     tools:context="com.codecamp.bitfit.activities.PushUpFragment">
 
     <TextView
+        android:id="@+id/button_pushup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:text="5"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="96sp"/>
+
+    <TextView
         android:id="@+id/textview_pushup_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="12:34"
         android:textStyle="bold"
         android:textSize="32sp"
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:layout_alignParentTop="true"/>
-
-    <Button
-        android:id="@+id/button_pushup"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/roundbuttonshape"
-        android:text="5"
-        android:textSize="64sp"/>
 
     <Button
         android:id="@+id/button_pushup_quit"
@@ -30,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="@string/quit"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/button_pushup"
-        android:layout_marginTop="32dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="96dp"/>
 
 </RelativeLayout>
