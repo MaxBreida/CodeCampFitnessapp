@@ -1,12 +1,16 @@
 package com.codecamp.bitfit.intro;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -53,6 +57,66 @@ public class IntroFragmentNameAgeGender extends Fragment {
 
         setupBirthdayPickers();
         setupGenderPicker();
+
+        setupListeners();
+    }
+
+    private void setupListeners() {
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                callback.onNameChanged(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // nothing
+            }
+        });
+
+        dayPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                callback.onDayChanged(newVal);
+            }
+        });
+
+        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                callback.onMonthChanged(newVal);
+            }
+        });
+
+        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                callback.onYearChanged(newVal);
+            }
+        });
+
+        genderPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                callback.onGenderChangedListener((String) parent.getAdapter().getItem(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        callback = (OnNameBirthdayGenderChangedListener) getActivity();
     }
 
     private void setupBirthdayPickers() {
@@ -74,4 +138,16 @@ public class IntroFragmentNameAgeGender extends Fragment {
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.gender_picker_text_view, genderList);
         genderPicker.setAdapter(genderAdapter);
     }
+
+    // callbacks to activity
+    OnNameBirthdayGenderChangedListener callback;
+
+    public interface OnNameBirthdayGenderChangedListener {
+        public void onNameChanged(String name);
+        public void onDayChanged(int day);
+        public void onMonthChanged(int month);
+        public void onYearChanged(int year);
+        public void onGenderChangedListener(String gender);
+    }
+
 }

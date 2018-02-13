@@ -12,7 +12,7 @@ import com.github.paolorotolo.appintro.AppIntro;
  * Created by MaxBreida on 12.02.18.
  */
 
-public class IntroActivity extends AppIntro {
+public class IntroActivity extends AppIntro implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener{
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,5 +52,31 @@ public class IntroActivity extends AppIntro {
     public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
         super.onSlideChanged(oldFragment, newFragment);
         // Do something when the slide changes.
+    }
+
+    @Override
+    public void onNameChanged(String name) {
+        // TODO update name in user object
+    }
+
+    @Override
+    public void onDayChanged(int day) {
+        // TODO update day in user object
+    }
+
+    @Override
+    public void onMonthChanged(int month) {
+        // TODO update month in user object
+    }
+
+    @Override
+    public void onYearChanged(int year) {
+        // TODO update year in user object
+    }
+
+
+    @Override
+    public void onGenderChangedListener(String gender) {
+        // TODO update gender in user object
     }
 }
