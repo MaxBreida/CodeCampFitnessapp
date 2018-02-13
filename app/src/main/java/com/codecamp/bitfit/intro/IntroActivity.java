@@ -12,7 +12,9 @@ import com.github.paolorotolo.appintro.AppIntro;
  * Created by MaxBreida on 12.02.18.
  */
 
-public class IntroActivity extends AppIntro implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener{
+public class IntroActivity extends AppIntro
+                           implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener,
+                           IntroFragmentHeightWeight.OnHeightWeightChangedListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class IntroActivity extends AppIntro implements IntroFragmentNameAgeGende
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
+        // TODO persist user data HERE in database
         finish();
     }
 
@@ -78,5 +81,15 @@ public class IntroActivity extends AppIntro implements IntroFragmentNameAgeGende
     @Override
     public void onGenderChangedListener(String gender) {
         // TODO update gender in user object
+    }
+
+    @Override
+    public void onHeightChangedListener(int height) {
+        // TODO update height in user object
+    }
+
+    @Override
+    public void onWeightChangedListner(double weight) {
+        // TODO update weight in user object
     }
 }

@@ -1,6 +1,7 @@
 package com.codecamp.bitfit.intro;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import com.codecamp.bitfit.R;
  */
 public class IntroFragmentHeightWeight extends Fragment {
 
+    OnHeightWeightChangedListener callback;
+
     public IntroFragmentHeightWeight() {
         // Required empty public constructor
     }
@@ -26,4 +29,15 @@ public class IntroFragmentHeightWeight extends Fragment {
         return inflater.inflate(R.layout.fragment_intro_fragment_height_weight, container, false);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        callback = (OnHeightWeightChangedListener) getActivity();
+    }
+
+    public interface OnHeightWeightChangedListener {
+        public void onHeightChangedListener(int height);
+        public void onWeightChangedListner(double weight);
+    }
 }
