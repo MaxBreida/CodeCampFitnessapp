@@ -15,4 +15,6 @@
     <string name="your_gender">Dein Geschlecht:</string>
     <string name="your_age">Dein Alter:</string>
     <string name="your_name">Dein Name:</string>
+    <string name="your_height">Deine Größe (in cm):</string>
+    <string name="your_weight">Dein Gewicht (in kg):</string>
 </resources>
