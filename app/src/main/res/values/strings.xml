@@ -12,4 +12,7 @@
     <string name="lets_go">Jetzt kann\'s losgehen!</string>
     <string name="intro_start_text">Hey, zum Start brauchen wir ein paar Daten von dir!</string>
     <string name="quit">Beenden</string>
+    <string name="your_gender">Dein Geschlecht:</string>
+    <string name="your_age">Dein Alter:</string>
+    <string name="your_name">Dein Name:</string>
 </resources>
