@@ -11,9 +11,15 @@ import com.codecamp.bitfit.activities.ProfileFragment;
 import com.codecamp.bitfit.activities.PushUpFragment;
 import com.codecamp.bitfit.activities.RunFragment;
 import com.codecamp.bitfit.activities.SquatFragment;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.intro.IntroActivity;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.structure.ModelAdapter;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
+
+import java.util.Date;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startActivity(new Intent(this, IntroActivity.class));
-
         initBottomNavigation();
     }
 
