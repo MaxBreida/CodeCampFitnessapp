@@ -30,6 +30,7 @@ public class SquatFragment extends Fragment {
     // int zeroCtr = 0;
     private boolean workoutStarted;
     private TextView timeTextView;
+    private TextView instruction;
     private Button sqFinishButton;
     private TextView squatButton;
 
@@ -53,6 +54,7 @@ public class SquatFragment extends Fragment {
                 SensorManager.SENSOR_DELAY_NORMAL);
 
         //find view elements
+        instruction = getView().findViewById(R.id.textview_instruction);
         squatButton = getView().findViewById(R.id.button_squat);
         timeTextView = getView().findViewById(R.id.textview_squat_time);
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
@@ -60,12 +62,44 @@ public class SquatFragment extends Fragment {
         //Initialize stopwatch
         countUpTimer = new CountUpTimer(1000, timeTextView);
 
+        //Call initialization method
+        setToInitialState();
+
+        //Create listener for squat workout start
+        squatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // show quit button if we started push ups
+                if(!workoutStarted) {
+                    sqFinishButton.setVisibility(View.VISIBLE);
+                    workoutStarted = true;
+                    countUpTimer.start();
+                    instruction.setVisibility(View.INVISIBLE);
+                }
+                // increment count and set text
+//                squatCtr++;
+                squatButton.setText(String.valueOf(squatCtr));
+            }
+        });
+
+        sqFinishButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                countUpTimer.stop();
+                // TODO: view acticity details and send them to database
+                setToInitialState();
+            }
+        });
+
     }
 
 
     private void setToInitialState() {
         workoutStarted = false;
         sqFinishButton.setVisibility(View.INVISIBLE);
+        instruction.setText("Put your smartphone in your trouser's " +
+                "pocket, click start and start squatting!");
         squatButton.setText("Start");
         timeTextView.setText("0:00");
         squatState = SquatStates.SQUAT_DOWN;
@@ -86,14 +120,12 @@ public class SquatFragment extends Fragment {
     private SensorEventListener listener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER && workoutStarted){
                 double ax,ay,az;
-                //double ax_old, ay_old, az_old;
 
-
-               // double ay_standing = 9.81;
-
-                boolean log = true;
+                //boolean variable log (for development): If on, the values of the accelerometer
+                //are logged and printed
+                boolean log = false;
 
                 long startTime = System.currentTimeMillis();
                 long stopTime = 0;
@@ -107,41 +139,44 @@ public class SquatFragment extends Fragment {
                 //When that is the case the accelaration from gravity goes mainly
                 //in direction y
 
-               // if(ay>7){
-                    System.out.println("You're standing, now squat!");
-                    switch (squatState) {
-                        case SQUAT_DOWN:
-                            if(ay<6){
-                                squatState = SquatStates.STAND_UP;
-                            }
+
+                if(ay<8) {
+//                    squatButton.setText("Stand up and put your phone in your pocket, then you can start");
+                } else {
+//                    squatButton.setText("You're standing, now squat!");
+//                        System.out.println("You're standing, now squat!");
+                        switch (squatState) {
+                            case SQUAT_DOWN:
+                                if(ay<6){
+                                    squatState = SquatStates.STAND_UP;
+                                }
                             /*while(ay>6){
                                 //Wait until user has "Squatted down"
                                 logOutput(ax, ay, az, log);
                             }*/
 
-                            break;
-                        case STAND_UP:
-                            if(ay>9){
-                                squatState = SquatStates.COUNT;
-                            }
+                                break;
+                            case STAND_UP:
+                                if(ay>9){
+                                    squatState = SquatStates.COUNT;
+                                }
 //                            while(ay<9){
 //                                //Wait until user has "Stood upS"
 //                                logOutput(ax, ay, az, log);
 //                            }
-                            squatState = SquatStates.COUNT;
-                            break;
-                        case COUNT:
-                            squatCtr++;
-                            System.err.println("Squatted! Counter is " + squatCtr);
-                            logOutput(ax, ay, az, log);
-                            squatState = SquatStates.SQUAT_DOWN;
-                            break;
+                                squatState = SquatStates.COUNT;
+                                break;
+                            case COUNT:
+                                squatCtr++;
+                                System.err.println("Squatted! Counter is " + squatCtr);
+                                logOutput(ax, ay, az, log);
+                                squatState = SquatStates.SQUAT_DOWN;
+                                break;
+                        }
+
+                        //}
                     }
-
-                //}
-
-
-            }
+                }
 
         }
 
