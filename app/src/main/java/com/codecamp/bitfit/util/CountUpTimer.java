@@ -7,18 +7,23 @@ package com.codecamp.bitfit.util;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.widget.TextView;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Simple timer class which count up until stopped.
  * Inspired by {@link android.os.CountDownTimer}
  */
-public abstract class CountUpTimer {
+public class CountUpTimer {
 
     private final long interval;
     private long base;
+    private TextView textView;
 
-    public CountUpTimer(long interval) {
+    public CountUpTimer(long interval, TextView textView) {
         this.interval = interval;
+        this.textView = textView;
     }
 
     public void start() {
@@ -36,7 +41,13 @@ public abstract class CountUpTimer {
         }
     }
 
-    abstract public void onTick(long elapsedTime);
+    public void onTick(long elapsedTime){
+        textView.setText(String.format("%d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
+                TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
+                        - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime)))
+        );
+    }
 
     private static final int MSG = 1;
 
