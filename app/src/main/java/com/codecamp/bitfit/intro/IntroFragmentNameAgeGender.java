@@ -146,11 +146,15 @@ public class IntroFragmentNameAgeGender extends Fragment {
     OnNameBirthdayGenderChangedListener callback;
 
     public interface OnNameBirthdayGenderChangedListener {
-        public void onNameChanged(String name);
-        public void onDayChanged(int day);
-        public void onMonthChanged(int month);
-        public void onYearChanged(int year);
-        public void onGenderChangedListener(String gender);
+        void onNameChanged(String name);
+
+        void onDayChanged(int day);
+
+        void onMonthChanged(int month);
+
+        void onYearChanged(int year);
+
+        void onGenderChangedListener(String gender);
     }
 
 }

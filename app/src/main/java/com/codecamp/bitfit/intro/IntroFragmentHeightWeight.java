@@ -27,6 +27,7 @@ public class IntroFragmentHeightWeight extends Fragment {
     public IntroFragmentHeightWeight() {
         // Required empty public constructor
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,8 +91,8 @@ public class IntroFragmentHeightWeight extends Fragment {
     }
 
     public interface OnHeightWeightChangedListener {
-        public void onHeightChangedListener(int height);
+        void onHeightChangedListener(int height);
 
-        public void onWeightChangedListener(double weight);
+        void onWeightChangedListener(double weight);
     }
 }

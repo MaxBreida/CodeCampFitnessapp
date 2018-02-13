@@ -63,7 +63,7 @@ public class IntroActivity extends AppIntro
         super.onDonePressed(currentFragment);
 
         user.setId(UUID.randomUUID());
-        // TODO commentout
+        // TODO comment out
         // Check user input, for missing or incorrect entries
        /* if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
             Context context = getApplicationContext();
