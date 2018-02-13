@@ -1,8 +1,14 @@
 package com.codecamp.bitfit.activities;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +21,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,29 +59,39 @@ public class RunFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private GoogleMap mMap;
-    //PolylineOptions line = new PolylineOptions();
-    //List<LatLng> points;
+    PolylineOptions lineOptions = new PolylineOptions().color(Color.RED).width(3);
+    Polyline line;
+    List<LatLng> points = new ArrayList<LatLng>();
+    //Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng kassel = new LatLng(51.3127, 9.4797);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(kassel));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kassel, 15));
+        mMap.setMaxZoomPreference(20);
+        mMap.setMinZoomPreference(1);
+        line = mMap.addPolyline(lineOptions);
+        drawLines();
     }
-    /*private void drawLines() {
+
+    double a=51.3127, b=9.4797;
+
+    private void drawLines() {
         final Handler han = new Handler();
         han.postDelayed(new Runnable() {
             @Override
             public void run() {
-                line.add(new LatLng(b, a));
-                a += 0.1;
-                b -= 0.1;
-                line.add(new LatLng(b, a));
-                mMap.addPolyline(line);
+                points.add(new LatLng(a, b));
+                a += 0.01;
+                b -= 0.01;
+                points.add(new LatLng(a, b));
+                line.setPoints(points);
                 drawLines();
             }
         }, 1000);
-    }*/
+    }
 }
