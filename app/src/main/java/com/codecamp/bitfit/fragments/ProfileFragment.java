@@ -1,4 +1,4 @@
-package com.codecamp.bitfit.activities;
+package com.codecamp.bitfit.fragments;
 
 
 import android.os.Bundle;
@@ -12,15 +12,15 @@ import com.codecamp.bitfit.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SquatFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
-    public static SquatFragment getInstance() {
-        SquatFragment fragment = new SquatFragment();
+    public static ProfileFragment getInstance() {
+        ProfileFragment fragment = new ProfileFragment();
 
         return fragment;
     }
 
-    public SquatFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +29,7 @@ public class SquatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_squat, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
 }

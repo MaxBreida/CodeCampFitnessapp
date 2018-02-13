@@ -8,20 +8,15 @@ import android.view.MenuItem;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
-import com.codecamp.bitfit.activities.HomeFragment;
-import com.codecamp.bitfit.activities.ProfileFragment;
-import com.codecamp.bitfit.activities.PushUpFragment;
-import com.codecamp.bitfit.activities.RunFragment;
-import com.codecamp.bitfit.activities.SquatFragment;
-import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.fragments.HomeFragment;
+import com.codecamp.bitfit.fragments.ProfileFragment;
+import com.codecamp.bitfit.fragments.PushUpFragment;
+import com.codecamp.bitfit.fragments.RunFragment;
+import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.structure.ModelAdapter;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
-
-import java.util.Date;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FlowManager.init(this);
 
         startActivity(new Intent(this, IntroActivity.class));
         initBottomNavigation();

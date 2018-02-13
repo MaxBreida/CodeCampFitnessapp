@@ -19,4 +19,11 @@
     <string name="your_weight">Dein Gewicht (in kg):</string>
     <string name="action_share">Share</string>
     <string name="action_statistics">Statistics</string>
+    <string name="last_activity">Letzte Aktivität</string>
+    <string name="highscore_pushups">Highscore PushUps</string>
+    <string name="highscore_squats">Highscore Squats</string>
+    <string name="highscore_run">Highscore Run</string>
+    <string name="start">Start</string>
+    <string name="default_timer_value">0:00</string>
+    <string name="date_format">dd.MM.yyyy</string>
 </resources>
