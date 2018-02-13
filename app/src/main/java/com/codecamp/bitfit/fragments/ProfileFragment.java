@@ -1,4 +1,4 @@
-package com.codecamp.bitfit.activities;
+package com.codecamp.bitfit.fragments;
 
 
 import android.os.Bundle;

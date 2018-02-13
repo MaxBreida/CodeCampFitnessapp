@@ -2,32 +2,35 @@ package com.codecamp.bitfit.database;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.UUID;
 
 /**
  * Created by Witali Schmidt on 13.02.2018.
  */
-
-public class PushUps {
+@Table(database = AppDatabase.class)
+public class PushUps extends BaseModel {
     //Declaration variables DBFlow
-    @PrimaryKey // at least one primary key required
-            UUID id;
+    // at least one primary key required
+    @PrimaryKey
+    UUID id;
 
     @Column
     String currentDate;
 
     @Column
-    Double duration;
+    long duration;
 
     @Column
-    Integer repeats;
+    int repeats;
 
     @Column
-    Integer pushPerMin;
+    double pushPerMin;
 
     @Column
-    Double calorie;
+    double calories;
 
     //Getter and Setter
 
@@ -48,35 +51,35 @@ public class PushUps {
         this.currentDate = currentDate;
     }
 
-    public Double getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(Double duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
-    public Integer getRepeats() {
+    public int getRepeats() {
         return repeats;
     }
 
-    public void setRepeats(Integer repeats) {
+    public void setRepeats(int repeats) {
         this.repeats = repeats;
     }
 
-    public Integer getPushPerMin() {
+    public double getPushPerMin() {
         return pushPerMin;
     }
 
-    public void setPushPerMin(Integer pushPerMin) {
+    public void setPushPerMin(double pushPerMin) {
         this.pushPerMin = pushPerMin;
     }
 
-    public Double getCalorie() {
-        return calorie;
+    public double getCalories() {
+        return calories;
     }
 
-    public void setCalorie(Double calorie) {
-        this.calorie = calorie;
+    public void setCalories(double calorie) {
+        this.calories = calorie;
     }
 }
