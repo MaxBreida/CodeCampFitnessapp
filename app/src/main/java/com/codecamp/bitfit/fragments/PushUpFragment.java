@@ -81,7 +81,6 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
 
         countUpTimer = new CountUpTimer(1000, timeTextView);
 
-
         // set button to start state
         setToInitialState();
 
@@ -133,6 +132,7 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
         return (double) ((count * 60000) / duration);
     }
 
+    //TODO
     private double calcCalories() {
         // dummy value
         return 1.0;
@@ -140,7 +140,7 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
 
     private String getCurrentDateAsString() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format));
         return dateFormat.format(calendar.getTime());
     }
 
@@ -149,8 +149,8 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
         startTime = 0;
         workoutStarted = false;
         finishButton.setVisibility(View.INVISIBLE);
-        pushUpButton.setText("Start");
-        timeTextView.setText("0:00");
+        pushUpButton.setText(R.string.start);
+        timeTextView.setText(R.string.default_timer_value);
         count = 0;
     }
 
