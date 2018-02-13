@@ -1,6 +1,7 @@
 package com.codecamp.bitfit.activities;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -29,7 +30,7 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
     // View stuff
     private TextView timeTextView;
     private Button finishButton;
-    private Button pushUpButton;
+    private TextView pushUpButton;
 
     private SensorManager sensorManager;
     private Sensor proximitySensor;
@@ -59,11 +60,13 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
         super.onViewCreated(view, savedInstanceState);
 
         countUpTimer = new CountUpTimer(1000) {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onTick(long elapsedTime) {
                 timeTextView.setText(String.format("%d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
-                        TimeUnit.MILLISECONDS.toSeconds(elapsedTime))
+                        TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
+                                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime)))
                 );
             }
         };
