@@ -33,8 +33,6 @@ public class PushUps extends BaseModel {
     double calories;
 
     //Getter and Setter
-
-
     public UUID getId() {
         return id;
     }

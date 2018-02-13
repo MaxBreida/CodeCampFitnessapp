@@ -25,9 +25,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // database init
         FlowManager.init(this);
 
+        // start intro on first launch
         startActivity(new Intent(this, IntroActivity.class));
+
         initBottomNavigation();
     }
 
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTabSelected(int position, boolean wasSelected) {
                 // only select item if it wasn't selected before
                 if(!wasSelected) {
+                    // select the fragment
                     switch(position) {
                         case 0:
                             HomeFragment homeFragment = HomeFragment.getInstance();
@@ -86,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // set start tab
         bottomNavigation.setCurrentItem(0);
         HomeFragment homeFragment = HomeFragment.getInstance();
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // fill action bar with buttons
         getMenuInflater().inflate(R.menu.action_bar_items, menu);
         return super.onCreateOptionsMenu(menu);
     }
