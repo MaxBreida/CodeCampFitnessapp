@@ -3,6 +3,8 @@ package com.codecamp.bitfit;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -92,5 +94,25 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.setCurrentItem(0);
         HomeFragment homeFragment = HomeFragment.getInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_statistics:
+                // TODO start statistics activity
+                return true;
+            case R.id.action_share:
+                // TODO start share intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
