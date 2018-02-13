@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.codecamp.bitfit"
-        minSdkVersion 24
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -17,6 +17,7 @@ android {
         }
     }
 }
+def dbflow_version = "4.2.4"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -43,6 +44,22 @@ dependencies {
     compile 'net.steamcrafted:materialiconlib:1.1.4'
     // app intro
     compile 'com.github.apl-devs:appintro:v4.2.2'
+<<<<<<< HEAD
     // cardview
     compile 'com.android.support:cardview-v7:26.1.0'
+=======
+
+    // if Java use this. If using Kotlin do NOT use this.
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+
+    // RXJava 1 support
+    compile "com.github.Raizlabs.DBFlow:dbflow-rx:${dbflow_version}"
+
+    // RXJava 2 support
+//    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+
+>>>>>>> 779b8208546724f51b49fac5464ed6ed5715448e
 }
