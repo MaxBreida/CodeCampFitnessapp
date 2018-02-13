@@ -12,7 +12,7 @@
         android:text="@string/squat_tab" />
 -->
 
-    <TextView
+    <Button
         android:id="@+id/button_squat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,8 +32,8 @@
         android:text="Instructions"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="48sp"/>
+        android:textColor="@color/grey"
+        android:textSize="36sp"/>
 
     <TextView
         android:id="@+id/textview_squat_time"

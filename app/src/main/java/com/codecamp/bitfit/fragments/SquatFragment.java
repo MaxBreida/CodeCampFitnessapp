@@ -32,7 +32,7 @@ public class SquatFragment extends Fragment {
     private TextView timeTextView;
     private TextView instruction;
     private Button sqFinishButton;
-    private TextView squatButton;
+    private Button squatButton;
 
     enum SquatStates {
             SQUAT_DOWN,
@@ -98,6 +98,7 @@ public class SquatFragment extends Fragment {
     private void setToInitialState() {
         workoutStarted = false;
         sqFinishButton.setVisibility(View.INVISIBLE);
+        instruction.setVisibility(View.VISIBLE);
         instruction.setText("Put your smartphone in your trouser's " +
                 "pocket, click start and start squatting!");
         squatButton.setText("Start");
