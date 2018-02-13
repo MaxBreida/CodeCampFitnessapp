@@ -75,6 +75,7 @@ public class RunFragment extends Fragment implements OnMapReadyCallback {
         mMap.setMaxZoomPreference(20);
         mMap.setMinZoomPreference(1);
         line = mMap.addPolyline(lineOptions);
+        try { mMap.setMyLocationEnabled(true); } catch (SecurityException e) { /* TODO: handle missing permission */ }
         drawLines();
     }
 
