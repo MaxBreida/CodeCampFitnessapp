@@ -96,8 +96,8 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
                 } else {
                     // increment count and set text
                     count++;
-                    pushUpButton.setText(String.valueOf(count));
                 }
+                pushUpButton.setText(String.valueOf(count));
             }
         });
 
