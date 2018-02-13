@@ -59,18 +59,6 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        countUpTimer = new CountUpTimer(1000) {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void onTick(long elapsedTime) {
-                timeTextView.setText(String.format("%d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
-                        TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
-                                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime)))
-                );
-            }
-        };
-
         // sensor stuff
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -79,6 +67,9 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
         timeTextView = getView().findViewById(R.id.textview_pushup_time);
         finishButton = getView().findViewById(R.id.button_pushup_quit);
         pushUpButton = getView().findViewById(R.id.button_pushup);
+
+        countUpTimer = new CountUpTimer(1000, timeTextView);
+
 
         // set button to start state
         setToInitialState();
