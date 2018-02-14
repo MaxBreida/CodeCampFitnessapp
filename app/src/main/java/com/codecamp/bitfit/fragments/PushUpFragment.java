@@ -2,6 +2,7 @@ package com.codecamp.bitfit.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
 
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.util.CountUpTimer;
@@ -53,6 +55,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     public static PushUpFragment getInstance() {
         PushUpFragment fragment = new PushUpFragment();
+
         return fragment;
     }
 
@@ -110,7 +113,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                persistUserObject();
+                persistPushupObject();
 
                 // Screen keep on Flag set
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -123,7 +126,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         });
     }
 
-    private void persistUserObject() {
+    private void persistPushupObject() {
         long duration = System.currentTimeMillis() - startTime;
 
         // set pushup object
@@ -180,6 +183,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         mSensorManager.unregisterListener(this);
     }
 
+    // TODO
     @Override
     public void onSensorChanged(SensorEvent event) {
         // Search for light sensor, only start at workoutstart
@@ -214,9 +218,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.action_statistics:
-                // TODO start statistics activity of pushups
+                getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
                 return true;
             case R.id.action_share:
                 // TODO start share intent

@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             // start intro on first launch
             startActivity(new Intent(this, IntroActivity.class));
         }
+
         initBottomNavigation();
     }
 
@@ -100,5 +101,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.setCurrentItem(0);
         HomeFragment homeFragment = HomeFragment.getInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }
