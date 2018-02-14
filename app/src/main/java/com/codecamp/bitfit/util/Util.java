@@ -45,4 +45,14 @@ public class Util {
 
         return query;
     }
+
+    /**
+     * calculates height in m from height in cm
+     *
+     * @param heightInCM
+     * @return height in m
+     */
+    public static double getHeightInMeters(int heightInCM) {
+        return (double) heightInCM / 100;
+    }
 }
