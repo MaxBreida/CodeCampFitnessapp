@@ -1,7 +1,6 @@
 package com.codecamp.bitfit.fragments;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,26 +9,21 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.R;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,10 +35,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private Button finishButton;
     private TextView pushUpButton;
 
-    // sensor stuff
-    private SensorManager sensorManager;
-    private Sensor proximitySensor;
-
     // fragment stuff
     private boolean workoutStarted;
     private int count;
@@ -52,9 +42,17 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private PushUps pushUp;
     private long startTime;
 
+    // sensor stuff
+    private SensorManager mSensorManager;
+    private Sensor mLight;
+    private float maxLightRange;
+    private double minLightRange;
+    private double averageLightRange;
+    private boolean lockPushUpsCount;
+
+
     public static PushUpFragment getInstance() {
         PushUpFragment fragment = new PushUpFragment();
-
         return fragment;
     }
 
@@ -74,9 +72,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // sensor stuff
-        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        // light sensor initialization
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // find view stuff
         timeTextView = getView().findViewById(R.id.textview_pushup_time);
@@ -91,8 +89,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // show quit button if we started push ups
-                if(!workoutStarted) {
+                if (!workoutStarted) {
                     finishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
@@ -101,6 +100,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     // increment count and set text
                     count++;
                 }
+                // Screen keep on Flag set
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
                 pushUpButton.setText(String.valueOf(count));
             }
         });
@@ -110,9 +112,13 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             public void onClick(View v) {
                 persistUserObject();
 
+                // Screen keep on Flag set
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
                 // set to initial state
                 setToInitialState();
                 countUpTimer.stop();
+
             }
         });
     }
@@ -156,36 +162,49 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);
         count = 0;
+        lockPushUpsCount = false;
+        maxLightRange = 0;
+        minLightRange = 0;
+        averageLightRange = 0;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        sensorManager.registerListener(this,
-//                proximitySensor,
-//                SensorManager.SENSOR_DELAY_NORMAL
-//        );
+        mSensorManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        sensorManager.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
     }
 
-    // TODO
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int val = (int) event.values[0];
+        // Search for light sensor, only start at workoutstart
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            if (event.values != null && workoutStarted) {
+                // calculation light range
+                if (maxLightRange < event.values[0]) {
+                    maxLightRange = (event.values[0]);
+                    minLightRange = (double) event.values[0] / 3;
+                    averageLightRange = (double) event.values[0] / 2;
+                }
 
-        Log.d("Proximity: ", String.valueOf(val));
+                // Count++ if is unlock
+                if (minLightRange > event.values[0] && lockPushUpsCount == false) {
+                    lockPushUpsCount = true;
+                    count++;
+                    pushUpButton.setText(String.valueOf(count));
+                }
 
-        if(val > 1)
-            val = 1;
-
-        // increment count and set text
-        count += val;
-        pushUpButton.setText(String.valueOf(count));
+                // Lock
+                if (averageLightRange < event.values[0] && lockPushUpsCount == true) {
+                    lockPushUpsCount = false;
+                }
+            }
+        }
     }
 
     @Override
@@ -195,7 +214,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_statistics:
                 // TODO start statistics activity of pushups
                 return true;

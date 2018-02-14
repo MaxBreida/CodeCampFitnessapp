@@ -72,11 +72,7 @@ public class IntroActivity extends AppIntro
         // Check user input, for missing or incorrect entries
        /*
        if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
-            Context context = getApplicationContext();
-            CharSequence text = "Prüfen auf fehlende oder fehlerhafte Eingaben!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            Toast.makeText(getActivity().getApplicationContext(), "Prüfen auf fehlende oder fehlerhafte Eingaben!", Toast.LENGTH_SHORT).show();
             return;
         }
         */
