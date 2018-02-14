@@ -18,6 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codecamp.bitfit.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -105,7 +109,11 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
         line = mMap.addPolyline(lineOptions);
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            //LocationManager locMan = new android.location.LocationManager();
+            FusedLocationProviderClient loc = LocationServices.getFusedLocationProviderClient(getActivity());
+            LocationRequest req = new LocationRequest();
+            req.setInterval(5);
+            req.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            //loc.requestLocationUpdates(req);
         }
         drawLines();
     }
@@ -163,4 +171,8 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
     public void onProviderDisabled(String s) {
 
     }
+}
+
+class LocCallback extends LocationCallback{
+
 }
