@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,7 +24,7 @@ import static java.lang.Math.abs;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SquatFragment extends Fragment {
+public class SquatFragment extends WorkoutFragment {
 
     private SensorManager mgr;
     private int squatCtr;
@@ -210,8 +211,24 @@ public class SquatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_squat, container, false);
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_statistics:
+                // TODO start statistics activity
+                return true;
+            case R.id.action_share:
+                // TODO start share intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

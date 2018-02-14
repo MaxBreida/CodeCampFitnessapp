@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RunFragment extends Fragment implements OnMapReadyCallback {
+public class RunFragment extends WorkoutFragment implements OnMapReadyCallback {
 
     public static RunFragment getInstance() {
         RunFragment fragment = new RunFragment();
@@ -46,6 +47,7 @@ public class RunFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_run, container, false);
     }
@@ -94,5 +96,19 @@ public class RunFragment extends Fragment implements OnMapReadyCallback {
                 drawLines();
             }
         }, 1000);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_statistics:
+                // TODO start statistics activity
+                return true;
+            case R.id.action_share:
+                // TODO start share intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
