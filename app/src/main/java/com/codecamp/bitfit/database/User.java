@@ -3,6 +3,7 @@ package com.codecamp.bitfit.database;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.Date;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Table(database = AppDatabase.class)
 
-public class User {
+public class User extends BaseModel {
     //Declaration variables DBFlow
     @PrimaryKey // at least one primary key required
             UUID id;

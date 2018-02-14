@@ -6,12 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.fragments.HomeFragment;
 import com.codecamp.bitfit.fragments.ProfileFragment;
 import com.codecamp.bitfit.fragments.PushUpFragment;
 import com.codecamp.bitfit.fragments.RunFragment;
 import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
+import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
@@ -26,9 +28,14 @@ public class MainActivity extends AppCompatActivity {
         // database init
         FlowManager.init(this);
 
-        // start intro on first launch
-        startActivity(new Intent(this, IntroActivity.class));
+        // Load user if initialized
+        User findUser = Util.findUser();
 
+        // If user is initialized, then skip intro
+        if (findUser == null) {
+            // start intro on first launch
+            startActivity(new Intent(this, IntroActivity.class));
+        }
         initBottomNavigation();
     }
 
@@ -58,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
                 // only select item if it wasn't selected before
-                if(!wasSelected) {
+                if (!wasSelected) {
                     // select the fragment
-                    switch(position) {
+                    switch (position) {
                         case 0:
                             HomeFragment homeFragment = HomeFragment.getInstance();
                             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
@@ -81,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
                             ProfileFragment profileFragment = ProfileFragment.getInstance();
                             getSupportFragmentManager().beginTransaction().replace(R.id.content_main, profileFragment).commit();
                             break;
-                        default: break;
+                        default:
+                            break;
                     }
                 }
                 return true;
