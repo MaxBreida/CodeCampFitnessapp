@@ -42,11 +42,7 @@ public class CountUpTimer {
     }
 
     public void onTick(long elapsedTime){
-        textView.setText(String.format("%d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
-                TimeUnit.MILLISECONDS.toSeconds(elapsedTime)
-                        - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime)))
-        );
+        textView.setText(Util.getMillisAsTimeString(elapsedTime));
     }
 
     private static final int MSG = 1;

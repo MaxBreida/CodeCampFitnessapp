@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
+import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Select;
@@ -27,6 +29,13 @@ import static com.raizlabs.android.dbflow.sql.language.Method.max;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
+
+    // highscore pushups views
+    private TextView highscorePushupsDuration;
+    private TextView highscorePushupsCalories;
+    private TextView highscorePushupsPPM;
+    private TextView highscorePushupsRepeats;
+    private TextView highscorePushupsDate;
 
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -49,15 +58,30 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Log.d("highscore pushups", String.valueOf(findHighscorePushup().getRepeats()));
+        highscorePushups();
     }
 
-    private PushUps findHighscorePushup() {
-        // find highscore from pushups by selecting max value from repeats
-        PushUps query = SQLite.select(Method.ALL_PROPERTY, max(PushUps_Table.repeats))
-                .from(PushUps.class)
-                .querySingle();
+    private void highscorePushups() {
+        // initialize highscore pushups textviews
+        highscorePushupsCalories = getView().findViewById(R.id.textview_highscore_pushup_calories);
+        highscorePushupsDate = getView().findViewById(R.id.textview_highscore_pushup_date);
+        highscorePushupsDuration = getView().findViewById(R.id.textview_highscore_pushup_duration);
+        highscorePushupsPPM = getView().findViewById(R.id.textview_highscore_pushup_ppm);
+        highscorePushupsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
 
-        return query;
+        // find pushup highscore
+        PushUps highscorePushups = Util.findHighscorePushup();
+
+        // set text in textviews
+        highscorePushupsCalories.setText(
+                String.format("Verbrauchte Kalorien: %s", String.valueOf(highscorePushups.getCalories())));
+        highscorePushupsRepeats.setText(
+                String.format("Wiederholungen: %s", String.valueOf(highscorePushups.getRepeats())));
+        highscorePushupsPPM.setText(
+                String.format("PushUps/min: %s", String.valueOf(highscorePushups.getPushPerMin())));
+        highscorePushupsDate.setText(
+                String.format("Datum: %s", highscorePushups.getCurrentDate()));
+        highscorePushupsDuration.setText(
+                String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
     }
 }
