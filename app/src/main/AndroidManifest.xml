@@ -3,7 +3,7 @@
     package="com.codecamp.bitfit">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -13,14 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--Not sure if we need it here, but it was included in the sample files, so i will put it here just in case-->
+        <!-- Not sure if we need it here, but it was included in the sample files, so i will put it here just in case -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCaQLCifeXfBi9GoGONa34eLKTNXGZTb3A" />
 
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,11 +28,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".intro.IntroActivity"
-            android:screenOrientation="portrait"
-            >
-
-        </activity>
+        <activity
+            android:name=".intro.IntroActivity"
+            android:screenOrientation="portrait" />
+        
+        <!-- Statistics -->
+        <activity android:name=".statistics.PushupStatisticsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".statistics.RunStatisticsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".statistics.SquatStatisticsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
