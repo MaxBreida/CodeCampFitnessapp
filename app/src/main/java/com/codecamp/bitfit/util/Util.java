@@ -2,6 +2,7 @@ package com.codecamp.bitfit.util;
 
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
+import com.codecamp.bitfit.database.User;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
@@ -43,6 +44,19 @@ public class Util {
                 .from(PushUps.class)
                 .querySingle();
 
+        return query;
+    }
+
+    /**
+     *  queries the database for the User
+     *  *
+     * @return current user
+     */
+    public static User findUser() {
+        // find adult users
+        User query = SQLite.select()
+                .from(User.class)
+                .querySingle();
         return query;
     }
 }

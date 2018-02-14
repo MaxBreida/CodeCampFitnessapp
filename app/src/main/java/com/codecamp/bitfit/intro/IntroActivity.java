@@ -9,9 +9,14 @@ import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.database.User_Table;
 import com.github.paolorotolo.appintro.AppIntro;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,10 +67,11 @@ public class IntroActivity extends AppIntro
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
 
-        user.setId(UUID.randomUUID());
+
         // TODO comment out
         // Check user input, for missing or incorrect entries
-       /* if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
+       /*
+       if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
             Context context = getApplicationContext();
             CharSequence text = "Prüfen auf fehlende oder fehlerhafte Eingaben!";
             int duration = Toast.LENGTH_SHORT;
@@ -73,11 +79,12 @@ public class IntroActivity extends AppIntro
             toast.show();
             return;
         }
-*/
+        */
+        // User initialize
+        user.setId(UUID.randomUUID());
         user.setName(name);
         user.setWeight(weight);
         user.setSize(height);
-
         user.setGender(gender);
 
         // If not select the Date, set default
@@ -86,8 +93,9 @@ public class IntroActivity extends AppIntro
         } else {
             user.setBirthday(new Date(0, 0, 1));
         }
+        //Save user to database
+        user.save();
 
-        user.getName();
         finish();
     }
 
