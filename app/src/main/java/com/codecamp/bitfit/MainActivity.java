@@ -1,10 +1,8 @@
 package com.codecamp.bitfit;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -25,9 +23,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // database init
         FlowManager.init(this);
 
+        // start intro on first launch
         startActivity(new Intent(this, IntroActivity.class));
+
         initBottomNavigation();
     }
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTabSelected(int position, boolean wasSelected) {
                 // only select item if it wasn't selected before
                 if(!wasSelected) {
+                    // select the fragment
                     switch(position) {
                         case 0:
                             HomeFragment homeFragment = HomeFragment.getInstance();
@@ -86,30 +88,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // set start tab
         bottomNavigation.setCurrentItem(0);
         HomeFragment homeFragment = HomeFragment.getInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_bar_items, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_statistics:
-                // TODO start statistics activity
-                return true;
-            case R.id.action_share:
-                // TODO start share intent
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

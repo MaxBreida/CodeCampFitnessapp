@@ -1,20 +1,34 @@
 package com.codecamp.bitfit.intro;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.database.User;
 import com.github.paolorotolo.appintro.AppIntro;
+
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by MaxBreida on 12.02.18.
  */
 
 public class IntroActivity extends AppIntro
-                           implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener,
-                           IntroFragmentHeightWeight.OnHeightWeightChangedListener {
+        implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener,
+        IntroFragmentHeightWeight.OnHeightWeightChangedListener {
+    private User user = new User();
+    private String name;
+    private int day;
+    private int month;
+    private int year;
+    private String gender;
+    private int height;
+    private double weight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +61,33 @@ public class IntroActivity extends AppIntro
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
-        // TODO persist user data HERE in database
+
+        user.setId(UUID.randomUUID());
+        // TODO comment out
+        // Check user input, for missing or incorrect entries
+       /* if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
+            Context context = getApplicationContext();
+            CharSequence text = "Prüfen auf fehlende oder fehlerhafte Eingaben!";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+*/
+        user.setName(name);
+        user.setWeight(weight);
+        user.setSize(height);
+
+        user.setGender(gender);
+
+        // If not select the Date, set default
+        if (day != 0 && month != 0) {
+            user.setBirthday(new Date(year, month, day));
+        } else {
+            user.setBirthday(new Date(0, 0, 1));
+        }
+
+        user.getName();
         finish();
     }
 
@@ -59,37 +99,37 @@ public class IntroActivity extends AppIntro
 
     @Override
     public void onNameChanged(String name) {
-        // TODO update name in user object
+        this.name = name;
     }
 
     @Override
     public void onDayChanged(int day) {
-        // TODO update day in user object
+        this.day = day;
     }
 
     @Override
     public void onMonthChanged(int month) {
-        // TODO update month in user object
+        this.month = month;
     }
 
     @Override
     public void onYearChanged(int year) {
-        // TODO update year in user object
+        this.year = year;
     }
 
 
     @Override
     public void onGenderChangedListener(String gender) {
-        // TODO update gender in user object
+        this.gender = gender;
     }
 
     @Override
     public void onHeightChangedListener(int height) {
-        // TODO update height in user object
+        this.height = height;
     }
 
     @Override
-    public void onWeightChangedListner(double weight) {
-        // TODO update weight in user object
+    public void onWeightChangedListener(double weight) {
+        this.weight = weight;
     }
 }

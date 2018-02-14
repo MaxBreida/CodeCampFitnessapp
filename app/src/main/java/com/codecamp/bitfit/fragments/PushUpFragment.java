@@ -12,6 +12,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PushUpFragment extends Fragment implements SensorEventListener {
+public class PushUpFragment extends WorkoutFragment implements SensorEventListener {
 
     // View stuff
     private TextView timeTextView;
@@ -62,6 +65,7 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_push_up, container, false);
     }
@@ -96,8 +100,8 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
                 } else {
                     // increment count and set text
                     count++;
-                    pushUpButton.setText(String.valueOf(count));
                 }
+                pushUpButton.setText(String.valueOf(count));
             }
         });
 
@@ -187,5 +191,19 @@ public class PushUpFragment extends Fragment implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // empty method, not needed but necessary by implementation of interface
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_statistics:
+                // TODO start statistics activity of pushups
+                return true;
+            case R.id.action_share:
+                // TODO start share intent
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

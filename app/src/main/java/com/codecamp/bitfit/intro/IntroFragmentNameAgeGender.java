@@ -44,6 +44,10 @@ public class IntroFragmentNameAgeGender extends Fragment {
         return inflater.inflate(R.layout.fragment_intro_fragment_name_age_gender, container, false);
     }
 
+    public EditText getNameEditText() {
+        return nameEditText;
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -57,7 +61,6 @@ public class IntroFragmentNameAgeGender extends Fragment {
 
         setupBirthdayPickers();
         setupGenderPicker();
-
         setupListeners();
     }
 
@@ -143,11 +146,15 @@ public class IntroFragmentNameAgeGender extends Fragment {
     OnNameBirthdayGenderChangedListener callback;
 
     public interface OnNameBirthdayGenderChangedListener {
-        public void onNameChanged(String name);
-        public void onDayChanged(int day);
-        public void onMonthChanged(int month);
-        public void onYearChanged(int year);
-        public void onGenderChangedListener(String gender);
+        void onNameChanged(String name);
+
+        void onDayChanged(int day);
+
+        void onMonthChanged(int month);
+
+        void onYearChanged(int year);
+
+        void onGenderChangedListener(String gender);
     }
 
 }
