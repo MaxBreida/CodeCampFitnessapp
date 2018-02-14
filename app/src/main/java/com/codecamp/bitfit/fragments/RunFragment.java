@@ -32,8 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RunFragment extends WorkoutFragment implements OnMapReadyCallback {
-public class RunFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, LocationListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
 
