@@ -5,13 +5,13 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/action_statistics"
-        android:icon="@drawable/ic_trending_up_black_48dp"
+        android:icon="@drawable/ic_show_chart_white_48dp"
         android:title="@string/action_statistics"
         app:showAsAction="ifRoom"/>
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_black_48dp"
+        android:icon="@drawable/ic_share_white_48dp"
         android:title="@string/action_share"
         app:showAsAction="ifRoom"/>
 
