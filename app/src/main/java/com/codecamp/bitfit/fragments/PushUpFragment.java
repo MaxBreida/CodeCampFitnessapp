@@ -1,8 +1,8 @@
 package com.codecamp.bitfit.fragments;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,24 +12,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.codecamp.bitfit.database.PushUps;
-import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.R;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.codecamp.bitfit.database.PushUps;
+import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
+import com.codecamp.bitfit.util.CountUpTimer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,7 +104,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                persistUserObject();
+                persistPushupObject();
 
                 // set to initial state
                 setToInitialState();
@@ -117,7 +113,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         });
     }
 
-    private void persistUserObject() {
+    private void persistPushupObject() {
         long duration = System.currentTimeMillis() - startTime;
 
         // set pushup object
@@ -197,7 +193,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_statistics:
-                // TODO start statistics activity of pushups
+                getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
                 return true;
             case R.id.action_share:
                 // TODO start share intent

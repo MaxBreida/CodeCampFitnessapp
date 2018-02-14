@@ -56,13 +56,12 @@ public class Util {
     public static double getHeightInMeters(int heightInCM) {
         return (double) heightInCM / 100;
     }
-    
+
      /*
      *  queries the database for the User
      *  *
      * @return current user
      */
-
      public static User findUser() {
          // find adult users
         User query = SQLite.select()

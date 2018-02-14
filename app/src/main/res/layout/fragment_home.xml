@@ -57,32 +57,88 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:padding="16dp"
-                    android:layout_alignParentStart="true"
-                    android:text="BMI"/>
-
-                <net.steamcrafted.materialiconlib.MaterialIconView
-                    android:id="@+id/button_share_bmi"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:materialIcon="share_variant" />
-            </RelativeLayout>
-
-            
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="150dp"></LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/icon_bmi"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="24sp"
+                            android:padding="16dp"
+                            android:layout_alignParentStart="true"
+                            android:text="BMI"/>
+                    </LinearLayout>
+
+                    <net.steamcrafted.materialiconlib.MaterialIconView
+                        android:id="@+id/button_share_bmi"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:materialIcon="share_variant" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="32dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="32dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textview_bmi_height"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Größe: 1.90m"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/textview_bmi_weight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Gewicht: 80kg"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/textview_bmi_bmivalue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="32dp"
+                        android:text="BMI: 42"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
