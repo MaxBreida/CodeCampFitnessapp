@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 
 import com.codecamp.bitfit.database.PushUps;
+import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.R;
 
