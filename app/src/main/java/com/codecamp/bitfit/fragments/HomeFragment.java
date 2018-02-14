@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -37,6 +38,11 @@ public class HomeFragment extends Fragment {
     private TextView highscorePushupsRepeats;
     private TextView highscorePushupsDate;
 
+    // bmi views
+    private TextView bmiHeight;
+    private TextView bmiWeight;
+    private TextView bmiValue;
+
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
 
@@ -58,7 +64,35 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // inflates pushup highscore card with values
         highscorePushups();
+
+        // inflates bmi card with values
+        bmi();
+    }
+
+    private void bmi() {
+        // initialize bmi views
+        bmiHeight = getView().findViewById(R.id.textview_bmi_height);
+        bmiWeight = getView().findViewById(R.id.textview_bmi_weight);
+        bmiValue = getView().findViewById(R.id.textview_bmi_bmivalue);
+
+        // get user data from database
+        User user = Util.findUser();
+
+        if(user != null) {
+            // calculate bim
+            double bmi = calculateBMI(user);
+
+            // set text in textviews
+            bmiHeight.setText(String.format("Größe: %s", String.valueOf(Util.getHeightInMeters(user.getSize()))));
+            bmiWeight.setText(String.format("Gewicht: %s", String.valueOf(user.getWeight())));
+            bmiValue.setText(String.format("BMI: %.2f", bmi));
+        }
+    }
+
+    private double calculateBMI(User user) {
+        return user.getWeight() / Math.pow(Util.getHeightInMeters(user.getSize()), 2);
     }
 
     private void highscorePushups() {
@@ -72,16 +106,18 @@ public class HomeFragment extends Fragment {
         // find pushup highscore
         PushUps highscorePushups = Util.findHighscorePushup();
 
-        // set text in textviews
-        highscorePushupsCalories.setText(
-                String.format("Verbrauchte Kalorien: %s", String.valueOf(highscorePushups.getCalories())));
-        highscorePushupsRepeats.setText(
-                String.format("Wiederholungen: %s", String.valueOf(highscorePushups.getRepeats())));
-        highscorePushupsPPM.setText(
-                String.format("PushUps/min: %s", String.valueOf(highscorePushups.getPushPerMin())));
-        highscorePushupsDate.setText(
-                String.format("Datum: %s", highscorePushups.getCurrentDate()));
-        highscorePushupsDuration.setText(
-                String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
+        if(highscorePushups != null) {
+            // set text in textviews
+            highscorePushupsCalories.setText(
+                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highscorePushups.getCalories())));
+            highscorePushupsRepeats.setText(
+                    String.format("Wiederholungen: %s", String.valueOf(highscorePushups.getRepeats())));
+            highscorePushupsPPM.setText(
+                    String.format("PushUps/min: %s", String.valueOf(highscorePushups.getPushPerMin())));
+            highscorePushupsDate.setText(
+                    String.format("Datum: %s", highscorePushups.getCurrentDate()));
+            highscorePushupsDuration.setText(
+                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
+        }
     }
 }
