@@ -28,6 +28,7 @@ import com.facebook.share.Share;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
+import com.facebook.share.model.ShareOpenGraphObject;
 import com.facebook.share.widget.MessageDialog;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
@@ -154,11 +155,26 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
                 return true;
             case R.id.action_share:
                 // TODO start share intent
-                //ShareOpenGraphContent graph = (ShareOpenGraphContent) new ShareOpenGraphContent.Builder();
-                ShareLinkContent content = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
+                        .putString("og:type", "fitness.course")
+                        .putString("og:title", "Sample Course")
+                        .putString("og:description", "This is a sample course.")
+                        .putInt("fitness:duration:value", 100)
+                        .putString("fitness:duration:units", "s")
+                        .putInt("fitness:distance:value", 12)
+                        .putString("fitness:distance:units", "km")
+                        .putInt("fitness:speed:value", 5)
+                        .putString("fitness:speed:units", "m/s")
                         .build();
-                MenuItem shareButton;
+                ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
+                        .setActionType("fitness.runs")
+                        .putObject("fitness:course", object)
+                        .build();
+                ShareOpenGraphContent content = new ShareOpenGraphContent.Builder()
+                        .setPreviewPropertyName("fitness:course")
+                        .setAction(action)
+                        .build();
+                ShareDialog.show(getActivity(), content);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
