@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.codecamp.bitfit.database.PushUps;
@@ -184,17 +185,33 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         mSensorManager.unregisterListener(this);
     }
 
-    // TODO
     @Override
     public void onSensorChanged(SensorEvent event) {
         // Search for light sensor, only start at workoutstart
+        // TODO calibration
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             if (event.values != null && workoutStarted) {
                 // calculation light range
                 if (maxLightRange < event.values[0]) {
-                    maxLightRange = (event.values[0]);
-                    minLightRange = (double) event.values[0] / 3;
-                    averageLightRange = (double) event.values[0] / 2;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if(maxLightRange < 400) {
+                        maxLightRange = (event.values[0]);
+                        minLightRange = (double) event.values[0] / 2;
+                        averageLightRange = (double) event.values[0] / 4;
+                        averageLightRange = averageLightRange * 3;
+                        //Toast.makeText(getActivity().getApplicationContext(), "unter", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        maxLightRange = (event.values[0]);
+                        minLightRange = (double) event.values[0] / 3;
+                        averageLightRange = (double) event.values[0] / 2;
+                        //Toast.makeText(getActivity().getApplicationContext(), "drüber", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
                 // Count++ if is unlock
