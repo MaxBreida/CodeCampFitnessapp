@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -20,10 +21,13 @@ import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
+import com.codecamp.bitfit.util.Util;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.Math.abs;
@@ -118,6 +122,9 @@ public class SquatFragment extends WorkoutFragment {
                     sqFinishButton.setVisibility(View.VISIBLE);
                     squatButton.setVisibility(View.VISIBLE);
                 }
+
+                // Screen keep on Flag set
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 // increment count and set text
                 squatButton.setText(String.valueOf(squatCtr));
             }
@@ -131,8 +138,12 @@ public class SquatFragment extends WorkoutFragment {
             public void onClick(View view) {
                 squatTimer.stop();
                 finishTime = System.currentTimeMillis();
-                createSquatObj();
+
+                // Screen keep on Flag set
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
                 // TODO: view acticity details and send them to database
+                createSquatObj();
                 setToInitialState();
             }
         });
@@ -149,26 +160,13 @@ public class SquatFragment extends WorkoutFragment {
         long duration = finishTime-startTime;
 
         //Set attributes of the squat object
-/*        currentSquat.setId(UUID.randomUUID());
+        currentSquat.setId(UUID.randomUUID());
         currentSquat.setCurrentDate(getCurrentDateAsString());
         currentSquat.setCalories(calcCalories());
         currentSquat.setDuration(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
-        currentSquat.setRepeats(squatCtr);*/
-
-        //Create fake squat for debugging
-        Squat fakeSquat = new Squat();
-        fakeSquat.setId(UUID.randomUUID());
-        fakeSquat.setCurrentDate(getCurrentDateAsString());
-        fakeSquat.setCalories(calcCalories());
-        fakeSquat.setDuration((long) 60);
-        fakeSquat.setSquatPerMin(calcSquatsPerMinute(duration));
-        fakeSquat.setRepeats(13);
-
-        //Save workout to database
-        fakeSquat.save();
-//        currentSquat.save();
-
+        currentSquat.setRepeats(squatCtr);
+        currentSquat.save();
     }
 
     double calcSquatsPerMinute(long duration){
