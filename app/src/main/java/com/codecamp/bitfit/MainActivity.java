@@ -14,6 +14,7 @@ import com.codecamp.bitfit.fragments.RunFragment;
 import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
 import com.codecamp.bitfit.util.Util;
+import com.facebook.FacebookSdk;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;

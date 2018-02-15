@@ -1,6 +1,7 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
@@ -15,13 +17,26 @@ import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.Util;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareHashtag;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 
+import net.steamcrafted.materialiconlib.MaterialIconView;
+
+import java.util.Arrays;
 import java.util.List;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.raizlabs.android.dbflow.sql.language.Method.count;
 import static com.raizlabs.android.dbflow.sql.language.Method.max;
 
@@ -42,6 +57,13 @@ public class HomeFragment extends Fragment {
     private TextView bmiHeight;
     private TextView bmiWeight;
     private TextView bmiValue;
+
+    private MaterialIconView shareBMIButton;
+
+    private ShareDialog shareDialog;
+    private CallbackManager callbackManager;
+    private LoginManager loginManager;
+
 
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -66,7 +88,7 @@ public class HomeFragment extends Fragment {
 
         // inflates pushup highscore card with values
         highscorePushups();
-
+        shareToFacebook();
         // inflates bmi card with values
         bmi();
     }
@@ -80,7 +102,7 @@ public class HomeFragment extends Fragment {
         // get user data from database
         User user = Util.findUser();
 
-        if(user != null) {
+        if (user != null) {
             // calculate bim
             double bmi = calculateBMI(user);
 
@@ -106,7 +128,7 @@ public class HomeFragment extends Fragment {
         // find pushup highscore
         PushUps highscorePushups = Util.findHighscorePushup();
 
-        if(highscorePushups != null) {
+        if (highscorePushups != null) {
             // set text in textviews
             highscorePushupsCalories.setText(
                     String.format("Verbrauchte Kalorien: %s", String.valueOf(highscorePushups.getCalories())));
@@ -119,5 +141,19 @@ public class HomeFragment extends Fragment {
             highscorePushupsDuration.setText(
                     String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
         }
+    }
+
+    // Share stuff to Facebook
+    private void shareToFacebook() {
+
+        shareBMIButton = getView().findViewById(R.id.button_share_bmi);
+  //      shareDialog = new ShareDialog(this);
+
+        shareBMIButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 }

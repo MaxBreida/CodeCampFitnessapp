@@ -59,4 +59,8 @@ dependencies {
 
     // RXJava 2 support
 //    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+
+    //Facebook share
+    compile 'com.facebook.android:facebook-share:[4,5)'
+
 }

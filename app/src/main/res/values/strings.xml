@@ -33,4 +33,6 @@
     <string name="weight">Gewicht (in kg):</string>
     <string name="birthday">Geburtstag:</string>
     <string name="save">Speichern</string>
+    <string name="facebook_app_id">2029588297311884</string>
+    <string name="fb_login_protocol_scheme">fb2029588297311884</string>
 </resources>
