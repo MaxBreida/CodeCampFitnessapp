@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,16 +41,16 @@ public class SquatFragment extends WorkoutFragment {
 
     private int squatCtr;
 
-    Squat currentSquat;
-    long startTime;
-    long finishTime;
+    private Squat currentSquat;
+    private long startTime;
+    private long finishTime;
     private boolean workoutStarted;
     private boolean exercisesStarted;
     private TextView timeTextView;
     private Button instructionButton;
     private TextView instruction;
     private Button sqFinishButton;
-    private Button squatButton;
+    private TextView squatButton;
 
 
     //Use an average value for the accelerometer output
@@ -108,12 +110,13 @@ public class SquatFragment extends WorkoutFragment {
             public void onClick(View v) {
                 // show quit button if we started push ups
                 if(!workoutStarted) {
-                    sqFinishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     squatTimer.start();
                     instruction.setVisibility(View.INVISIBLE);
                     instructionButton.setVisibility(View.INVISIBLE);
                     timeTextView.setVisibility(View.VISIBLE);
+                    sqFinishButton.setVisibility(View.VISIBLE);
+                    squatButton.setVisibility(View.VISIBLE);
                 }
                 // increment count and set text
                 squatButton.setText(String.valueOf(squatCtr));
@@ -127,10 +130,10 @@ public class SquatFragment extends WorkoutFragment {
             @Override
             public void onClick(View view) {
                 squatTimer.stop();
-                fillSquatObj();
+                finishTime = System.currentTimeMillis();
+                createSquatObj();
                 // TODO: view acticity details and send them to database
                 setToInitialState();
-                finishTime = System.currentTimeMillis();
             }
         });
 
@@ -142,21 +145,34 @@ public class SquatFragment extends WorkoutFragment {
 //        super.onResume();
 //        sensorManager.registerListener(listener, proximitySensor, sensorManager.SENSOR_DELAY_NORMAL);
 //    }
-    private void fillSquatObj(){
+    private void createSquatObj(){
         long duration = finishTime-startTime;
 
-        currentSquat.setId(UUID.randomUUID());
-        // TODO: Check what's wrong with the date here
-      //  currentSquat.setCurrentDate(getCurrentDateAsString());
-        currentSquat.setDuration((double) duration);  //Is this cast correct?
-        currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
-        currentSquat.setRepeats(squatCtr);
+        //Set attributes of the squat object
+/*        currentSquat.setId(UUID.randomUUID());
+        currentSquat.setCurrentDate(getCurrentDateAsString());
         currentSquat.setCalories(calcCalories());
+        currentSquat.setDuration(duration);
+        currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
+        currentSquat.setRepeats(squatCtr);*/
+
+        //Create fake squat for debugging
+        Squat fakeSquat = new Squat();
+        fakeSquat.setId(UUID.randomUUID());
+        fakeSquat.setCurrentDate(getCurrentDateAsString());
+        fakeSquat.setCalories(calcCalories());
+        fakeSquat.setDuration((long) 60);
+        fakeSquat.setSquatPerMin(calcSquatsPerMinute(duration));
+        fakeSquat.setRepeats(13);
+
+        //Save workout to database
+        fakeSquat.save();
+//        currentSquat.save();
 
     }
 
-    double calcSquatsPerMinute(double duration){
-        return (double) ((squatCtr * 60000) / duration);
+    double calcSquatsPerMinute(long duration){
+        return ((squatCtr * 60000) / duration);
     }
 
 
@@ -177,6 +193,7 @@ public class SquatFragment extends WorkoutFragment {
         currentSquat = new Squat();
         workoutStarted = false;
         exercisesStarted = false;
+        squatButton.setVisibility(View.VISIBLE);
         sqFinishButton.setVisibility(View.INVISIBLE);
         instructionButton.setVisibility(View.VISIBLE);
         instruction.setVisibility(View.INVISIBLE);
@@ -186,6 +203,12 @@ public class SquatFragment extends WorkoutFragment {
         timeTextView.setText("0:00");
         squatState = SquatStates.SQUAT_DOWN;
         squatCtr = 0;
+
+/*        instruction.setVisibility(View.INVISIBLE);
+        instructionButton.setVisibility(View.INVISIBLE);
+        timeTextView.setVisibility(View.VISIBLE);
+        sqFinishButton.setVisibility(View.VISIBLE);
+        squatButton.setVisibility(View.INVISIBLE);*/
     }
 
     public void onDestroy(){
