@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 
 import com.codecamp.bitfit.database.PushUps;
+import com.codecamp.bitfit.instructions.PushUpsInstructionsActivity;
 import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
@@ -243,6 +244,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_instructions:
+                getActivity().startActivity(new Intent(getActivity(), PushUpsInstructionsActivity.class));
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
                 return true;
