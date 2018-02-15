@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codecamp.bitfit">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> // location services for the running app
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> // wake lock to keep the running app on in the background once the screen is turned off
 
     <application
         android:allowBackup="true"

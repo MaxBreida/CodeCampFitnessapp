@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -103,20 +106,30 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
             LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            if(lm.getAllProviders().isEmpty()){
-                /*TODO: handle no location service*/
+
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                // TODO:notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+            }
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                // TODO:notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
             }
             else{
                 String provider = lm.getBestProvider(criteria,true);
                 Location firstLoc = lm.getLastKnownLocation(provider);
                 if(firstLoc == null){
-                    /*TODO: handle location not found*/
+                    /*TODO: notify user that there's no location data and that they should wait for a GPS signal*/
                 }
                 else{
-                    onLocationChanged(firstLoc);
-                    mMap.setMaxZoomPreference(20);
-                    mMap.setMinZoomPreference(1);
+                    PowerManager powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
+                    PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
+                    wakeLock.acquire();
+
+                    LatLng firstLocLatLng = new LatLng(firstLoc.getLatitude(), firstLoc.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
                     lm.requestLocationUpdates(1000, 25, criteria, this, null);
+
+                    //lm.removeUpdates(this);
+                    //wakeLock.release();
                 }
             }
         }
@@ -136,13 +149,19 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
         }
     }
 
+    float runningDistance = 0;
+    Location previousPoint = null;
+
     @Override
     public void onLocationChanged(Location location) {
-        if(location != null && location.getAccuracy() >= 1){
+        if(location != null && location.getAccuracy() >= 16){
             LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curPos, 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
             points.add(curPos);
             line.setPoints(points);
+            if(previousPoint != null){
+                runningDistance += location.distanceTo(previousPoint);
+            }
         }
     }
 
