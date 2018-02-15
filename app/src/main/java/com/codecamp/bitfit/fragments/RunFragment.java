@@ -1,6 +1,7 @@
 package com.codecamp.bitfit.fragments;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
@@ -18,8 +20,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.codecamp.bitfit.R;
+import com.facebook.ShareGraphRequest;
+import com.facebook.share.Share;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.ShareOpenGraphAction;
+import com.facebook.share.model.ShareOpenGraphContent;
+import com.facebook.share.widget.MessageDialog;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -143,6 +154,11 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
                 return true;
             case R.id.action_share:
                 // TODO start share intent
+                //ShareOpenGraphContent graph = (ShareOpenGraphContent) new ShareOpenGraphContent.Builder();
+                ShareLinkContent content = new ShareLinkContent.Builder()
+                        .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                        .build();
+                MenuItem shareButton;
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

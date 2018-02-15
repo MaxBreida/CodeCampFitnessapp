@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codecamp.bitfit.R;
+import com.facebook.share.widget.ShareDialog;
 
 /**
  * Created by MaxBreida on 14.02.18.
