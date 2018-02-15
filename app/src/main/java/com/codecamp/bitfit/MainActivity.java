@@ -13,6 +13,7 @@ import com.codecamp.bitfit.fragments.PushUpFragment;
 import com.codecamp.bitfit.fragments.RunFragment;
 import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 import com.facebook.FacebookSdk;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         FlowManager.init(this);
 
         // Load user if initialized
-        User findUser = Util.findUser();
+        User findUser = DBQueryHelper.findUser();
 
         // If user is initialized, then skip intro
         if (findUser == null) {

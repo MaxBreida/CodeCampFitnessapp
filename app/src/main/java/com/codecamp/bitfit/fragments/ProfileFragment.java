@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ProfileFragment extends Fragment {
         saveButton = getView().findViewById(R.id.button_profile_save);
 
         // get User data from database
-        user = Util.findUser();
+        user = DBQueryHelper.findUser();
 
         if(user != null) {
             // initialize values

@@ -22,8 +22,12 @@ import android.widget.Toast;
 
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
+import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.util.SharedPrefsHelper;
+import com.codecamp.bitfit.util.Util;
+import com.facebook.share.Share;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -124,7 +128,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 // set to initial state
                 setToInitialState();
                 countUpTimer.stop();
-
             }
         });
     }
@@ -138,10 +141,15 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);
         pushUp.setCalories(calcCalories());
-        pushUp.setCurrentDate(getCurrentDateAsString());
+        pushUp.setCurrentDate(Util.getCurrentDateAsString());
 
         // save workout to database
         pushUp.save();
+
+        // set as last activity
+        new SharedPrefsHelper(getContext())
+                .setLastActivity(Constants.WORKOUT_PUSHUPS, pushUp.getId());
+
     }
 
     private double calcPushupsPerMinute(long duration) {
@@ -154,11 +162,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         return 1.0;
     }
 
-    private String getCurrentDateAsString() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format));
-        return dateFormat.format(calendar.getTime());
-    }
+
 
     private void setToInitialState() {
         pushUp = new PushUps();

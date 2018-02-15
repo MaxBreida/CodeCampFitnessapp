@@ -12,51 +12,14 @@ import java.util.UUID;
  */
 @Table(database = AppDatabase.class)
 
-public class Run extends BaseModel {
-    //Declaration variables DBFlow
-    @PrimaryKey // at least one primary key required
-            UUID id;
-
-    @Column
-    String currentDate;
-
-    @Column
-    Double calorie;
-
+public class Run extends Workout {
     @Column
     Double distance;
 
     @Column
     Double speed;
 
-    @Column
-    Double duration;
-
     // Getter and Setter
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getCurrentDate() {
-        return currentDate;
-    }
-
-    public void setCurrentDate(String currentDate) {
-        this.currentDate = currentDate;
-    }
-
-    public Double getCalorie() {
-        return calorie;
-    }
-
-    public void setCalorie(Double calorie) {
-        this.calorie = calorie;
-    }
-
     public Double getDistance() {
         return distance;
     }
@@ -71,13 +34,5 @@ public class Run extends BaseModel {
 
     public void setSpeed(Double speed) {
         this.speed = speed;
-    }
-
-    public Double getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Double duration) {
-        this.duration = duration;
     }
 }

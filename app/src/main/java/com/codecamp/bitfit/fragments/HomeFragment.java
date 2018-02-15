@@ -20,6 +20,8 @@ import com.codecamp.bitfit.database.Squat_Table;
 import com.codecamp.bitfit.database.Run;
 import com.codecamp.bitfit.database.Run_Table;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.database.Workout;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -104,11 +106,21 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        // get last activity
+        lastActivity();
         // inflates pushup highscore card with values
         highscorePushups();
         shareToFacebook();
         // inflates bmi card with values
         bmi();
+    }
+
+    private void lastActivity() {
+        // get last activity from shared prefs
+        Workout lastActivity = DBQueryHelper.getLastWorkout(getContext());
+
+        // inflate the card TODO
     }
 
     private void bmi() {
@@ -118,7 +130,7 @@ public class HomeFragment extends Fragment {
         bmiValue = getView().findViewById(R.id.textview_bmi_bmivalue);
 
         // get user data from database
-        User user = Util.findUser();
+        User user = DBQueryHelper.findUser();
 
         if (user != null) {
             // calculate bim
@@ -144,7 +156,7 @@ public class HomeFragment extends Fragment {
         highscorePushupsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
 
         // find pushup highscore
-        PushUps highscorePushups = Util.findHighscorePushup();
+        PushUps highscorePushups = DBQueryHelper.findHighscorePushup();
 
         if (highscorePushups != null) {
             // set text in textviews
@@ -170,7 +182,7 @@ public class HomeFragment extends Fragment {
         highscoreSquatsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
 
         // find pushup highscore
-        Squat highscoreSquats = Util.findHighscoreSquat();
+        Squat highscoreSquats = DBQueryHelper.findHighscoreSquat();
 
         if (highscoreSquats != null) {
             // set text in textviews
@@ -196,11 +208,11 @@ public class HomeFragment extends Fragment {
         highscoreRunSpeed = getView().findViewById(R.id.textview_highscore_run_speed);
         highscoreRunDistance = getView().findViewById(R.id.textview_highscore_run_distance);
 
-        Run highScoreRun = Util.findHighScoreRun();
+        Run highScoreRun = DBQueryHelper.findHighScoreRun();
 
         if(highScoreRun != null){
             highscoreRunCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCalorie()))
+                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCalories()))
             );
             highscoreRunDate.setText(
                     String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCurrentDate()))
