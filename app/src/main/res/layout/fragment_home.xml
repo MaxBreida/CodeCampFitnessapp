@@ -35,11 +35,11 @@
 
                 <net.steamcrafted.materialiconlib.MaterialIconView
                     android:id="@+id/button_share_last_activity"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_centerVertical="true"
                     app:materialIcon="share_variant"/>
             </RelativeLayout>
 
@@ -87,10 +87,10 @@
 
                     <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/button_share_bmi"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="16dp"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
                         app:materialIcon="share_variant" />
                 </RelativeLayout>
@@ -184,11 +184,11 @@
 
                     <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/button_share_highscore_pushups"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_centerVertical="true"
                         app:materialIcon="share_variant"
                         />
                 </RelativeLayout>
@@ -310,11 +310,11 @@
 
                     <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/button_share_highscore_squats"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_centerVertical="true"
                         app:materialIcon="share_variant"
                         />
                 </RelativeLayout>
@@ -439,11 +439,11 @@
 
                     <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/button_share_highscore_run"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_centerVertical="true"
                         app:materialIcon="share_variant"
                         />
                 </RelativeLayout>
