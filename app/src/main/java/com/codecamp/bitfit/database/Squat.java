@@ -19,13 +19,13 @@ public class Squat extends BaseModel {
             UUID id;
 
     @Column
-    Date currentDate;
+    String currentDate;
 
     @Column
     Double calories;
 
     @Column
-    Double duration;
+    Long duration;
 
     @Column
     Double squatPerMin;
@@ -42,11 +42,11 @@ public class Squat extends BaseModel {
         this.id = id;
     }
 
-    public Date getCurrentDate() {
+    public String getCurrentDate() {
         return currentDate;
     }
 
-    public void setCurrentDate(Date currentDate) {
+    public void setCurrentDate(String currentDate) {
         this.currentDate = currentDate;
     }
 
@@ -58,11 +58,11 @@ public class Squat extends BaseModel {
         this.calories = calories;
     }
 
-    public Double getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public void setDuration(Double duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 
