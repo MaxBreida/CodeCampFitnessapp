@@ -3,6 +3,9 @@ package com.codecamp.bitfit.util;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.database.Squat_Table;
+import com.codecamp.bitfit.database.Run;
+import com.codecamp.bitfit.database.Run_Table;
 import com.codecamp.bitfit.database.User;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -44,6 +47,33 @@ public class Util {
         // find highscore from pushups by selecting max value from repeats
         PushUps query = SQLite.select(Method.ALL_PROPERTY, max(PushUps_Table.repeats))
                 .from(PushUps.class)
+                .querySingle();
+        return query;
+    }
+
+    /**
+     *  queries the database for the squats with the highest repeat count
+     *
+     * @return highscore squat
+     */
+    public static Squat findHighscoreSquat() {
+        // find highscore from pushups by selecting max value from repeats
+        Squat query = SQLite.select(Method.ALL_PROPERTY, max(Squat_Table.repeats))
+                .from(Squat.class)
+                .querySingle();
+
+        return query;
+    }
+
+    /**
+     *  queries the database for the squats with the highest distance value
+     *
+     * @return highscore run
+     */
+    public static Run findHighScoreRun(){
+        // find highscore from runs by selecting max value from distance
+        Run query = SQLite.select(Method.ALL_PROPERTY, max(Run_Table.distance))
+                .from(Run.class)
                 .querySingle();
         return query;
     }

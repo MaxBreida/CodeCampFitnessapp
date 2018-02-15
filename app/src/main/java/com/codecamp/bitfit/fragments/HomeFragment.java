@@ -15,6 +15,10 @@ import android.widget.TextView;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
+import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.database.Squat_Table;
+import com.codecamp.bitfit.database.Run;
+import com.codecamp.bitfit.database.Run_Table;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.Util;
 import com.facebook.CallbackManager;
@@ -52,6 +56,20 @@ public class HomeFragment extends Fragment {
     private TextView highscorePushupsPPM;
     private TextView highscorePushupsRepeats;
     private TextView highscorePushupsDate;
+
+    // highscore squats views
+    private TextView highscoreSquatsDuration;
+    private TextView highscoreSquatsCalories;
+    private TextView highscoreSquatsSPM;
+    private TextView highscoreSquatsRepeats;
+    private TextView highscoreSquatsDate;
+
+    // highscore Runs views
+    private TextView highscoreRunDuration;
+    private TextView highscoreRunCalories;
+    private TextView highscoreRunSpeed;
+    private TextView highscoreRunDistance;
+    private TextView highscoreRunDate;
 
     // bmi views
     private TextView bmiHeight;
@@ -140,6 +158,62 @@ public class HomeFragment extends Fragment {
                     String.format("Datum: %s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
                     String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
+        }
+    }
+
+    private void highscoreSquats() {
+        // initialize highscore pushups textviews
+        highscoreSquatsCalories = getView().findViewById(R.id.textview_highscore_pushup_calories);
+        highscoreSquatsDate = getView().findViewById(R.id.textview_highscore_pushup_date);
+        highscoreSquatsDuration = getView().findViewById(R.id.textview_highscore_pushup_duration);
+        highscoreSquatsSPM = getView().findViewById(R.id.textview_highscore_pushup_ppm);
+        highscoreSquatsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
+
+        // find pushup highscore
+        Squat highscoreSquats = Util.findHighscoreSquat();
+
+        if (highscoreSquats != null) {
+            // set text in textviews
+            highscoreSquatsCalories.setText(
+                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highscoreSquats.getCalories())));
+            highscoreSquatsRepeats.setText(
+                    String.format("Wiederholungen: %s", String.valueOf(highscoreSquats.getRepeats())));
+            highscoreSquatsSPM.setText(
+                    String.format("PushUps/min: %s", String.valueOf(highscoreSquats.getSquatPerMin())));
+            highscoreSquatsDate.setText(
+                    String.format("Datum: %s", highscoreSquats.getCurrentDate()));
+            highscoreSquatsDuration.setText(
+                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscoreSquats.getDuration())));
+        }
+    }
+
+    private void highscoreRun(){
+
+        // initialize highscore run
+        highscoreRunCalories = getView().findViewById(R.id.textview_highscore_run_calories);
+        highscoreRunDate = getView().findViewById(R.id.textview_highscore_run_date);
+        highscoreRunDuration = getView().findViewById(R.id.textview_highscore_run_duration);
+        highscoreRunSpeed = getView().findViewById(R.id.textview_highscore_run_speed);
+        highscoreRunDistance = getView().findViewById(R.id.textview_highscore_run_distance);
+
+        Run highScoreRun = Util.findHighScoreRun();
+
+        if(highScoreRun != null){
+            highscoreRunCalories.setText(
+                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCalorie()))
+            );
+            highscoreRunDate.setText(
+                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCurrentDate()))
+            );
+            highscoreRunDuration.setText(
+                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDuration()))
+            );
+            highscoreRunDistance.setText(
+                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDistance()))
+            );
+            highscoreRunSpeed.setText(
+                    String.format("Dauer: %s", String.valueOf(highScoreRun.getSpeed()))
+            );
         }
     }
 
