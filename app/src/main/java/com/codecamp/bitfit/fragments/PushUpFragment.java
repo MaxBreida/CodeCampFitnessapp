@@ -97,6 +97,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
                 // show quit button if we started push ups
                 if (!workoutStarted) {
+                    timeTextView.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
@@ -163,6 +164,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp = new PushUps();
         startTime = 0;
         workoutStarted = false;
+        timeTextView.setVisibility(View.INVISIBLE);
         finishButton.setVisibility(View.INVISIBLE);
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);
