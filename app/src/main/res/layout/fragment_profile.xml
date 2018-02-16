@@ -136,5 +136,9 @@
         android:text="@string/save"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/profile_linear_layout"
+        android:background="@drawable/custom_button"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:layout_marginTop="64dp"/>
 </RelativeLayout>

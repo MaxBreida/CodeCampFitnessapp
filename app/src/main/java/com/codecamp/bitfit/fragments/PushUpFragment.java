@@ -39,6 +39,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private TextView timeTextView;
     private Button finishButton;
     private TextView pushUpButton;
+    private TextView caloriesTextView;
+    private TextView avgPushupsTextView;
 
     // fragment stuff
     private boolean workoutStarted;
@@ -86,6 +88,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         timeTextView = getView().findViewById(R.id.textview_pushup_time);
         finishButton = getView().findViewById(R.id.button_pushup_quit);
         pushUpButton = getView().findViewById(R.id.button_pushup);
+        avgPushupsTextView = getView().findViewById(R.id.textview_avg_pushups);
+        caloriesTextView = getView().findViewById(R.id.textview_calories_pushups);
 
         countUpTimer = new CountUpTimer(1000, timeTextView);
 
@@ -95,10 +99,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // show quit button if we started push ups
                 if (!workoutStarted) {
                     timeTextView.setVisibility(View.VISIBLE);
+                    caloriesTextView.setVisibility(View.VISIBLE);
+                    avgPushupsTextView.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
@@ -166,6 +171,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         startTime = 0;
         workoutStarted = false;
         timeTextView.setVisibility(View.INVISIBLE);
+        caloriesTextView.setVisibility(View.INVISIBLE);
+        avgPushupsTextView.setVisibility(View.INVISIBLE);
         finishButton.setVisibility(View.INVISIBLE);
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);
