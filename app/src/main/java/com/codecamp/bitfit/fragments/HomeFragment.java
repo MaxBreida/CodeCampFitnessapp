@@ -79,9 +79,22 @@ public class HomeFragment extends Fragment {
     private MaterialIconView shareBMIButton;
     private int genderUrlFormat = 1;
 
-    // highsore share to Facebook
+    // highsore pushups share to Facebook
     private MaterialIconView shareHighScorePushUpsButton;
     private CardView cardview_highscore_pushups;
+
+    // highscore Squat share to Facebook
+    private MaterialIconView shareHighScoreSquatsButton;
+    private CardView cardview_highscore_squats;
+
+    // highscore Runnin share to Facebook
+    private MaterialIconView shareHighScoreRunButton;
+    private CardView cardview_highscore_Run;
+
+    // share last activity to Facebook
+    private MaterialIconView shareLastActivityButton;
+    private CardView cardview_last_activity;
+
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
 
@@ -106,12 +119,21 @@ public class HomeFragment extends Fragment {
 
         // get last activity
         lastActivity();
+
         // inflates pushup highscore card with values
         highscorePushups();
-        shareBMIToFacebook();
-        shareHighScorePushUpsToFacebook();
+
         // inflates bmi card with values
         bmi();
+
+        // initialized Facebook share buttons
+        shareBMIToFacebook();
+        shareHighScorePushUpsToFacebook();
+        shareHighScoreSquatToFacebook();
+        shareHighScoreRunToFacebook();
+        shareLastActivityToFacebook();
+
+
     }
 
     private void lastActivity() {
@@ -259,39 +281,8 @@ public class HomeFragment extends Fragment {
         shareHighScorePushUpsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                0);
-
-                    }
-                }
-
                 Bitmap bitmap = viewToBitmap(cardview_highscore_pushups);
-                try {
-                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/111.png");
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
-                    output.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 SharePhoto photo = new SharePhoto.Builder()
                         .setBitmap(bitmap)
                         .build();
@@ -301,6 +292,73 @@ public class HomeFragment extends Fragment {
 
                 ShareDialog.show(getActivity(), content);
                 shareHighScorePushUpsButton.setColor(Color.parseColor("#DDDDDD"));
+            }
+        });
+    }
+
+    private void shareHighScoreSquatToFacebook() {
+        shareHighScoreSquatsButton = getView().findViewById(R.id.button_share_highscore_squats);
+        cardview_highscore_squats = getView().findViewById(R.id.cardview_highscore_squats);
+
+        shareHighScoreSquatsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = viewToBitmap(cardview_highscore_squats);
+
+                SharePhoto photo = new SharePhoto.Builder()
+                        .setBitmap(bitmap)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+
+                ShareDialog.show(getActivity(), content);
+                shareHighScoreSquatsButton.setColor(Color.parseColor("#DDDDDD"));
+            }
+        });
+    }
+
+    private void shareHighScoreRunToFacebook() {
+        shareHighScoreRunButton = getView().findViewById(R.id.button_share_highscore_run);
+        cardview_highscore_Run = getView().findViewById(R.id.cardview_highscore_run);
+
+        shareHighScoreRunButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = viewToBitmap(cardview_highscore_Run);
+
+                SharePhoto photo = new SharePhoto.Builder()
+                        .setBitmap(bitmap)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+
+                ShareDialog.show(getActivity(), content);
+                shareHighScoreRunButton.setColor(Color.parseColor("#DDDDDD"));
+            }
+        });
+    }
+
+    private void shareLastActivityToFacebook() {
+
+        shareLastActivityButton = getView().findViewById(R.id.button_share_last_activity);
+        cardview_last_activity = getView().findViewById(R.id.cardview_last_activity);
+
+        shareLastActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = viewToBitmap(cardview_last_activity);
+
+                SharePhoto photo = new SharePhoto.Builder()
+                        .setBitmap(bitmap)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+
+                ShareDialog.show(getActivity(), content);
+                shareLastActivityButton.setColor(Color.parseColor("#DDDDDD"));
             }
         });
     }
