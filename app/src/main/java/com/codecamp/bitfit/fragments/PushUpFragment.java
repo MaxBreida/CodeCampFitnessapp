@@ -24,6 +24,7 @@ import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
@@ -244,7 +245,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_instructions:
-//                getActivity().startActivity(new Intent(getActivity(), PushUpsInstructionsActivity.class));
+                new InstructionsDialog(getContext(),
+                        getString(R.string.pushups),
+                        //TODO bild ändern
+                        getActivity().getDrawable(R.drawable.squat_instruction),
+                        getString(R.string.pushup_instructions)).show();
                 return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));

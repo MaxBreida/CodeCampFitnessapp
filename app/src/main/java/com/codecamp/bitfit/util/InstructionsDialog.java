@@ -21,6 +21,13 @@ public class InstructionsDialog extends Dialog {
     private final Drawable instructionsImage;
     private final String instructions;
 
+    /**
+     *
+     * @param context for dialog
+     * @param title of instruction
+     * @param instructionImage drawable
+     * @param instructions instruction text
+     */
     public InstructionsDialog(Context context, String title, Drawable instructionImage, String instructions) {
         super(context);
 
@@ -44,6 +51,7 @@ public class InstructionsDialog extends Dialog {
         imageView.setImageDrawable(instructionsImage);
         instructionsTextView.setText(instructions);
 
+        // dismiss dialog
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
