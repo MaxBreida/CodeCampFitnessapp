@@ -40,7 +40,7 @@
         android:layout_height="85dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="368dp"
-        android:text="Nimm das Smartphone waagerecht in die Hand und führe die Übung wie im Bild gezeigt durch"
+        android:text="@string/squat_instructions"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

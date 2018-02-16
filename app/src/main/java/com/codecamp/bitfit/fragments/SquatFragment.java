@@ -21,21 +21,14 @@ import android.widget.TextView;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
-import com.codecamp.bitfit.instructions.SquatsInstructionsActivity;
+import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
-import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
+import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
-
-import static java.lang.Math.abs;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -301,7 +294,10 @@ public class SquatFragment extends WorkoutFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_instructions:
-                getActivity().startActivity(new Intent(getActivity(), SquatsInstructionsActivity.class));
+                new InstructionsDialog(getContext(),
+                        getString(R.string.squats),
+                        getActivity().getDrawable(R.drawable.squat_instruction),
+                        getString(R.string.squat_instructions)).show();
                 return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), SquatStatisticsActivity.class));

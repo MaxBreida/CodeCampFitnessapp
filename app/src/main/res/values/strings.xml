@@ -41,4 +41,6 @@
     <string name="pushups">Push-Ups</string>
     <string name="squats">Squats</string>
     <string name="home">Home</string>
+    <string name="squat_instructions">Nimm das Smartphone waagerecht in die Hand und führe die Übung wie im Bild gezeigt durch</string>
+    <string name="ok">Alles klar!</string>
 </resources>
