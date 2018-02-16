@@ -218,7 +218,8 @@ public class HomeFragment extends Fragment {
                 } else {
                     genderUrlFormat = 1;
                 }
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc="+ user.getSize() +"&wk=" + user.getWeight() +"&us="+genderUrlFormat + "&ua="+23 +"&gk=";
+
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc="+ user.getSize() +"&wk=" + user.getWeight() +"&us="+genderUrlFormat + "&ua="+user.getAge() +"&gk=";
 
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(urlToBmiCalculator))

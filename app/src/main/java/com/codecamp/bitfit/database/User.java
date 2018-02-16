@@ -69,7 +69,9 @@ public class User extends BaseModel {
         this.weight = weight;
     }
 
-    public Date getBirthday() {return birthday; }
+    public Date getBirthday() {
+        return birthday;
+    }
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
@@ -83,12 +85,12 @@ public class User extends BaseModel {
         this.gender = gender;
     }
 
-    public int getAge(){
+    public int getAge() {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
         Date curDate = Calendar.getInstance().getTime();
         int curD = Integer.parseInt(df.format(curDate));
         int bday = Integer.parseInt(df.format(birthday));
-        int age = (curD - bday) / 10000;
+        int age = ((curD - bday) / 10000) + 1900;
         return age;
     }
 
