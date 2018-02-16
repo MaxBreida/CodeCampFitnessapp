@@ -36,6 +36,7 @@ import java.util.UUID;
 public class PushUpFragment extends WorkoutFragment implements SensorEventListener {
 
     // View stuff
+    private View container;
     private TextView timeTextView;
     private Button finishButton;
     private TextView pushUpButton;
@@ -90,6 +91,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUpButton = getView().findViewById(R.id.button_pushup);
         avgPushupsTextView = getView().findViewById(R.id.textview_avg_pushups);
         caloriesTextView = getView().findViewById(R.id.textview_calories_pushups);
+        container = getView().findViewById(R.id.container_pushup_counter);
 
         countUpTimer = new CountUpTimer(1000, timeTextView);
 
@@ -101,9 +103,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             public void onClick(View v) {
                 // show quit button if we started push ups
                 if (!workoutStarted) {
-                    timeTextView.setVisibility(View.VISIBLE);
-                    caloriesTextView.setVisibility(View.VISIBLE);
-                    avgPushupsTextView.setVisibility(View.VISIBLE);
+                    container.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
@@ -170,9 +170,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp = new PushUps();
         startTime = 0;
         workoutStarted = false;
-        timeTextView.setVisibility(View.INVISIBLE);
-        caloriesTextView.setVisibility(View.INVISIBLE);
-        avgPushupsTextView.setVisibility(View.INVISIBLE);
+        container.setVisibility(View.INVISIBLE);
         finishButton.setVisibility(View.INVISIBLE);
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);

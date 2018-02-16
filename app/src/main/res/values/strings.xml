@@ -45,4 +45,6 @@
     <string name="ok">Alles klar!</string>
     <string name="pushup_instructions">Lege das Smartphone mit dem Bildschirm nach oben auf den Boden und führe die Übung wie im Bild gezeigt durch</string>
     <string name="saved_successfully">Änderungen erfolgreich gespeichert!</string>
+    <string name="duration">Dauer</string>
+    <string name="pushups_per_min">Push-Ups/min</string>
 </resources>
