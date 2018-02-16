@@ -1,57 +1,37 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
-import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.Squat;
-import com.codecamp.bitfit.database.Squat_Table;
 import com.codecamp.bitfit.database.Run;
-import com.codecamp.bitfit.database.Run_Table;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareHashtag;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
-import com.raizlabs.android.dbflow.sql.language.Method;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Select;
-import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.raizlabs.android.dbflow.sql.language.Method.count;
-import static com.raizlabs.android.dbflow.sql.language.Method.max;
-
+import java.text.DecimalFormat;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-
+    // initialized user
+    private User user = DBQueryHelper.findUser();
     // highscore pushups views
     private TextView highscorePushupsDuration;
     private TextView highscorePushupsCalories;
@@ -77,13 +57,8 @@ public class HomeFragment extends Fragment {
     private TextView bmiHeight;
     private TextView bmiWeight;
     private TextView bmiValue;
-
+    private double bmi;
     private MaterialIconView shareBMIButton;
-
-    private ShareDialog shareDialog;
-    private CallbackManager callbackManager;
-    private LoginManager loginManager;
-
 
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -130,11 +105,11 @@ public class HomeFragment extends Fragment {
         bmiValue = getView().findViewById(R.id.textview_bmi_bmivalue);
 
         // get user data from database
-        User user = DBQueryHelper.findUser();
+
 
         if (user != null) {
             // calculate bim
-            double bmi = calculateBMI(user);
+            bmi = calculateBMI(user);
 
             // set text in textviews
             bmiHeight.setText(String.format("Größe: %s", String.valueOf(Util.getHeightInMeters(user.getSize()))));
@@ -233,12 +208,26 @@ public class HomeFragment extends Fragment {
     private void shareToFacebook() {
 
         shareBMIButton = getView().findViewById(R.id.button_share_bmi);
-  //      shareDialog = new ShareDialog(this);
 
         shareBMIButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int genderUrlFormat = 0;
+                if(user.getGender() != "männlich") {
+                    genderUrlFormat = 0;
+                } else {
+                    genderUrlFormat = 1;
+                }
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc="+ user.getSize() +"&wk=" + user.getWeight() +"&us="+genderUrlFormat + "&ua="+23 +"&gk=";
 
+                ShareLinkContent content = new ShareLinkContent.Builder()
+                        .setContentUrl(Uri.parse(urlToBmiCalculator))
+                        .setQuote(user.getName() +" BMI: " + Double.toString(Math.rint(bmi*100)/100))
+                        .build();
+
+                ShareDialog.show(getActivity(), content);
+
+                shareBMIButton.setColor(Color.parseColor("#636161"));
             }
         });
     }
