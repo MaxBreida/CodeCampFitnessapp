@@ -14,20 +14,7 @@ import java.util.UUID;
  */
 
 @Table(database = AppDatabase.class)
-
-public class Squat extends BaseModel {
-    //Declaration variables DBFlow
-    @PrimaryKey // at least one primary key required
-            UUID id;
-
-    @Column
-    String currentDate;
-
-    @Column
-    Double calories;
-
-    @Column
-    Long duration;
+public class Squat extends Workout {
 
     @Column
     Double squatPerMin;
@@ -36,38 +23,6 @@ public class Squat extends BaseModel {
     Integer repeats;
 
     //Getter and Setter
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getCurrentDate() {
-        return currentDate;
-    }
-
-    public void setCurrentDate(String currentDate) {
-        this.currentDate = currentDate;
-    }
-
-    public Double getCalories() {
-        return calories;
-    }
-
-    public void setCalories(Double calories) {
-        this.calories = calories;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
     public Double getSquatPerMin() {
         return squatPerMin;
     }
@@ -83,9 +38,4 @@ public class Squat extends BaseModel {
     public void setRepeats(int repeats) {
         this.repeats = repeats;
     }
-
-    public void setRepeats(Integer repeats) {
-        this.repeats = repeats;
-    }
-
 }

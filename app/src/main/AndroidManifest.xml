@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codecamp.bitfit">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- location services for the running app -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- wake lock to keep the running app on in the background once the screen is turned off -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- wake lock to keep the running app on in the background once the screen is turned off -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,30 +29,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".intro.IntroActivity"
             android:screenOrientation="portrait" />
-        
+
         <!-- Statistics -->
-        <activity android:name=".statistics.PushupStatisticsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".statistics.RunStatisticsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".statistics.SquatStatisticsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".statistics.PushupStatisticsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".statistics.RunStatisticsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".statistics.SquatStatisticsActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Provider Facebook add to App -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity"
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
 
-       <provider android:authorities="com.facebook.app.FacebookContentProvider{@string/facebook_app_id}"
-           android:name="com.facebook.FacebookContentProvider"
-           android:exported="true"/>
-   </application>
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider{@string/facebook_app_id}"
+            android:exported="true" />
 
+        <activity android:name=".instructions.PushUpsInstructionsActivity" />
+        <activity android:name=".instructions.SquatsInstructionsActivity" />
+        <activity android:name=".instructions.RunInstructionsActivity"></activity>
+    </application>
 
 </manifest>

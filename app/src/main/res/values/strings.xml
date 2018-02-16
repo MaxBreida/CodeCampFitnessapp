@@ -25,7 +25,6 @@
     <string name="highscore_run">Highscore Run</string>
     <string name="start">Start</string>
     <string name="default_timer_value">0:00</string>
-    <string name="date_format">dd.MM.yyyy</string>
     <string name="name">Name:</string>
     <string name="gender">Geschlecht:</string>
     <string name="age">Alter:</string>
@@ -36,4 +35,5 @@
     <string name="facebook_app_id">2029588297311884</string>
     <string name="fb_login_protocol_scheme">fb2029588297311884</string>
     <string name="fb_android_hash_key">IF7piqtBrepbr0kQg79zjvHgTpE=</string>
+    <string name="instructions">Instructions</string>
 </resources>

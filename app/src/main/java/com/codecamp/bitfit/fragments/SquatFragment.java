@@ -19,8 +19,10 @@ import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
+import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
 
@@ -161,12 +163,18 @@ public class SquatFragment extends WorkoutFragment {
 
         //Set attributes of the squat object
         currentSquat.setId(UUID.randomUUID());
-        currentSquat.setCurrentDate(getCurrentDateAsString());
+        currentSquat.setCurrentDate(Util.getCurrentDateAsString());
         currentSquat.setCalories(calcCalories());
         currentSquat.setDuration(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
         currentSquat.setRepeats(squatCtr);
+
+        // save object to database
         currentSquat.save();
+
+        // set as last workout
+        new SharedPrefsHelper(getContext())
+                .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
     }
 
     double calcSquatsPerMinute(long duration){
@@ -179,13 +187,6 @@ public class SquatFragment extends WorkoutFragment {
         // dummy value
         return 1.0;
     }
-
-    private String getCurrentDateAsString() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format));
-        return dateFormat.format(calendar.getTime());
-    }
-
 
     private void setToInitialState() {
         currentSquat = new Squat();

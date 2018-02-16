@@ -1,12 +1,21 @@
 package com.codecamp.bitfit.util;
 
+import android.content.Context;
+
+import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.database.Squat_Table;
+import com.codecamp.bitfit.database.Run;
+import com.codecamp.bitfit.database.Run_Table;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.database.Workout;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,7 +26,7 @@ import static com.raizlabs.android.dbflow.sql.language.Method.max;
  */
 
 /**
- * This class hold static methods for basic operations (databse queries and String conversions etc.)
+ * This class hold static methods for basic operations  (String conversions etc.)
  * to minimize code repetition
  */
 public class Util {
@@ -36,19 +45,6 @@ public class Util {
     }
 
     /**
-     * queries the database for the pushup with the highest repeat count
-     *
-     * @return highscore pushup
-     */
-    public static PushUps findHighscorePushup() {
-        // find highscore from pushups by selecting max value from repeats
-        PushUps query = SQLite.select(Method.ALL_PROPERTY, max(PushUps_Table.repeats))
-                .from(PushUps.class)
-                .querySingle();
-        return query;
-    }
-
-    /**
      * calculates height in m from height in cm
      *
      * @param heightInCM
@@ -58,35 +54,13 @@ public class Util {
         return (double) heightInCM / 100;
     }
 
-    /*
-    *  queries the database for the User
-    *  *
-    * @return current user
-    */
-    public static User findUser() {
-        User query = SQLite.select()
-                .from(User.class)
-                .querySingle();
-        return query;
-    }
-
-
-    /*
-    *  queries the database for the Squats
-    *  *
-    * @return all Squats
-    */
-    public static List<Squat> findAllSquats() {
-        List<Squat> query = SQLite.select()
-                .from(Squat.class)
-                .queryList();
-        return query;
-
-/*      //give you all squats
-        List<Squat> allSquat = new ArrayList<Squat>();
-        for (Squat squat : allSquat = Util.findAllSquats()) {
-            squat.getId();
-        }
-        */
+    /**
+     * generates a string of the current date
+     * @return date as string in german date format
+     */
+    public static String getCurrentDateAsString() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
+        return dateFormat.format(calendar.getTime());
     }
 }
