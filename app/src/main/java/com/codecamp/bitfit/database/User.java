@@ -5,6 +5,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -79,6 +81,15 @@ public class User extends BaseModel {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public int getAge(){
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+        Date curDate = Calendar.getInstance().getTime();
+        int curD = Integer.parseInt(df.format(curDate));
+        int bday = Integer.parseInt(df.format(birthday));
+        int age = (curD - bday) / 10000;
+        return age;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.codecamp.bitfit.fragments;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
@@ -20,17 +18,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.codecamp.bitfit.R;
-import com.facebook.ShareGraphRequest;
-import com.facebook.share.Share;
-import com.facebook.share.model.ShareLinkContent;
+import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.Util;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
-import com.facebook.share.widget.MessageDialog;
-import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -112,6 +107,9 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        User user = DBQueryHelper.findUser();
+        user.getAge();
+
         line = mMap.addPolyline(lineOptions);
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
@@ -155,16 +153,24 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
                 return true;
             case R.id.action_share:
                 // TODO start share intent
+                double[] lats = new double[points.size()];
+                double[] longs = new double[points.size()];
+                for (int i = 0; i < points.size(); i++) {
+                    lats[i] = points.get(i).latitude;
+                    longs[i] = points.get(i).longitude;
+                }
                 ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
                         .putString("og:type", "fitness.course")
-                        .putString("og:title", "Sample Course")
-                        .putString("og:description", "This is a sample course.")
+                        .putString("og:title", "Running Course")
+                        .putString("og:description", "My magnificent run.")
                         .putInt("fitness:duration:value", 100)
                         .putString("fitness:duration:units", "s")
-                        .putInt("fitness:distance:value", 12)
+                        .putInt("fitness:distance:value", (int) runningDistance)
                         .putString("fitness:distance:units", "km")
                         .putInt("fitness:speed:value", 5)
                         .putString("fitness:speed:units", "m/s")
+                        //.putDoubleArray("fitness:metrics:location:latitude",lats)
+                        //.putDoubleArray("fitness:metrics:location:latitude",longs)
                         .build();
                 ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
                         .setActionType("fitness.runs")
