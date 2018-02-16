@@ -16,6 +16,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -62,5 +63,14 @@ public class Util {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
         return dateFormat.format(calendar.getTime());
+    }
+
+    /**
+     * generates a string of any given date object
+     * @return date as string in german date format
+     */
+    public static String getDateAsString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
+        return dateFormat.format(date);
     }
 }

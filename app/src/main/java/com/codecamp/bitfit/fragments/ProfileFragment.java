@@ -12,14 +12,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private EditText weightEditText;
     private Button saveButton;
     private User user;
+    private boolean dateFormatWrong = false;
 
     public static ProfileFragment getInstance() {
         ProfileFragment fragment = new ProfileFragment();
@@ -74,7 +80,7 @@ public class ProfileFragment extends Fragment {
         if(user != null) {
             // initialize values
             nameEditText.setHint(user.getName());
-            birthdayEditText.setHint(user.getBirthday().toString());
+            birthdayEditText.setHint(Util.getDateAsString(user.getBirthday()));
             heightEditText.setHint(String.valueOf(user.getSize()));
             weightEditText.setHint(String.valueOf(user.getWeight()));
             setupGenderPicker();
@@ -87,7 +93,15 @@ public class ProfileFragment extends Fragment {
                     }
 
                     if(!birthdayEditText.getText().toString().isEmpty()) {
-                       //TODO  user.setBirthday(birthdayEditText.getText().toString());
+                        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
+                        try {
+                            Date newDate = df.parse(birthdayEditText.getText().toString());
+                            dateFormatWrong = false;
+                            user.setBirthday(newDate);
+                        } catch (ParseException e) {
+                            dateFormatWrong = true;
+                            e.printStackTrace();
+                        }
                     }
 
                     user.setGender(genderSpinner.getSelectedItem().toString());
@@ -100,9 +114,17 @@ public class ProfileFragment extends Fragment {
                         user.setWeight(Double.parseDouble(weightEditText.getText().toString()));
                     }
 
-                    user.update();
-
-                    // TODO show toast that user got successfully saved
+                    if(dateFormatWrong) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Bitte Geburtsdatum überprüfen!",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(user.update()) {
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    R.string.saved_successfully,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             });
         }
