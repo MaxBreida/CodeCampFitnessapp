@@ -1,6 +1,7 @@
 package com.codecamp.bitfit.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.instructions.SquatsInstructionsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
@@ -54,7 +56,6 @@ public class SquatFragment extends WorkoutFragment {
     private boolean exercisesStarted;
     private TextView timeTextView;
     private Button instructionButton;
-    private TextView instruction;
     private Button sqFinishButton;
     private TextView squatButton;
 
@@ -99,7 +100,7 @@ public class SquatFragment extends WorkoutFragment {
 
         //find view elements
         instructionButton = getView().findViewById(R.id.button_squat_instruction);
-        instruction = getView().findViewById(R.id.textview_instruction);
+        instructionButton.setVisibility(View.VISIBLE);
         squatButton = getView().findViewById(R.id.button_squat);
         timeTextView = getView().findViewById(R.id.textview_squat_time);
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
@@ -110,15 +111,26 @@ public class SquatFragment extends WorkoutFragment {
         //Call initialization method
         setToInitialState();
 
+
+        //Create listener for displaying instructions
+        instructionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SquatsInstructionsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //Create listener for squat workout start
         squatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("Start workout clicked!");
                 // show quit button if we started push ups
                 if(!workoutStarted) {
+
                     workoutStarted = true;
                     squatTimer.start();
-                    instruction.setVisibility(View.INVISIBLE);
                     instructionButton.setVisibility(View.INVISIBLE);
                     timeTextView.setVisibility(View.VISIBLE);
                     sqFinishButton.setVisibility(View.VISIBLE);
@@ -152,12 +164,6 @@ public class SquatFragment extends WorkoutFragment {
 
     }
 
-//    //Register proximity sensor listener
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//        sensorManager.registerListener(listener, proximitySensor, sensorManager.SENSOR_DELAY_NORMAL);
-//    }
     private void createSquatObj(){
         long duration = finishTime-startTime;
 
@@ -195,19 +201,12 @@ public class SquatFragment extends WorkoutFragment {
         squatButton.setVisibility(View.VISIBLE);
         sqFinishButton.setVisibility(View.INVISIBLE);
         instructionButton.setVisibility(View.VISIBLE);
-        instruction.setVisibility(View.INVISIBLE);
-        instruction.setText("Lay your snartphone on your hand horizontally, click on the start " +
-                "button and start squatting!");
         squatButton.setText("Start");
-        timeTextView.setText("0:00");
+ //       timeTextView.setText("0:00");
+        timeTextView.setVisibility(View.VISIBLE);
         squatState = SquatStates.SQUAT_DOWN;
         squatCtr = 0;
 
-/*        instruction.setVisibility(View.INVISIBLE);
-        instructionButton.setVisibility(View.INVISIBLE);
-        timeTextView.setVisibility(View.VISIBLE);
-        sqFinishButton.setVisibility(View.VISIBLE);
-        squatButton.setVisibility(View.INVISIBLE);*/
     }
 
     public void onDestroy(){
@@ -271,21 +270,21 @@ public class SquatFragment extends WorkoutFragment {
                     case SQUAT_DOWN:
                         if(azAvg>0){
                             // Linear acceleration sensor has a slight negative offset
-//                            System.out.println("Switching to state stand up");
+                            System.out.println("Switching to state stand up");
                             squatState = SquatStates.STAND_UP;
                         }
                         break;
                     case STAND_UP:
                         if(azAvg<0){
                             // While standing up: acceleration is positive
-//                            System.out.println("Switching to state count");
+                            System.out.println("Switching to state count");
                             squatState = SquatStates.COUNT;
                         }
 
                         break;
                     case COUNT:
                         squatCtr++;
-//                        System.out.println("Squat counted! Switching to state squat down");
+                        System.out.println("Squat counted! Switching to state squat down");
 
                         //Display new value for squat counter
                         squatButton.setText(String.valueOf(squatCtr));
@@ -296,23 +295,7 @@ public class SquatFragment extends WorkoutFragment {
                 }
 
         }
-/*
-        public void logOutput(double ax, double ay, double az, boolean log){
-            //Log values
-            if(log){
-                //     Log.d("ay triggered with: ", ay + ", ax = " + ax + "az = " + az);
 
-                if(abs(ay)>5 && ay>ax && ay>az){
-                    Log.d("ay triggered!: ", ay + ", ax = " + ax + ", az = " + az);
-                } else if(abs(ax)>5  && ax>ay && ax>az){
-                    Log.d("ax triggered with: ", ax + ", ay = " + ay + ", az = " + az);
-                } else if (abs(az)>5  && az>ax && az>ay){
-                    Log.d("az triggered with: ", az + ", ax = " + ax + ", ay = " + ay);
-                } else {
-                    Log.d("Values: ay = ", ay + ", ax = " + ax + ", az = " + az);
-                }
-            }
-        }*/
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
