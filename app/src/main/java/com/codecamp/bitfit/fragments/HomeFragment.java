@@ -1,15 +1,21 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
@@ -19,11 +25,17 @@ import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
+import com.facebook.share.internal.ShareFeedContent;
 import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 /**
@@ -58,8 +70,14 @@ public class HomeFragment extends Fragment {
     private TextView bmiWeight;
     private TextView bmiValue;
     private double bmi;
-    private MaterialIconView shareBMIButton;
 
+    // bmi share to Facebook
+    private MaterialIconView shareBMIButton;
+    private int genderUrlFormat = 1;
+
+    // highsore share to Facebook
+    private MaterialIconView shareHighScorePushUpsButton;
+    private CardView cardview_highscore_pushups;
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
 
@@ -86,7 +104,8 @@ public class HomeFragment extends Fragment {
         lastActivity();
         // inflates pushup highscore card with values
         highscorePushups();
-        shareToFacebook();
+        shareBMIToFacebook();
+        shareHighScorePushUpsToFacebook();
         // inflates bmi card with values
         bmi();
     }
@@ -174,7 +193,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void highscoreRun(){
+    private void highscoreRun() {
 
         // initialize highscore run
         highscoreRunCalories = getView().findViewById(R.id.textview_highscore_run_calories);
@@ -185,7 +204,7 @@ public class HomeFragment extends Fragment {
 
         Run highScoreRun = DBQueryHelper.findHighScoreRun();
 
-        if(highScoreRun != null){
+        if (highScoreRun != null) {
             highscoreRunCalories.setText(
                     String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCalories()))
             );
@@ -205,31 +224,76 @@ public class HomeFragment extends Fragment {
     }
 
     // Share stuff to Facebook
-    private void shareToFacebook() {
-
+    private void shareBMIToFacebook() {
+        /*
         shareBMIButton = getView().findViewById(R.id.button_share_bmi);
-
         shareBMIButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int genderUrlFormat = 0;
-                if(user.getGender() != "männlich") {
+
+                if (user.getGender() != "männlich") {
                     genderUrlFormat = 0;
-                } else {
-                    genderUrlFormat = 1;
                 }
 
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc="+ user.getSize() +"&wk=" + user.getWeight() +"&us="+genderUrlFormat + "&ua="+user.getAge() +"&gk=";
-
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(urlToBmiCalculator))
-                        .setQuote(user.getName() +" BMI: " + Double.toString(Math.rint(bmi*100)/100))
+                        .setQuote(user.getName() + " BMI: " + Double.toString(Math.rint(bmi * 100) / 100))
                         .build();
 
                 ShareDialog.show(getActivity(), content);
-
-                shareBMIButton.setColor(Color.parseColor("#636161"));
+                shareBMIButton.setColor(Color.parseColor("#DDDDDD"));
             }
         });
+        */
+    }
+
+    private void shareHighScorePushUpsToFacebook() {
+        shareHighScorePushUpsButton = getView().findViewById(R.id.button_share_highscore_pushups);
+        cardview_highscore_pushups = getView().findViewById(R.id.cardview_highscore_pushups);
+
+        shareHighScorePushUpsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = viewToBitmap(v);
+                try {
+                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "111111111.png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+                    output.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                SharePhoto photo = new SharePhoto.Builder()
+                        .setBitmap(bitmap)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+
+                ShareDialog.show(getActivity(), content);
+                shareHighScorePushUpsButton.setColor(Color.parseColor("#DDDDDD"));
+
+            /*
+                try {
+                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/path/to/file.png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+                    output.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                */
+            }
+        });
+    }
+
+    public Bitmap viewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 }
