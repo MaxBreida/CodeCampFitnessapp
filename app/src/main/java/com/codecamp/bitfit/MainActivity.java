@@ -40,15 +40,15 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.setInactiveColor(getResources().getColor(R.color.black));
 
         // create items
-        AHBottomNavigationItem home = new AHBottomNavigationItem(getString(R.string.home_tab),
+        AHBottomNavigationItem home = new AHBottomNavigationItem(getString(R.string.home),
                 getDrawable(R.drawable.icon_home_black));
-        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.push_up_tab),
+        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.pushups),
                 getDrawable(R.drawable.icon_pushup_black));
-        AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.squat_tab),
+        AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.squats),
                 getDrawable(R.drawable.icon_squat_black));
-        AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run_tab),
+        AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run),
                 getDrawable(R.drawable.icon_run_black));
-        AHBottomNavigationItem profile = new AHBottomNavigationItem(getString(R.string.profile_tab),
+        AHBottomNavigationItem profile = new AHBottomNavigationItem(getString(R.string.profile),
                 getDrawable(R.drawable.icon_profile_black));
 
         bottomNavigation.addItem(home);
@@ -94,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set start tab
-//        bottomNavigation.setCurrentItem(0);
-//        HomeFragment homeFragment = HomeFragment.getInstance();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+        bottomNavigation.setCurrentItem(0);
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
     }
 
     public void setActionBarTitle(String title) {

@@ -65,12 +65,11 @@ public class IntroActivity extends AppIntro
 
         // TODO comment out
         // Check user input, for missing or incorrect entries
-       /*
        if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
-            Toast.makeText(getActivity().getApplicationContext(), "Prüfen auf fehlende oder fehlerhafte Eingaben!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Bitte überprüfe deine Angaben!", Toast.LENGTH_SHORT).show();
             return;
         }
-        */
+
         // User initialize
         user.setId(UUID.randomUUID());
         user.setName(name);

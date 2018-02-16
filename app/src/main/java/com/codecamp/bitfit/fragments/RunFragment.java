@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.DBQueryHelper;
@@ -214,4 +215,12 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
         return bitmap;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Set title bar
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.run));
+    }
 }

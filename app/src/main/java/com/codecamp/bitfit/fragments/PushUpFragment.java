@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.instructions.PushUpsInstructionsActivity;
 import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
@@ -184,6 +185,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     public void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
+
+        // Set title bar
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.pushups));
     }
 
     @Override

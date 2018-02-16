@@ -130,6 +130,6 @@ public class ProfileFragment extends Fragment {
 
         // Set title bar
         ((MainActivity) getActivity())
-                .setActionBarTitle("Profile");
+                .setActionBarTitle(getString(R.string.profile));
     }
 }

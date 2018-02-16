@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.instructions.SquatsInstructionsActivity;
@@ -339,5 +340,14 @@ public class SquatFragment extends WorkoutFragment {
         average = sum/array.length;
 
         return average;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Set title bar
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.squats));
     }
 }
