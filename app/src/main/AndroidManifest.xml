@@ -9,6 +9,7 @@
 
     <!-- wake lock to keep the running app on in the background once the screen is turned off -->
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

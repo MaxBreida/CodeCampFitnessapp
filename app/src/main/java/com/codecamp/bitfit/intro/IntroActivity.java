@@ -39,16 +39,11 @@ public class IntroActivity extends AppIntro
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Note here that we DO NOT use setContentView();
-
-        // Add your slide fragments here.
-        // AppIntro will automatically generate the dots indicator and buttons.
         addSlide(new IntroFragmentStart());
         addSlide(new IntroFragmentNameAgeGender());
         addSlide(new IntroFragmentHeightWeight());
         addSlide(new IntroFragmentFinish());
 
-        // OPTIONAL METHODS
         // Override bar/separator color.
         setBarColor(getResources().getColor(R.color.colorPrimaryDark));
         setSeparatorColor(Color.parseColor("#2196F3"));

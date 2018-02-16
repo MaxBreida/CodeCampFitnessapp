@@ -1,7 +1,6 @@
 package com.codecamp.bitfit;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -15,11 +14,6 @@ import com.codecamp.bitfit.fragments.RunFragment;
 import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
 import com.codecamp.bitfit.util.DBQueryHelper;
-import com.codecamp.bitfit.util.Util;
-import com.facebook.FacebookSdk;
-import com.raizlabs.android.dbflow.config.FlowManager;
-
-import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,9 +21,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // database init
-        FlowManager.init(this);
 
         // Load user if initialized
         User findUser = DBQueryHelper.findUser();
@@ -46,24 +37,19 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Get the icons working (make them smaller?)
     private void initBottomNavigation() {
         AHBottomNavigation bottomNavigation = findViewById(R.id.bottom_navigation);
-                // create items
+        bottomNavigation.setInactiveColor(getResources().getColor(R.color.black));
+
+        // create items
         AHBottomNavigationItem home = new AHBottomNavigationItem(getString(R.string.home_tab),
-                MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.HOME).build());
-
-        Drawable pushUpIcon = getDrawable(R.drawable.icon_pushup_black);
-        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.push_up_tab), pushUpIcon);
-
-        Drawable squatIcon = getDrawable(R.drawable.icon_squat_black);
-//        AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.push_up_tab), squatIcon);
+                getDrawable(R.drawable.icon_home_black));
+        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.push_up_tab),
+                getDrawable(R.drawable.icon_pushup_black));
         AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.squat_tab),
-                MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.BABY).build());
-        Drawable runIcon = getDrawable(R.drawable.icon_run_black);
-//        AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run_tab), runIcon);
+                getDrawable(R.drawable.icon_squat_black));
         AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run_tab),
-                MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.RUN).build());
-
+                getDrawable(R.drawable.icon_run_black));
         AHBottomNavigationItem profile = new AHBottomNavigationItem(getString(R.string.profile_tab),
-                MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.FACE_PROFILE).build());
+                getDrawable(R.drawable.icon_profile_black));
 
         bottomNavigation.addItem(home);
         bottomNavigation.addItem(pushUps);
@@ -108,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set start tab
-        bottomNavigation.setCurrentItem(0);
-        HomeFragment homeFragment = HomeFragment.getInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+//        bottomNavigation.setCurrentItem(0);
+//        HomeFragment homeFragment = HomeFragment.getInstance();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
     }
 
     public void setActionBarTitle(String title) {
