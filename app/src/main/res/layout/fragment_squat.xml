@@ -49,16 +49,6 @@
 
 
     <Button
-        android:id="@+id/button_squat_instruction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button_squat_quit"
-        android:layout_alignBottom="@+id/button_squat_quit"
-        android:layout_centerHorizontal="true"
-        android:text="Anleitung"
-        android:textSize="12dp" />
-
-    <Button
         android:id="@+id/button_squat_quit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -52,7 +52,6 @@ public class SquatFragment extends WorkoutFragment {
     private boolean workoutStarted;
     private boolean exercisesStarted;
     private TextView timeTextView;
-    private Button instructionButton;
     private Button sqFinishButton;
     private TextView squatButton;
 
@@ -98,8 +97,6 @@ public class SquatFragment extends WorkoutFragment {
 
 
         //find view elements
-        instructionButton = getView().findViewById(R.id.button_squat_instruction);
-        instructionButton.setVisibility(View.VISIBLE);
         squatButton = getView().findViewById(R.id.button_squat);
         timeTextView = getView().findViewById(R.id.textview_squat_time);
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
@@ -110,16 +107,6 @@ public class SquatFragment extends WorkoutFragment {
         //Call initialization method
         setToInitialState();
 
-
-        //Create listener for displaying instructions
-        instructionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SquatsInstructionsActivity.class);
-                startActivity(intent);
-            }
-        });
-
         //Create listener for squat workout start
         squatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +116,6 @@ public class SquatFragment extends WorkoutFragment {
                 if(!workoutStarted) {
                     workoutStarted = true;
                     squatTimer.start();
-                    instructionButton.setVisibility(View.INVISIBLE);
                     timeTextView.setVisibility(View.VISIBLE);
                     sqFinishButton.setVisibility(View.VISIBLE);
                     squatButton.setVisibility(View.VISIBLE);
@@ -198,7 +184,6 @@ public class SquatFragment extends WorkoutFragment {
         exercisesStarted = false;
         squatButton.setVisibility(View.VISIBLE);
         sqFinishButton.setVisibility(View.INVISIBLE);
-        instructionButton.setVisibility(View.VISIBLE);
         squatButton.setText("Start");
         timeTextView.setText("0:00");
         timeTextView.setVisibility(View.VISIBLE);
@@ -317,6 +302,7 @@ public class SquatFragment extends WorkoutFragment {
         switch(item.getItemId()) {
             case R.id.action_instructions:
                 getActivity().startActivity(new Intent(getActivity(), SquatsInstructionsActivity.class));
+                return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), SquatStatisticsActivity.class));
                 return true;

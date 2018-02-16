@@ -251,6 +251,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         switch(item.getItemId()) {
             case R.id.action_instructions:
                 getActivity().startActivity(new Intent(getActivity(), PushUpsInstructionsActivity.class));
+                return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
                 return true;
