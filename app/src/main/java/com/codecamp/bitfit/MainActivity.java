@@ -1,6 +1,7 @@
 package com.codecamp.bitfit;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -42,18 +43,25 @@ public class MainActivity extends AppCompatActivity {
         initBottomNavigation();
     }
 
+    // TODO: Get the icons working (make them smaller?)
     private void initBottomNavigation() {
         AHBottomNavigation bottomNavigation = findViewById(R.id.bottom_navigation);
-
-        // create items
+                // create items
         AHBottomNavigationItem home = new AHBottomNavigationItem(getString(R.string.home_tab),
                 MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.HOME).build());
-        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.push_up_tab),
-                MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.LIGHTBULB).build());
+
+        Drawable pushUpIcon = getDrawable(R.drawable.icon_pushup_black);
+        AHBottomNavigationItem pushUps = new AHBottomNavigationItem(getString(R.string.push_up_tab), pushUpIcon);
+
+        Drawable squatIcon = getDrawable(R.drawable.icon_squat_black);
+//        AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.push_up_tab), squatIcon);
         AHBottomNavigationItem squats = new AHBottomNavigationItem(getString(R.string.squat_tab),
                 MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.BABY).build());
+        Drawable runIcon = getDrawable(R.drawable.icon_run_black);
+//        AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run_tab), runIcon);
         AHBottomNavigationItem run = new AHBottomNavigationItem(getString(R.string.run_tab),
                 MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.RUN).build());
+
         AHBottomNavigationItem profile = new AHBottomNavigationItem(getString(R.string.profile_tab),
                 MaterialDrawableBuilder.with(this).setIcon(MaterialDrawableBuilder.IconValue.FACE_PROFILE).build());
 

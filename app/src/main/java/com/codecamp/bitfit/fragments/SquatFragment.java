@@ -43,10 +43,6 @@ public class SquatFragment extends WorkoutFragment {
 
     private SensorManager sensorManager;
 
-//    private Sensor proximitySensor;
-//
-//    private static final int PROXIMITY_SENSITIVITY = 4;
-
     private int squatCtr;
 
     private Squat currentSquat;
@@ -58,6 +54,8 @@ public class SquatFragment extends WorkoutFragment {
     private Button instructionButton;
     private Button sqFinishButton;
     private TextView squatButton;
+
+    boolean movingAverageStart = false;
 
 
     //Use an average value for the accelerometer output
@@ -128,7 +126,6 @@ public class SquatFragment extends WorkoutFragment {
                 System.out.println("Start workout clicked!");
                 // show quit button if we started push ups
                 if(!workoutStarted) {
-
                     workoutStarted = true;
                     squatTimer.start();
                     instructionButton.setVisibility(View.INVISIBLE);
@@ -202,7 +199,7 @@ public class SquatFragment extends WorkoutFragment {
         sqFinishButton.setVisibility(View.INVISIBLE);
         instructionButton.setVisibility(View.VISIBLE);
         squatButton.setText("Start");
- //       timeTextView.setText("0:00");
+        timeTextView.setText("0:00");
         timeTextView.setVisibility(View.VISIBLE);
         squatState = SquatStates.SQUAT_DOWN;
         squatCtr = 0;
@@ -224,14 +221,6 @@ public class SquatFragment extends WorkoutFragment {
         @Override
         public void onSensorChanged(SensorEvent event) {
 
-           /*
-            //Use proximity sensor to turn off display when the smartphone is in the pocket
-            if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
-                if(event.values[0] >= -PROXIMITY_SENSITIVITY && event.values[0]<= PROXIMITY_SENSITIVITY){
-                    //Sensor is near: Smartphone is in the pocket
-                    System.out.println("Proximity triggered");
-                }
-            }*/
 
             //Use the accelerometer for the squats
             if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION && workoutStarted){
@@ -239,14 +228,17 @@ public class SquatFragment extends WorkoutFragment {
 
                 //boolean variable log (for development): If on, the values of the accelerometer
                 //are logged and printed
-                boolean log = false;
-
                 startTime = System.currentTimeMillis();
+
+                boolean log = false;
 
                 ax = event.values[0];
                 ay = event.values[1];
                 az = event.values[2];
 
+
+                // TODO: move this part into outside method
+                // average values are calculated with a moving average
                 //Store the acceleration values until the array is full
                 if(arrayCtr<arrayLength){
                     axValues[arrayCtr]=ax;
@@ -265,6 +257,7 @@ public class SquatFragment extends WorkoutFragment {
                         Log.d("ax avg: ", axAvg + ", ay avg:  " + ayAvg + ", az avg: " + azAvg);
                     }
                 }
+
 
                 switch(squatState){
                     case SQUAT_DOWN:
@@ -321,8 +314,10 @@ public class SquatFragment extends WorkoutFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_instructions:
+                getActivity().startActivity(new Intent(getActivity(), SquatsInstructionsActivity.class));
             case R.id.action_statistics:
-                // TODO start statistics activity
+                getActivity().startActivity(new Intent(getActivity(), SquatStatisticsActivity.class));
                 return true;
             case R.id.action_share:
                 // TODO start share intent
