@@ -12,7 +12,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -26,11 +25,7 @@ import android.view.ViewGroup;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.DBQueryHelper;
-import com.codecamp.bitfit.util.Util;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.ShareOpenGraphAction;
-import com.facebook.share.model.ShareOpenGraphContent;
-import com.facebook.share.model.ShareOpenGraphObject;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
@@ -42,9 +37,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,19 +160,6 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
                 SharePhotoContent content = new SharePhotoContent.Builder()
                         .addPhoto(photo)
                         .build();
-                try {
-                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "testy.png");
-                    image.compress(Bitmap.CompressFormat.PNG, 100, output);
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 ShareDialog.show(getActivity(), content);
                 return true;
             case R.id.action_share:
