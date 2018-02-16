@@ -3,12 +3,16 @@ package com.codecamp.bitfit.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -23,9 +27,12 @@ import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
+import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +42,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,37 +160,43 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
         switch(item.getItemId()) {
             case R.id.action_statistics:
                 // TODO start statistics activity
+                View but = getView().findViewById(R.id.button_share_highscore_squats);
+                Bitmap image = viewToBitmap(but);
+                SharePhoto photo = new SharePhoto.Builder()
+                        .setBitmap(image)
+                        .build();
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+                try {
+                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "testy.png");
+                    image.compress(Bitmap.CompressFormat.PNG, 100, output);
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ShareDialog.show(getActivity(), content);
                 return true;
             case R.id.action_share:
                 // TODO start share intent
-                double[] lats = new double[points.size()];
-                double[] longs = new double[points.size()];
+
+                String googleMapsLink = "https://www.google.com/maps/dir/";
                 for (int i = 0; i < points.size(); i++) {
-                    lats[i] = points.get(i).latitude;
-                    longs[i] = points.get(i).longitude;
+                    googleMapsLink = googleMapsLink + points.get(i).latitude + "," + points.get(i).longitude + "/";
                 }
-                ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
-                        .putString("og:type", "fitness.course")
-                        .putString("og:title", "Running Course")
-                        .putString("og:description", "My magnificent run.")
-                        .putInt("fitness:duration:value", 100)
-                        .putString("fitness:duration:units", "s")
-                        .putInt("fitness:distance:value", (int) runningDistance)
-                        .putString("fitness:distance:units", "km")
-                        .putInt("fitness:speed:value", 5)
-                        .putString("fitness:speed:units", "m/s")
-                        //.putDoubleArray("fitness:metrics:location:latitude",lats)
-                        //.putDoubleArray("fitness:metrics:location:latitude",longs)
+
+                ShareLinkContent content1 = new ShareLinkContent.Builder()
+                        .setContentUrl(Uri.parse(googleMapsLink + "data=!3m1!4b1!4m2!4m1!3e2"))
+                        .setQuote("")
                         .build();
-                ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
-                        .setActionType("fitness.runs")
-                        .putObject("fitness:course", object)
-                        .build();
-                ShareOpenGraphContent content = new ShareOpenGraphContent.Builder()
-                        .setPreviewPropertyName("fitness:course")
-                        .setAction(action)
-                        .build();
-                ShareDialog.show(getActivity(), content);
+
+                ShareDialog.show(getActivity(), content1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -192,7 +208,7 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
 
     @Override
     public void onLocationChanged(Location location) {
-        if(location != null && location.getAccuracy() >= 16){
+        if(location != null && location.getAccuracy() <= 25){
             LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
             points.add(curPos);
@@ -211,4 +227,12 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
 
     @Override
     public void onProviderDisabled(String s) {}
+
+    public Bitmap viewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
 }

@@ -57,7 +57,7 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider{@string/facebook_app_id}"
+            android:authorities="com.facebook.app.FacebookContentProvider2029588297311884"
             android:exported="true" />
 
         <activity android:name=".instructions.PushUpsInstructionsActivity" />

@@ -1,6 +1,8 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -225,7 +229,7 @@ public class HomeFragment extends Fragment {
 
     // Share stuff to Facebook
     private void shareBMIToFacebook() {
-        /*
+
         shareBMIButton = getView().findViewById(R.id.button_share_bmi);
         shareBMIButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,7 +249,7 @@ public class HomeFragment extends Fragment {
                 shareBMIButton.setColor(Color.parseColor("#DDDDDD"));
             }
         });
-        */
+
     }
 
     private void shareHighScorePushUpsToFacebook() {
@@ -255,9 +259,32 @@ public class HomeFragment extends Fragment {
         shareHighScorePushUpsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap bitmap = viewToBitmap(v);
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                0);
+
+                    }
+                }
+
+                Bitmap bitmap = viewToBitmap(cardview_highscore_pushups);
                 try {
-                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "111111111.png");
+                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/111.png");
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
                     output.close();
                 } catch (FileNotFoundException e) {
@@ -274,18 +301,6 @@ public class HomeFragment extends Fragment {
 
                 ShareDialog.show(getActivity(), content);
                 shareHighScorePushUpsButton.setColor(Color.parseColor("#DDDDDD"));
-
-            /*
-                try {
-                    FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/path/to/file.png");
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
-                    output.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                */
             }
         });
     }
