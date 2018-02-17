@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,7 +39,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     // View stuff
     private View container;
     private TextView timeTextView;
-    private Button finishButton;
+    private FloatingActionButton finishButton;
     private TextView pushUpButton;
     private TextView caloriesTextView;
     private TextView avgPushupsTextView;

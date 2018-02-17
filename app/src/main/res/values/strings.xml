@@ -47,4 +47,5 @@
     <string name="saved_successfully">Änderungen erfolgreich gespeichert!</string>
     <string name="duration">Dauer</string>
     <string name="pushups_per_min">Push-Ups/min</string>
+    <string name="calories">Kalorien</string>
 </resources>
