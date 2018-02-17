@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         initBottomNavigation();
     }
 
-    // TODO: Get the icons working (make them smaller?)
     private void initBottomNavigation() {
         AHBottomNavigation bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setInactiveColor(getResources().getColor(R.color.black));
