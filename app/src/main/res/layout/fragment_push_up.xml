@@ -63,8 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/duration"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"/>
+                        android:textSize="18sp"/>
 
                     <TextView
                         android:id="@+id/textview_pushup_time"
@@ -111,8 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/pushups_per_min"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"/>
+                        android:textSize="14sp"/>
 
                     <TextView
                         android:id="@+id/textview_avg_pushups"
@@ -159,8 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/calories"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"/>
+                        android:textSize="14sp"/>
 
                     <TextView
                         android:id="@+id/textview_calories_pushups"
