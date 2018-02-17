@@ -48,4 +48,6 @@
     <string name="duration">Dauer</string>
     <string name="pushups_per_min">Push-Ups/min</string>
     <string name="calories">Kalorien</string>
+    <string name="speed">Geschwindigkeit</string>
+    <string name="distance">Distanz (km)</string>
 </resources>

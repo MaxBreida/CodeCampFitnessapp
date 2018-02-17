@@ -55,7 +55,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_toEndOf="@+id/pushup_image_duration"
                     android:orientation="vertical">
 
@@ -63,6 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/duration"
+                        android:textStyle="bold"
                         android:textSize="18sp"/>
 
                     <TextView
@@ -102,7 +103,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_toEndOf="@+id/pushup_image_ppm"
                     android:orientation="vertical">
 
@@ -110,6 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/pushups_per_min"
+                        android:textStyle="bold"
                         android:textSize="14sp"/>
 
                     <TextView
@@ -149,7 +151,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:layout_toEndOf="@+id/pushup_image_calories"
                     android:orientation="vertical">
 
@@ -157,6 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/calories"
+                        android:textStyle="bold"
                         android:textSize="14sp"/>
 
                     <TextView
