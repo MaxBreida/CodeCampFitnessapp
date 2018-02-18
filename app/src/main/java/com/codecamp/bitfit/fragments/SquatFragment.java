@@ -21,9 +21,11 @@ import android.widget.TextView;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
@@ -42,28 +44,23 @@ public class SquatFragment extends WorkoutFragment {
     private Squat currentSquat;
     private long startTime;
     private long finishTime;
+    //Boolean variable to store if the workout was started, if not: no need to evaluate sensors
     private boolean workoutStarted;
-    private boolean exercisesStarted;
+
+    //GUI elements
     private TextView timeTextView;
     private Button sqFinishButton;
     private TextView squatButton;
 
-    boolean movingAverageStart = false;
-
 
     //Use an average value for the accelerometer output
-    //Counter and length for the average
-    int arrayCtr;
-    int arrayLength = 10;
-
-    //arrays for storing the sensor values
-    private double[] axValues = new double[arrayLength];
-    private double[] ayValues = new double[arrayLength];
+    //Variable for the length of the array for the average value
+    private int arrayLength = 10;
+    //array for storing the sensor value
     private double[] azValues = new double[arrayLength];
-
-    //average values, calculated later
-    private double axAvg;
-    private double ayAvg;
+    // counter for how full the array is yet
+    private int arrayCtr;
+    //average value, calculated later
     private double azAvg;
 
 
@@ -73,9 +70,9 @@ public class SquatFragment extends WorkoutFragment {
             COUNT
     }
 
-    private CountUpTimer squatTimer;
-
     private SquatStates squatState;
+
+    private CountUpTimer squatTimer;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -85,9 +82,6 @@ public class SquatFragment extends WorkoutFragment {
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(listener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
                 SensorManager.SENSOR_DELAY_NORMAL);
-
-//        sensorManager.registerListener(listener, proximitySensor, sensorManager.SENSOR_DELAY_NORMAL);
-
 
         //find view elements
         squatButton = getView().findViewById(R.id.button_squat);
@@ -142,12 +136,12 @@ public class SquatFragment extends WorkoutFragment {
     }
 
     private void createSquatObj(){
-        long duration = finishTime-startTime;
+        long duration = finishTime-startTime; //duration in milliseconds
 
         //Set attributes of the squat object
         currentSquat.setId(UUID.randomUUID());
         currentSquat.setCurrentDate(Util.getCurrentDateAsString());
-        currentSquat.setCalories(calcCalories());
+        currentSquat.setCalories(calcCalories(duration));
         currentSquat.setDuration(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
         currentSquat.setRepeats(squatCtr);
@@ -165,16 +159,23 @@ public class SquatFragment extends WorkoutFragment {
     }
 
 
-    //TODO
-    private double calcCalories() {
-        // dummy value
-        return 1.0;
+
+    private double calcCalories(long duration) {
+        //Get user from database to get weight
+        User user = DBQueryHelper.findUser();
+        double weight = user.getWeight();
+
+        //MET (metabolic equivalent of task) value for calculating calories
+        double metSquat = 5.0;
+        // calories are calculated by metSquat*weight*duration (in hours)
+        //duration[hours]=duration[msec]/3600000
+
+        return metSquat*(duration/3600000)* weight;
     }
 
     private void setToInitialState() {
         currentSquat = new Squat();
         workoutStarted = false;
-        exercisesStarted = false;
         squatButton.setVisibility(View.VISIBLE);
         sqFinishButton.setVisibility(View.INVISIBLE);
         squatButton.setText("Start");
@@ -200,41 +201,24 @@ public class SquatFragment extends WorkoutFragment {
         @Override
         public void onSensorChanged(SensorEvent event) {
 
-
-            //Use the accelerometer for the squats
+            //Use the linear acceleration sensor for for the squats, but only if start was clicked yet
             if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION && workoutStarted){
-                double ax,ay,az;
-
-                //boolean variable log (for development): If on, the values of the accelerometer
-                //are logged and printed
+                // linear acceleration sensor value in direction z (the other directions are not needed)
+                double az;
                 startTime = System.currentTimeMillis();
 
-                boolean log = false;
 
-                ax = event.values[0];
-                ay = event.values[1];
                 az = event.values[2];
 
-
-                // TODO: move this part into outside method
-                // average values are calculated with a moving average
-                //Store the acceleration values until the array is full
+                //Store the acceleration value until the array is full
                 if(arrayCtr<arrayLength){
-                    axValues[arrayCtr]=ax;
-                    ayValues[arrayCtr]=ay;
                     azValues[arrayCtr]=az;
                     arrayCtr++;
                 } else {
                     //When it's full: reset the counter
                     arrayCtr=0;
-                    //and then calculate average acceleration for each sensor
-                    axAvg = getArrAvg(axValues);
-                    ayAvg = getArrAvg(ayValues);
+                    //and then calculate average acceleration
                     azAvg = getArrAvg(azValues);
-                    if(log){
-                        System.out.println("ax avg: " + axAvg + " ay avg: " + ayAvg + " az avg: " + azAvg);
-                        Log.d("ax avg: ", axAvg + ", ay avg:  " + ayAvg + ", az avg: " + azAvg);
-                    }
                 }
 
 

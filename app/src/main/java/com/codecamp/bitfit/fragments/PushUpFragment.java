@@ -22,9 +22,11 @@ import android.widget.TextView;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
@@ -143,7 +145,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp.setDuration(duration);
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);
-        pushUp.setCalories(calcCalories());
+        pushUp.setCalories(calcCalories(duration));
         pushUp.setCurrentDate(Util.getCurrentDateAsString());
 
         // save workout to database
@@ -160,9 +162,17 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     //TODO
-    private double calcCalories() {
-        // dummy value
-        return 1.0;
+    private double calcCalories(long duration) {
+        //Get user from database to get weight
+        User user = DBQueryHelper.findUser();
+        double weight = user.getWeight();
+
+        //MET (metabolic equivalent of task) value for calculating calories
+        double metPushUp = 6.0;
+        // calories are calculated by metPushUp*weight*duration (in hours)
+        //duration[hours]=duration[msec]/3600000
+
+        return metPushUp*(duration/3600000)* weight;
     }
 
 
