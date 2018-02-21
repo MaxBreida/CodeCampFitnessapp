@@ -62,8 +62,6 @@ public class IntroActivity extends AppIntro
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
 
-
-        // TODO comment out
         // Check user input, for missing or incorrect entries
        if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
             Toast.makeText(getApplicationContext(), "Bitte überprüfe deine Angaben!", Toast.LENGTH_SHORT).show();
@@ -79,7 +77,7 @@ public class IntroActivity extends AppIntro
 
         // If not select the Date, set default
         if (day != 0 && month != 0) {
-            user.setBirthday(new Date(year, month, day));
+            user.setBirthday(new Date(year, month, day - 1900));
         } else {
             user.setBirthday(new Date(0, 0, 1));
         }

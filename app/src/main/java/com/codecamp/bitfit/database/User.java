@@ -90,7 +90,7 @@ public class User extends BaseModel {
         Date curDate = Calendar.getInstance().getTime();
         int curD = Integer.parseInt(df.format(curDate));
         int bday = Integer.parseInt(df.format(birthday));
-        int age = ((curD - bday) / 10000) + 1900;
+        int age = ((curD - bday) / 10000);
         return age;
     }
 
