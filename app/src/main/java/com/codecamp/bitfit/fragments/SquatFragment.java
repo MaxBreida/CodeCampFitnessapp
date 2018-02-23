@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -103,6 +102,7 @@ public class SquatFragment extends WorkoutFragment {
                 if(!workoutStarted) {
                     workoutStarted = true;
                     squatTimer.start();
+                    startTime = System.currentTimeMillis();
                     timeTextView.setVisibility(View.VISIBLE);
                     sqFinishButton.setVisibility(View.VISIBLE);
                     squatButton.setVisibility(View.VISIBLE);
@@ -142,7 +142,7 @@ public class SquatFragment extends WorkoutFragment {
         currentSquat.setId(UUID.randomUUID());
         currentSquat.setCurrentDate(Util.getCurrentDateAsString());
         currentSquat.setCalories(calcCalories(duration));
-        currentSquat.setDuration(duration);
+        currentSquat.setDurationInMillis(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
         currentSquat.setRepeats(squatCtr);
 
@@ -160,7 +160,7 @@ public class SquatFragment extends WorkoutFragment {
 
 
 
-    private double calcCalories(long duration) {
+    double calcCalories(long duration) {
         //Get user from database to get weight
         User user = DBQueryHelper.findUser();
         double weight = user.getWeight();
@@ -205,7 +205,6 @@ public class SquatFragment extends WorkoutFragment {
             if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION && workoutStarted){
                 // linear acceleration sensor value in direction z (the other directions are not needed)
                 double az;
-                startTime = System.currentTimeMillis();
 
 
                 az = event.values[2];

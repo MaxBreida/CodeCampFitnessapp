@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
@@ -142,7 +141,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
         // set pushup object
         pushUp.setId(UUID.randomUUID());
-        pushUp.setDuration(duration);
+        pushUp.setDurationInMillis(duration);
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);
         pushUp.setCalories(calcCalories(duration));

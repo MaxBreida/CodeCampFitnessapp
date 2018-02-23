@@ -1,25 +1,18 @@
 package com.codecamp.bitfit.fragments;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -30,18 +23,12 @@ import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
-import com.facebook.share.internal.ShareFeedContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.DecimalFormat;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -190,7 +177,7 @@ public class HomeFragment extends Fragment {
             highscorePushupsDate.setText(
                     String.format("Datum: %s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
-                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDuration())));
+                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
         }
     }
 
@@ -216,7 +203,7 @@ public class HomeFragment extends Fragment {
             highscoreSquatsDate.setText(
                     String.format("Datum: %s", highscoreSquats.getCurrentDate()));
             highscoreSquatsDuration.setText(
-                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscoreSquats.getDuration())));
+                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
         }
     }
 
@@ -239,7 +226,7 @@ public class HomeFragment extends Fragment {
                     String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCurrentDate()))
             );
             highscoreRunDuration.setText(
-                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDuration()))
+                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDurationInMillis()))
             );
             highscoreRunDistance.setText(
                     String.format("Dauer: %s", String.valueOf(highScoreRun.getDistance()))

@@ -16,7 +16,7 @@ public class Workout extends BaseModel {
     UUID id;
 
     @Column
-    long duration;
+    long durationInMillis;
 
     @Column
     double calories;
@@ -32,12 +32,12 @@ public class Workout extends BaseModel {
         this.id = id;
     }
 
-    public long getDuration() {
-        return duration;
+    public long getDurationInMillis() {
+        return durationInMillis;
     }
 
-    public void setDuration(long duration) {
-        this.duration = duration;
+    public void setDurationInMillis(long durationInMillis) {
+        this.durationInMillis = durationInMillis;
     }
 
     public double getCalories() {
