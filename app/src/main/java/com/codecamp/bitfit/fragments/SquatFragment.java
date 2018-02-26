@@ -139,6 +139,9 @@ public class SquatFragment extends WorkoutFragment {
         long duration = finishTime-startTime; //duration in milliseconds
 
         //Set attributes of the squat object
+        User currentUser = DBQueryHelper.findUser();
+
+        currentSquat.setUser(currentUser);
         currentSquat.setId(UUID.randomUUID());
         currentSquat.setCurrentDate(Util.getCurrentDateAsString());
         currentSquat.setCalories(calcCalories(duration));

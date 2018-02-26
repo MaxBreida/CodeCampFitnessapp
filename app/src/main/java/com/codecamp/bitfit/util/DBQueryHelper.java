@@ -90,6 +90,17 @@ public class DBQueryHelper {
         return query;
     }
 
+    /*
+*  queries the database for the PushUps
+*  *
+* @return all PushUps
+*/
+    public static List<PushUps> findAllPushUps() {
+        List<PushUps> query = SQLite.select()
+                .from(PushUps.class)
+                .queryList();
+        return query;
+    }
     /**
      * get last workout from database
      * @param context is necessary for shared preferences

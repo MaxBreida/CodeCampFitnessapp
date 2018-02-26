@@ -140,6 +140,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         long duration = System.currentTimeMillis() - startTime;
 
         // set pushup object
+        User currentUser = DBQueryHelper.findUser();
+
+        pushUp.setUser(currentUser);
         pushUp.setId(UUID.randomUUID());
         pushUp.setDurationInMillis(duration);
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));

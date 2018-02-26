@@ -1,13 +1,16 @@
 package com.codecamp.bitfit.database;
 
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -94,4 +97,41 @@ public class User extends BaseModel {
         return age;
     }
 
+
+    // One to Many relataion, if you have more than one User
+    List<PushUps> pushUps;
+    @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "pushUps")
+    public List<PushUps> getMyPushUps() {
+        if (pushUps == null || pushUps.isEmpty()) {
+            pushUps = SQLite.select()
+                    .from(PushUps.class)
+                    .where(PushUps_Table.user_id.eq(id))
+                    .queryList();
+        }
+        return pushUps;
+    }
+
+    List<Squat> squats;
+    @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "squats")
+    public List<Squat> getMySquats() {
+        if (squats == null || squats.isEmpty()) {
+            squats = SQLite.select()
+                    .from(Squat.class)
+                    .where(Squat_Table.user_id.eq(id))
+                    .queryList();
+        }
+        return squats;
+    }
+
+    List<Run> runs;
+    @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "runs")
+    public List<Run> getMyRuns() {
+        if (runs == null || runs.isEmpty()) {
+            runs = SQLite.select()
+                    .from(Run.class)
+                    .where(Run_Table.user_id.eq(id))
+                    .queryList();
+        }
+        return runs;
+    }
 }
