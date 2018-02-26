@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -99,6 +101,14 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        FloatingActionButton startStopBut = getView().findViewById(R.id.button_start_stop_run);
+        startStopBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private GoogleMap mMap;
@@ -133,19 +143,50 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
                     /*TODO: notify user that there's no location data and that they should wait for a GPS signal*/
                 }
                 else{
-                    PowerManager powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
-                    PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
-                    wakeLock.acquire();
-
                     LatLng firstLocLatLng = new LatLng(firstLoc.getLatitude(), firstLoc.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
-                    lm.requestLocationUpdates(1000, 25, criteria, this, null);
 
                     //lm.removeUpdates(this);
                     //wakeLock.release();
                 }
+                PowerManager powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
+                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
+                wakeLock.acquire();
+                lm.requestLocationUpdates(1000, 25, criteria, this, null);
             }
         }
+    }
+
+    float runningDistance = 0;
+    Location previousPoint = null;
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location != null && location.getAccuracy() <= 25){
+            LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
+            points.add(curPos);
+            line.setPoints(points);
+            if(previousPoint != null){
+                runningDistance += location.distanceTo(previousPoint);
+            }
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {}
+
+    @Override
+    public void onProviderEnabled(String s) {}
+
+    @Override
+    public void onProviderDisabled(String s) {}
+
+    public Bitmap viewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
     @Override
@@ -181,38 +222,6 @@ public class RunFragment extends WorkoutFragment implements OnMapReadyCallback, 
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    float runningDistance = 0;
-    Location previousPoint = null;
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if(location != null && location.getAccuracy() <= 25){
-            LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
-            points.add(curPos);
-            line.setPoints(points);
-            if(previousPoint != null){
-                runningDistance += location.distanceTo(previousPoint);
-            }
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {}
-
-    @Override
-    public void onProviderEnabled(String s) {}
-
-    @Override
-    public void onProviderDisabled(String s) {}
-
-    public Bitmap viewToBitmap(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
     }
 
     @Override
