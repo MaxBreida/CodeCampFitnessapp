@@ -101,6 +101,19 @@ public class DBQueryHelper {
                 .queryList();
         return query;
     }
+
+    /*
+*  queries the database for the Runs
+*  *
+* @return all Runs
+*/
+    public static List<Run> findAllRuns() {
+        List<Run> query = SQLite.select()
+                .from(Run.class)
+                .queryList();
+        return query;
+    }
+
     /**
      * get last workout from database
      * @param context is necessary for shared preferences

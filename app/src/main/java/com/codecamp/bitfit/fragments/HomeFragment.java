@@ -12,7 +12,9 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -29,6 +31,13 @@ import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
+
+import java.util.List;
+
+import static com.codecamp.bitfit.util.DBQueryHelper.findAllPushUps;
+import static com.codecamp.bitfit.util.DBQueryHelper.findAllRuns;
+import static com.codecamp.bitfit.util.DBQueryHelper.findAllSquats;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,6 +71,14 @@ public class HomeFragment extends Fragment {
     private TextView bmiWeight;
     private TextView bmiValue;
     private double bmi;
+
+    // last activity views
+    private TextView lastActivityDuration;
+    private TextView lastActivityCalories;
+    private TextView lastActivityPerMinOrSpeed;
+    private TextView lastActivityRepeatsOrDistance;
+    private TextView lastActivityDate;
+    private ImageView lastActivityIcon;
 
     // bmi share to Facebook
     private MaterialIconView shareBMIButton;
@@ -124,11 +141,74 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     private void lastActivity() {
         // get last activity from shared prefs
         Workout lastActivity = DBQueryHelper.getLastWorkout(getContext());
+        // initialize lastActivity view
+        lastActivityDuration = getView().findViewById(R.id.textview_lastActivity_duration);
+        lastActivityCalories = getView().findViewById(R.id.textview_lastActivity_calories);
+        lastActivityPerMinOrSpeed = getView().findViewById(R.id.textview_lastActivity_perMin_or_speed);
+        lastActivityRepeatsOrDistance = getView().findViewById(R.id.textview_lastActivity_repeats_or_distance);
+        lastActivityDate = getView().findViewById(R.id.textview_lastActivity_date);
+        lastActivityIcon = getView().findViewById(R.id.imageview_lastActivity_icon);
 
-        // inflate the card TODO
+        //check all activity, if id equals to lastActivity, set lastActivity view
+
+        List<PushUps> pushUpsList = findAllPushUps();
+        for (PushUps pushUps : pushUpsList) {
+            if (pushUps.getId().equals(lastActivity.getId())) {
+                lastActivityCalories.setText(
+                        String.format("Verbrauchte Kalorien: %s", String.valueOf(pushUps.getCalories())));
+                lastActivityDuration.setText(
+                        String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(pushUps.getDurationInMillis())));
+                lastActivityPerMinOrSpeed.setText(
+                        String.format("PushUps/min: %s", String.valueOf(pushUps.getPushPerMin())));
+                lastActivityRepeatsOrDistance.setText(
+                        String.format("Wiederholungen: %s", String.valueOf(pushUps.getRepeats())));
+                lastActivityDate.setText(
+                        String.format("Datum: %s", pushUps.getCurrentDate()));
+                lastActivityIcon.setVisibility(View.VISIBLE);
+                lastActivityIcon.setImageResource(R.drawable.icon_pushup_color);
+            }
+        }
+
+        List<Squat> squatList = findAllSquats();
+        for (Squat squat : squatList) {
+            if (squat.getId().equals(lastActivity.getId())) {
+                lastActivityCalories.setText(
+                        String.format("Verbrauchte Kalorien: %s", String.valueOf(squat.getCalories())));
+                lastActivityDuration.setText(
+                        String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(squat.getDurationInMillis())));
+                lastActivityPerMinOrSpeed.setText(
+                        String.format("Sqauts/min: %s", String.valueOf(squat.getSquatPerMin())));
+                lastActivityRepeatsOrDistance.setText(
+                        String.format("Wiederholungen: %s", String.valueOf(squat.getRepeats())));
+                lastActivityDate.setText(
+                        String.format("Datum: %s", squat.getCurrentDate()));
+                lastActivityIcon.setVisibility(View.VISIBLE);
+                lastActivityIcon.setImageResource(R.drawable.icon_squat_color);
+            }
+        }
+
+        List<Run> runList = findAllRuns();
+        for (Run run : runList) {
+            if (run.getId().equals(lastActivity.getId())) {
+                lastActivityCalories.setText(
+                        String.format("Verbrauchte Kalorien: %s", String.valueOf(run.getCalories())));
+                lastActivityDuration.setText(
+                        String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(run.getDurationInMillis())));
+                lastActivityPerMinOrSpeed.setText(
+                        String.format("Geschwindigkeit: %s", String.valueOf(run.getSpeed())));
+                lastActivityRepeatsOrDistance.setText(
+                        String.format("Distanz: %s", String.valueOf(run.getDistance())));
+                lastActivityDate.setText(
+                        String.format("Datum: %s", run.getCurrentDate()));
+                lastActivityIcon.setVisibility(View.VISIBLE);
+                lastActivityIcon.setImageResource(R.drawable.icon_run_color);
+            }
+        }
+
     }
 
     private void bmi() {
@@ -177,7 +257,7 @@ public class HomeFragment extends Fragment {
             highscorePushupsDate.setText(
                     String.format("Datum: %s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
-                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
+                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
         }
     }
 
@@ -203,7 +283,7 @@ public class HomeFragment extends Fragment {
             highscoreSquatsDate.setText(
                     String.format("Datum: %s", highscoreSquats.getCurrentDate()));
             highscoreSquatsDuration.setText(
-                    String.format("Dauer: %s", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
+                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
         }
     }
 
@@ -232,7 +312,7 @@ public class HomeFragment extends Fragment {
                     String.format("Dauer: %s", String.valueOf(highScoreRun.getDistance()))
             );
             highscoreRunSpeed.setText(
-                    String.format("Dauer: %s", String.valueOf(highScoreRun.getSpeed()))
+                    String.format("Dauer: %s" + " Minuten", String.valueOf(highScoreRun.getSpeed()))
             );
         }
     }
