@@ -88,11 +88,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // find view stuff
-        timeTextView = getView().findViewById(R.id.textview_pushup_time);
+        timeTextView = getView().findViewById(R.id.textview_cardview_time);
         finishButton = getView().findViewById(R.id.button_pushup_quit);
         pushUpButton = getView().findViewById(R.id.button_pushup);
-        avgPushupsTextView = getView().findViewById(R.id.textview_avg_pushups);
-        caloriesTextView = getView().findViewById(R.id.textview_calories_pushups);
+        avgPushupsTextView = getView().findViewById(R.id.textview_cardview_avg);
+        caloriesTextView = getView().findViewById(R.id.textview_cardview_calories);
         container = getView().findViewById(R.id.container_pushup_counter);
 
         countUpTimer = new CountUpTimer(1000, timeTextView);
@@ -218,11 +218,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             if (event.values != null && workoutStarted) {
                 // calculation light range
                 if (maxLightRange < event.values[0]) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                     if(maxLightRange < 400) {
                         maxLightRange = (event.values[0]);
                         minLightRange = (double) event.values[0] / 2;
