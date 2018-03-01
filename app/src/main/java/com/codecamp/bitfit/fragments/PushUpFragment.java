@@ -265,8 +265,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             case R.id.action_instructions:
                 new InstructionsDialog(getContext(),
                         getString(R.string.pushups),
-                        //TODO bild ändern
-                        getActivity().getDrawable(R.drawable.squat_instruction),
+                        getActivity().getDrawable(R.drawable.push_up_instruction),
                         getString(R.string.pushup_instructions)).show();
                 return true;
             case R.id.action_statistics:
