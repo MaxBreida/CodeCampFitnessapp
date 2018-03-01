@@ -48,7 +48,16 @@ import static android.content.Context.POWER_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+// TODO: test offline functionality, implement if necessary
 public class RunFragment extends WorkoutFragment {
+
+    Polyline line;
+    List<LatLng> points = new ArrayList<>(); // a list of points of the track that was ran
+    GoogleMap mMap; // an instance of a google map client
+    LocationManager lm; // location manager that keeps track of current location
+    PowerManager powerManager;
+    PowerManager.WakeLock wakeLock;
 
     public static RunFragment getInstance() {
         RunFragment fragment = new RunFragment();
@@ -76,92 +85,99 @@ public class RunFragment extends WorkoutFragment {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mapReady);
 
+        powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
+
         final FloatingActionButton startStopBut = getView().findViewById(R.id.button_start_stop_run);
         startStopBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startStopBut.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#BB0000")));
-                startStopBut.setImageResource(R.drawable.ic_stop_white_48dp);
+                if(startStopBut.isActivated()){
+                    setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
+
+                    lm.removeUpdates(locListener);
+                    wakeLock.release();
+                }
+                else{
+                    setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
+
+                    wakeLock.acquire(36000000);
+
+                    startRunIfAllIsSet();
+                }
+            }
+
+            private void startRunIfAllIsSet() {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
+                    lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                        // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+                    }
+                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
+                    }
+                    else{
+                        Criteria criteria = new Criteria();
+                        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                        lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
+                    }
+                }
+                else{
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+                }
+            }
+
+            private void setButton(boolean active, int color, int resId){
+                startStopBut.setActivated(active);
+                startStopBut.setBackgroundTintList(ColorStateList.valueOf(color));
+                startStopBut.setImageResource(resId);
             }
         });
     }
 
-    private GoogleMap mMap;
-    PolylineOptions lineOptions = new PolylineOptions().color(Color.RED).width(3);
-    Polyline line;
-    List<LatLng> points = new ArrayList<>();
+    LocationListener locListener = new LocationListener() {
+
+        float runningDistance = 0;
+        Location previousLoc = null;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            if(location != null && location.getAccuracy() <= 25){
+                LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
+                points.add(curPos);
+                line.setPoints(points);
+                if(previousLoc != null){
+                    runningDistance += location.distanceTo(previousLoc);
+                }
+                else{
+                    LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
+                }
+                previousLoc = location;
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {}
+        @Override
+        public void onProviderEnabled(String s) {}
+        @Override
+        public void onProviderDisabled(String s) {}
+    };
 
     OnMapReadyCallback mapReady = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
-            User user = DBQueryHelper.findUser();
-            user.getAge();
-
+            PolylineOptions lineOptions = new PolylineOptions().color(Color.RED).width(3);
             line = mMap.addPolyline(lineOptions);
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mMap.setMyLocationEnabled(true);
-                LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                    // TODO:notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-                }
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    // TODO:notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                }
-                else{
-
-
-                    //lm.removeUpdates(this);
-                    //wakeLock.release();
-
-                    PowerManager powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
-                    PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
-                    wakeLock.acquire();
-
-                    LocationListener locListener = new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            if(location != null && location.getAccuracy() <= 25){
-                                LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
-                                points.add(curPos);
-                                line.setPoints(points);
-                                if(previousLoc != null){
-                                    runningDistance += location.distanceTo(previousLoc);
-                                }
-                                else{
-                                    LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
-                                }
-                                previousLoc = location;
-                            }
-                        }
-
-                        @Override
-                        public void onStatusChanged(String s, int i, Bundle bundle) {}
-                        @Override
-                        public void onProviderEnabled(String s) {}
-                        @Override
-                        public void onProviderDisabled(String s) {}
-                    };
-
-                    lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
-                }
-            }
-            else{
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-                //TODO start the map after getting the permission
-            }
         }
     };
-
-    float runningDistance = 0;
-    Location previousLoc = null;
 
     public Bitmap viewToBitmap(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
