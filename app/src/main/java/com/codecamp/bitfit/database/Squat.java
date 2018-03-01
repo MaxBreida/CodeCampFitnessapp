@@ -17,10 +17,10 @@ import java.util.UUID;
 public class Squat extends Workout {
 
     @Column
-    Double squatPerMin;
+    double squatPerMin;
 
     @Column
-    Integer repeats;
+    int repeats;
 
     //Getter and Setter
     public Double getSquatPerMin() {
