@@ -11,15 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <TextView
-        android:id="@+id/squatItemId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:text="TextView" />
-
-  <!--    <android.support.v7.widget.CardView
+      <android.support.v7.widget.CardView
        android:id="@+id/squatItemId"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -54,6 +46,7 @@
                        android:textSize="18sp"
                        android:padding="12sp"
                        android:text="Datum Squat"
+                       android:id="@+id/textview_squatitem_date"
                        />
 
                </LinearLayout>
@@ -78,19 +71,19 @@
                        >
 
                        <TextView
-                           android:id="@+id/textview_highscore_squats_duration"
+                           android:id="@+id/textview_squatitem_duration"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
                            android:text="Dauer: 1:23 Minuten"/>
 
                        <TextView
-                           android:id="@+id/textview_highscore_squats_repeats"
+                           android:id="@+id/textview_squatitem_calories"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:layout_marginTop="4sp"
-                           android:text="Verbrauchte Kalorien: 123"/>
+                           android:text="Verbrauchte Kalorien: 50"/>
+
 
                    </LinearLayout>
 
@@ -102,18 +95,18 @@
                        android:layout_marginRight="16sp">
 
                        <TextView
-                           android:id="@+id/textview_highscore_squats_calories"
+                           android:id="@+id/textview_squatitem_repeats"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:text="Verbrauchte Kalorien: 50"/>
+                           android:text="Anzahl Squats: 123"/>
+
 
                        <TextView
-                           android:id="@+id/textview_highscore_squats_spm"
+                           android:id="@+id/textview_squatitem_spm"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:layout_marginTop="4dp"
                            android:text="Squats/min: 5"/>
                    </LinearLayout>
                </LinearLayout>
@@ -121,6 +114,6 @@
            </RelativeLayout>
 
        </LinearLayout>
-   </android.support.v7.widget.CardView>-->
+   </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

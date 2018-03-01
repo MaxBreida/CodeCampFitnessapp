@@ -32,13 +32,9 @@ public class SquatStatisticsActivity extends ListActivity {
             squatStringList.add(getSquatAsString(squat));
         }
 
-        ArrayAdapter<String> squatItemAdapter = new ArrayAdapter<String>(
-                this,
-                R.layout.activity_squat_statistics,
-                R.id.squatItemId,
-                squatStringList);
+        SquatAdapter squatItemAdapter = new SquatAdapter(this, allSquats);
 
-//        setContentView(R.layout.activity_squat_statistics);
+
 
         setListAdapter(squatItemAdapter);
 
