@@ -56,7 +56,7 @@ public class IntroFragmentHeightWeight extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                callback.onWeightChangedListener(Double.parseDouble(s.toString()));
+                if(count > 0) callback.onWeightChangedListener(Double.parseDouble(s.toString()));
             }
 
             @Override
@@ -73,7 +73,7 @@ public class IntroFragmentHeightWeight extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                callback.onHeightChangedListener(Integer.parseInt(s.toString()));
+                if(count > 0) callback.onHeightChangedListener(Integer.parseInt(s.toString()));
             }
 
             @Override
