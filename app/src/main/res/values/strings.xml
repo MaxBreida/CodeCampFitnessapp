@@ -6,7 +6,6 @@
     <string name="squat_tab">Squats</string>
     <string name="profile_tab">Profile</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="finish">Fertig</string>
     <string name="lets_go">Jetzt kann\'s losgehen!</string>
@@ -50,4 +49,5 @@
     <string name="calories">Kalorien</string>
     <string name="speed">Geschwindigkeit</string>
     <string name="distance">Distanz (km)</string>
+    <string name="default_double_value">0.0</string>
 </resources>

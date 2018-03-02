@@ -88,7 +88,12 @@ public class SquatFragment extends WorkoutFragment {
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
 
         //Initialize stopwatch
-        squatTimer = new CountUpTimer(1000, timeTextView);
+        squatTimer = new CountUpTimer(1000, timeTextView) {
+            @Override
+            public void onTick(long elapsedTime) {
+                //TODO
+            }
+        };
 
         //Call initialization method
         setToInitialState();

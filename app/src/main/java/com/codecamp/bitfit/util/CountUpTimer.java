@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * Simple timer class which count up until stopped.
  * Inspired by {@link android.os.CountDownTimer}
  */
-public class CountUpTimer {
+public abstract class CountUpTimer {
 
     private final long interval;
     private long base;
@@ -41,9 +41,10 @@ public class CountUpTimer {
         }
     }
 
-    public void onTick(long elapsedTime){
-        textView.setText(Util.getMillisAsTimeString(elapsedTime));
-    }
+    public abstract void onTick(long elapsedTime);
+//    public void onTick(long elapsedTime){
+//        textView.setText(Util.getMillisAsTimeString(elapsedTime));
+//    }
 
     private static final int MSG = 1;
 

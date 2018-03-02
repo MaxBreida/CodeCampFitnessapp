@@ -6,6 +6,8 @@
     tools:context="com.codecamp.bitfit.fragments.HomeFragment">
 
     <!-- TODO Highscore Reihenfolgen ueberarbeiten -->
+    <!-- TODO Icons in Karten einfügen -->
+    <!-- TODO Texte anpassen wenn kein highscore etc vorhanden -->
 
     <LinearLayout
         android:layout_width="match_parent"

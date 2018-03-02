@@ -30,12 +30,16 @@ import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PushUpFragment extends WorkoutFragment implements SensorEventListener {
+
+    // current User
+    User user = DBQueryHelper.findUser();
 
     // View stuff
     private View container;
@@ -59,6 +63,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private double minLightRange;
     private double averageLightRange;
     private boolean lockPushUpsCount;
+    private long elapsedTime;
 
 
     public static PushUpFragment getInstance() {
@@ -95,7 +100,14 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         caloriesTextView = getView().findViewById(R.id.textview_cardview_calories);
         container = getView().findViewById(R.id.container_pushup_counter);
 
-        countUpTimer = new CountUpTimer(1000, timeTextView);
+        countUpTimer = new CountUpTimer(1000, timeTextView) {
+            @Override
+            public void onTick(long elapsedTime) {
+                setElapsedTime(elapsedTime);
+                avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
+                timeTextView.setText(Util.getMillisAsTimeString(elapsedTime));
+            }
+        };
 
         // set button to start state
         setToInitialState();
@@ -103,7 +115,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // show quit button if we started push ups
+                // show quit button and cardview if we started push ups
                 if (!workoutStarted) {
                     container.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
@@ -113,6 +125,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 } else {
                     // increment count and set text
                     count++;
+                    avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
+                    caloriesTextView.setText(String.valueOf(calcCalories()));
                 }
                 // Screen keep on Flag set
                 getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -126,9 +140,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             public void onClick(View v) {
                 persistPushupObject();
 
-                // Screen keep on Flag set
+                // Screen keep on Flag clear
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+                List<PushUps> allPushUps = DBQueryHelper.findAllPushUps();
+                PushUps highscorePushup = DBQueryHelper.findHighscorePushup();
                 // set to initial state
                 setToInitialState();
                 countUpTimer.stop();
@@ -140,14 +156,12 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         long duration = System.currentTimeMillis() - startTime;
 
         // set pushup object
-        User currentUser = DBQueryHelper.findUser();
-
-        pushUp.setUser(currentUser);
+        pushUp.setUser(user);
         pushUp.setId(UUID.randomUUID());
         pushUp.setDurationInMillis(duration);
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);
-        pushUp.setCalories(calcCalories(duration));
+        pushUp.setCalories(calcCalories());
         pushUp.setCurrentDate(Util.getCurrentDateAsString());
 
         // save workout to database
@@ -160,24 +174,20 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     private double calcPushupsPerMinute(long duration) {
-        return (double) ((count * 60000) / duration);
+        return Util.roundTwoDecimals(((double) count * 60000.0) / (double) duration);
     }
 
-    //TODO
-    private double calcCalories(long duration) {
-        //Get user from database to get weight
-        User user = DBQueryHelper.findUser();
+    private double calcCalories() {
+        // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
+
         double weight = user.getWeight();
 
-        //MET (metabolic equivalent of task) value for calculating calories
-        double metPushUp = 6.0;
-        // calories are calculated by metPushUp*weight*duration (in hours)
-        //duration[hours]=duration[msec]/3600000
+        // wayUp + wayDown = one push up
+        double wayUp = ((weight*0.7 * 9.81 * 0.3) / 4.1868) / 1000;
+        double wayDown = wayUp / 2.0;
 
-        return metPushUp*(duration/3600000)* weight;
+        return Util.roundTwoDecimals((wayDown + wayUp) * (double) count);
     }
-
-
 
     private void setToInitialState() {
         pushUp = new PushUps();
@@ -187,6 +197,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         finishButton.setVisibility(View.INVISIBLE);
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);
+        caloriesTextView.setText(R.string.default_double_value);
+        avgPushupsTextView.setText(R.string.default_double_value);
         count = 0;
         lockPushUpsCount = false;
         maxLightRange = 0;
@@ -244,6 +256,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     lockPushUpsCount = true;
                     count++;
                     pushUpButton.setText(String.valueOf(count));
+                    avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
+                    caloriesTextView.setText(String.valueOf(calcCalories()));
                 }
 
                 // Lock
@@ -277,5 +291,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 }
