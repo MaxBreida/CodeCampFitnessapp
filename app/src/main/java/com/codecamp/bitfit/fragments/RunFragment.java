@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.facebook.share.model.ShareLinkContent;

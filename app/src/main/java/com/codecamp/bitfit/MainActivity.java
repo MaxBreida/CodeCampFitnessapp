@@ -2,6 +2,7 @@ package com.codecamp.bitfit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         if(permissions[0].equals("android.permission.ACCESS_FINE_LOCATION")) {
             if (grantResults[0] == -1) { // access location permission denied
                 bottomNavigation.setCurrentItem(0); // return to home screen
