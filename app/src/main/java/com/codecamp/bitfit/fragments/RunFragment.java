@@ -14,20 +14,21 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
-import com.codecamp.bitfit.database.User;
-import com.codecamp.bitfit.util.DBQueryHelper;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -52,17 +53,17 @@ import static android.content.Context.POWER_SERVICE;
 // TODO: test offline functionality, implement if necessary
 public class RunFragment extends WorkoutFragment {
 
-    Polyline line;
-    List<LatLng> points = new ArrayList<>(); // a list of points of the track that was ran
+    Polyline line; // the line that represents the running track
+    List<LatLng> points = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
     LocationManager lm; // location manager that keeps track of current location
-    PowerManager powerManager;
-    PowerManager.WakeLock wakeLock;
+    PowerManager powerManager; // required for wakelock creation
+    PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
+    FragmentActivity activity; // avoid using getActivity() all the time
 
     public static RunFragment getInstance() {
-        RunFragment fragment = new RunFragment();
 
-        return fragment;
+        return new RunFragment();
     }
 
     public RunFragment() {
@@ -71,21 +72,25 @@ public class RunFragment extends WorkoutFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_run, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // taking care of the infamous may be "null" warnings
+        if(getActivity() != null)
+            activity = getActivity();
+        // TODO: else unexpected error notification
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mapReady);
 
-        powerManager = (PowerManager) getActivity().getSystemService(POWER_SERVICE);
+        powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
         final FloatingActionButton startStopBut = getView().findViewById(R.id.button_start_stop_run);
@@ -108,9 +113,8 @@ public class RunFragment extends WorkoutFragment {
             }
 
             private void startRunIfAllIsSet() {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    mMap.setMyLocationEnabled(true);
-                    lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (checkPermission()) {
+                    lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
                     if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                         // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
@@ -124,10 +128,6 @@ public class RunFragment extends WorkoutFragment {
                         lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
                     }
                 }
-                else{
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-                }
             }
 
             private void setButton(boolean active, int color, int resId){
@@ -136,6 +136,24 @@ public class RunFragment extends WorkoutFragment {
                 startStopBut.setImageResource(resId);
             }
         });
+    }
+
+    private boolean checkPermission() {
+        if(permissionGranted())
+            return true;
+        else{
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+
+            // Todo: explain that location permissions are needed for the run workout and send back to home!
+            return false;
+        }
+    }
+
+    private boolean permissionGranted() {
+        return ContextCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED;
     }
 
     LocationListener locListener = new LocationListener() {
@@ -176,6 +194,8 @@ public class RunFragment extends WorkoutFragment {
 
             PolylineOptions lineOptions = new PolylineOptions().color(Color.RED).width(3);
             line = mMap.addPolyline(lineOptions);
+
+            if(checkPermission()) mMap.setMyLocationEnabled(true);
         }
     };
 
@@ -192,6 +212,7 @@ public class RunFragment extends WorkoutFragment {
             case R.id.action_statistics:
                 // TODO start statistics activity
                 View but = getView().findViewById(R.id.button_share_highscore_squats);
+                if(but == null) return true;
                 Bitmap image = viewToBitmap(but);
                 SharePhoto photo = new SharePhoto.Builder()
                         .setBitmap(image)
@@ -199,22 +220,22 @@ public class RunFragment extends WorkoutFragment {
                 SharePhotoContent content = new SharePhotoContent.Builder()
                         .addPhoto(photo)
                         .build();
-                ShareDialog.show(getActivity(), content);
+                ShareDialog.show(activity, content);
                 return true;
             case R.id.action_share:
                 // TODO start share intent
 
-                String googleMapsLink = "https://www.google.com/maps/dir/";
+                StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
                 for (int i = 0; i < points.size(); i++) {
-                    googleMapsLink = googleMapsLink + points.get(i).latitude + "," + points.get(i).longitude + "/";
+                    googleMapsLink.append(points.get(i).latitude).append(",").append(points.get(i).longitude).append("/");
                 }
 
                 ShareLinkContent content1 = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse(googleMapsLink + "data=!3m1!4b1!4m2!4m1!3e2"))
+                        .setContentUrl(Uri.parse(googleMapsLink.toString() + "data=!3m1!4b1!4m2!4m1!3e2"))
                         .setQuote("")
                         .build();
 
-                ShareDialog.show(getActivity(), content1);
+                ShareDialog.show(activity, content1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -226,7 +247,7 @@ public class RunFragment extends WorkoutFragment {
         super.onResume();
 
         // Set title bar
-        ((MainActivity) getActivity())
+        ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
     }
 }
