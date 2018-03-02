@@ -73,4 +73,10 @@ public class Util {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
         return dateFormat.format(date);
     }
+
+    public static double roundTwoDecimals(double d) {
+        d = Math.round(d * 100);
+        d = d/100;
+        return d;
+    }
 }
