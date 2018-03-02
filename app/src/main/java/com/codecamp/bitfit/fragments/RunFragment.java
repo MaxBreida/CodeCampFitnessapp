@@ -143,8 +143,6 @@ public class RunFragment extends WorkoutFragment {
             return true;
         else{
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-
-            // Todo: explain that location permissions are needed for the run workout and send back to home!
             return false;
         }
     }

@@ -113,8 +113,12 @@ public class MainActivity extends AppCompatActivity {
                 tabSelectLstener.onTabSelected(0,false);
                 // TODO: tell this greedy boy that "no location permission = no run workouts"!
             }
-            else { // permission granted
-                tabSelectLstener.onTabSelected(3,false); // refresh run fragment
+            else { // access location permission granted
+                /* refresh run fragment, since asking for permissions happens asynchronously,
+                *  hence, this is the simplest way of restoring all functions to their initial state.
+                *  Furthermore, the user couldn't do anything without location permissions anyways,
+                *  so nothing gets discarded and the user shouldn't even notice a change in the app. */
+                tabSelectLstener.onTabSelected(3,false);
             }
         }
     }
