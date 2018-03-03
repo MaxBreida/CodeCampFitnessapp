@@ -1,27 +1,41 @@
 <resources>
     <string name="app_name">BitFit</string>
+
+    <!-- tabs -->
     <string name="home_tab">Home</string>
     <string name="run_tab">Run</string>
     <string name="push_up_tab">Push Ups</string>
     <string name="squat_tab">Squats</string>
     <string name="profile_tab">Profile</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="finish">Fertig</string>
-    <string name="lets_go">Jetzt kann\'s losgehen!</string>
+    <!-- facebook -->
+    <string name="facebook_app_id">2029588297311884</string>
+    <string name="fb_login_protocol_scheme">fb2029588297311884</string>
+    <string name="fb_android_hash_key">IF7piqtBrepbr0kQg79zjvHgTpE=</string>
+
+    <!-- intro -->
     <string name="intro_start_text">Hey, zum Start brauchen wir ein paar Daten von dir!</string>
-    <string name="quit">Beenden</string>
-    <string name="your_gender">Dein Geschlecht:</string>
-    <string name="your_age">Dein Geburtstag:</string>
-    <string name="your_name">Dein Name:</string>
-    <string name="your_height">Deine Größe (in cm):</string>
-    <string name="your_weight">Dein Gewicht (in kg):</string>
-    <string name="action_share">Share</string>
-    <string name="action_statistics">Statistics</string>
-    <string name="last_activity">Letzte Aktivität</string>
+    <string name="your_gender">Geschlecht</string>
+    <string name="choose_gender">Geschlecht auswählen</string>
+    <string name="your_age">Geburtstag</string>
+    <string name="your_name">Name</string>
+    <string name="your_height">Größe (in cm)</string>
+    <string name="your_weight">Gewicht (in kg)</string>
+    <string name="name_min_characters">Der Name muss mindestens 2 Buchstaben enthalten</string>
+    <string name="check_these_information">Überprüfe folgende Angaben:&#160;</string>
+    <string name="lets_go">Jetzt kann\'s losgehen!</string>
+
+    <!-- home -->
     <string name="highscore_pushups">Highscore PushUps</string>
     <string name="highscore_squats">Highscore Squats</string>
     <string name="highscore_run">Highscore Run</string>
+
+    <string name="finish">Fertig</string>
+    <string name="quit">Beenden</string>
+    <string name="action_share">Share</string>
+    <string name="action_statistics">Statistics</string>
+    <string name="last_activity">Letzte Aktivität</string>
+
     <string name="start">Start</string>
     <string name="default_timer_value">0:00</string>
     <string name="name">Name:</string>
@@ -31,9 +45,6 @@
     <string name="weight">Gewicht (in kg):</string>
     <string name="birthday">Geburtstag:</string>
     <string name="save">Speichern</string>
-    <string name="facebook_app_id">2029588297311884</string>
-    <string name="fb_login_protocol_scheme">fb2029588297311884</string>
-    <string name="fb_android_hash_key">IF7piqtBrepbr0kQg79zjvHgTpE=</string>
     <string name="instructions">Instructions</string>
     <string name="run">Laufen</string>
     <string name="profile">Profil</string>
@@ -51,4 +62,5 @@
     <string name="speed">Geschwindigkeit</string>
     <string name="distance">Distanz (km)</string>
     <string name="default_double_value">0.0</string>
+
 </resources>

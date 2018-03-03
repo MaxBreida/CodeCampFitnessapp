@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static com.raizlabs.android.dbflow.sql.language.Method.max;
@@ -61,7 +62,7 @@ public class Util {
      */
     public static String getCurrentDateAsString() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.GERMANY);
         return dateFormat.format(calendar.getTime());
     }
 
@@ -70,7 +71,7 @@ public class Util {
      * @return date as string in german date format
      */
     public static String getDateAsString(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.GERMANY);
         return dateFormat.format(date);
     }
 

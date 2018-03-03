@@ -4,6 +4,9 @@
     android:layout_height="match_parent"
     tools:context="com.codecamp.bitfit.intro.IntroFragmentNameAgeGender"
     android:background="@color/colorPrimary"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,64 +14,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_name"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/name_input_layout"
+                android:textColorHint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-            <EditText
-                android:id="@+id/edittext_name"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:inputType="textPersonName"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="32dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_age"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
-
-            <LinearLayout
-                android:layout_width="250dp"
-                android:layout_height="100dp">
-                <NumberPicker
-                    android:id="@+id/number_picker_day"
-                    android:layout_width="80dp"
+                <com.codecamp.bitfit.util.CustomEditText
+                    android:id="@+id/edittext_name"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:hint="@string/your_name"
+                    android:textSize="18sp"
                     android:textColor="@color/white"
-                    />
-
-                <NumberPicker
-                    android:id="@+id/number_picker_month"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"/>
-
-                <NumberPicker
-                    android:id="@+id/number_picker_year"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
+                    android:backgroundTint="@color/white"
+                    android:inputType="textPersonName|textCapWords"
+                    style="@style/Base.Widget.AppCompat.EditText"/>
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -77,18 +45,36 @@
             android:orientation="vertical"
             android:layout_marginTop="32dp">
 
-            <TextView
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/birthday_input_layout"
+                android:textColorHint="@color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_gender"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:layout_height="wrap_content" >
 
+                <EditText
+                    android:id="@+id/edittext_birtday"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/your_age"
+                    android:textSize="18sp"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="32dp">
             <Spinner
                 android:id="@+id/genderpicker"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>

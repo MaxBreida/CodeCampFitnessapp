@@ -4,7 +4,6 @@ package com.codecamp.bitfit.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +134,7 @@ public class ProfileFragment extends Fragment {
         genderList.add("männlich");
         genderList.add("weiblich");
 
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.gender_picker_text_view, genderList);
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.intro_gender_picker_text_view, genderList);
         genderSpinner.setAdapter(genderAdapter);
 
         if(user.getGender().equals("männlich")) {
