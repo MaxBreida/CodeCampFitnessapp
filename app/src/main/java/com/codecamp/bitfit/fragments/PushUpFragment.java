@@ -55,6 +55,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private CountUpTimer countUpTimer;
     private PushUps pushUp;
     private long startTime;
+    private long elapsedTime;
 
     // sensor stuff
     private SensorManager mSensorManager;
@@ -63,7 +64,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private double minLightRange;
     private double averageLightRange;
     private boolean lockPushUpsCount;
-    private long elapsedTime;
 
 
     public static PushUpFragment getInstance() {
@@ -93,6 +93,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // find view stuff
+        TextView avgTitleTextView = getView().findViewById(R.id.textview_cardview_avg_title);
+        avgTitleTextView.setText(getString(R.string.pushups_per_min));
+
         timeTextView = getView().findViewById(R.id.textview_cardview_time);
         finishButton = getView().findViewById(R.id.button_pushup_quit);
         pushUpButton = getView().findViewById(R.id.button_pushup);
@@ -143,13 +146,28 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 // Screen keep on Flag clear
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-                List<PushUps> allPushUps = DBQueryHelper.findAllPushUps();
-                PushUps highscorePushup = DBQueryHelper.findHighscorePushup();
                 // set to initial state
                 setToInitialState();
                 countUpTimer.stop();
             }
         });
+    }
+
+    private void setToInitialState() {
+        pushUp = new PushUps();
+        startTime = 0;
+        workoutStarted = false;
+        container.setVisibility(View.INVISIBLE);
+        finishButton.setVisibility(View.INVISIBLE);
+        pushUpButton.setText(R.string.start);
+        timeTextView.setText(R.string.default_timer_value);
+        caloriesTextView.setText(R.string.default_double_value);
+        avgPushupsTextView.setText(R.string.default_double_value);
+        count = 0;
+        lockPushUpsCount = false;
+        maxLightRange = 0;
+        minLightRange = 0;
+        averageLightRange = 0;
     }
 
     private void persistPushupObject() {
@@ -189,23 +207,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         return Util.roundTwoDecimals((wayDown + wayUp) * (double) count);
     }
 
-    private void setToInitialState() {
-        pushUp = new PushUps();
-        startTime = 0;
-        workoutStarted = false;
-        container.setVisibility(View.INVISIBLE);
-        finishButton.setVisibility(View.INVISIBLE);
-        pushUpButton.setText(R.string.start);
-        timeTextView.setText(R.string.default_timer_value);
-        caloriesTextView.setText(R.string.default_double_value);
-        avgPushupsTextView.setText(R.string.default_double_value);
-        count = 0;
-        lockPushUpsCount = false;
-        maxLightRange = 0;
-        minLightRange = 0;
-        averageLightRange = 0;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -230,11 +231,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             if (event.values != null && workoutStarted) {
                 // calculation light range
                 if (maxLightRange < event.values[0]) {
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+
                     if(maxLightRange < 400) {
                         maxLightRange = (event.values[0]);
                         minLightRange = (double) event.values[0] / 2;

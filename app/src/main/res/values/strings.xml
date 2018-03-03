@@ -46,6 +46,7 @@
     <string name="saved_successfully">Änderungen erfolgreich gespeichert!</string>
     <string name="durationInMillis">Dauer</string>
     <string name="pushups_per_min">Push-Ups/min</string>
+    <string name="squats_per_min">Squats/min</string>
     <string name="calories">Kalorien</string>
     <string name="speed">Geschwindigkeit</string>
     <string name="distance">Distanz (km)</string>
