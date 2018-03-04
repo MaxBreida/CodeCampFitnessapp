@@ -2,58 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codecamp.bitfit.intro.IntroFragmentHeightWeight"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    tools:context="com.codecamp.bitfit.intro.IntroFragmentHeightWeight">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
-        <LinearLayout
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/weight_input_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:textColorHint="@color/white">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/weight_input_layout"
-                android:textColorHint="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+            <com.codecamp.bitfit.util.CustomEditText
+                android:id="@+id/edittext_weight"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:hint="@string/your_weight"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </android.support.design.widget.TextInputLayout>
 
-                <com.codecamp.bitfit.util.CustomEditText
-                    android:id="@+id/edittext_weight"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/your_weight"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:backgroundTint="@color/white"
-                    android:inputType="numberDecimal"/>
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/birthday_input_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="32dp">
+            android:layout_marginTop="32dp"
+            android:textColorHint="@color/white">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/birthday_input_layout"
-                android:textColorHint="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-                <com.codecamp.bitfit.util.CustomEditText
-                    android:id="@+id/edittext_height"
-                    android:layout_width="250dp"
-                    android:hint="@string/your_height"
-                    android:backgroundTint="@color/white"
-                    android:textSize="18sp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:inputType="number"/>
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
+            <com.codecamp.bitfit.util.CustomEditText
+                android:id="@+id/edittext_height"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:hint="@string/your_height"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 </RelativeLayout>

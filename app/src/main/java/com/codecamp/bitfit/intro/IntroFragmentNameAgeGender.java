@@ -72,8 +72,8 @@ public class IntroFragmentNameAgeGender extends Fragment {
     private void setupGenderPicker() {
         List<String> genderList = new ArrayList<>();
         genderList.add(getString(R.string.choose_gender));
-        genderList.add("männlich");
-        genderList.add("weiblich");
+        genderList.add(getString(R.string.gender_male));
+        genderList.add(getString(R.string.gender_female));
 
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.intro_gender_picker_text_view, genderList);
         genderPicker.setAdapter(genderAdapter);

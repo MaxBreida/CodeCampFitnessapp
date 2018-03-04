@@ -14,6 +14,7 @@ import com.codecamp.bitfit.database.Workout;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,6 +76,29 @@ public class Util {
         return dateFormat.format(date);
     }
 
+    /**
+     * convers a string to a date object
+     * @param string
+     * @return date
+     */
+    public static Date getStringAsDate(String string) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT, Locale.GERMANY);
+        Date date;
+        try {
+            date = dateFormat.parse(string);
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Does what the method title says
+     * @param d
+     * @return rounded double value
+     */
     public static double roundTwoDecimals(double d) {
         d = Math.round(d * 100);
         d = d/100;

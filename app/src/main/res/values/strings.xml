@@ -62,5 +62,7 @@
     <string name="speed">Geschwindigkeit</string>
     <string name="distance">Distanz (km)</string>
     <string name="default_double_value">0.0</string>
+    <string name="gender_male">männlich</string>
+    <string name="gender_female">weiblich</string>
 
 </resources>

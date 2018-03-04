@@ -1,14 +1,20 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -16,13 +22,17 @@ import android.widget.Toast;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
+import com.codecamp.bitfit.util.CustomEditText;
 import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.Util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,18 +41,16 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
-    private static final int GENDER_MALE_POSITION = 0;
-    private static final int GENDER_FEMALE_POSITION = 1;
+    private static final int GENDER_MALE_POSITION = 1;
+    private static final int GENDER_FEMALE_POSITION = 2;
 
     // views
-    private EditText nameEditText;
-    private Spinner genderSpinner;
+    private CustomEditText nameEditText;
     private EditText birthdayEditText;
-    private EditText heightEditText;
-    private EditText weightEditText;
-    private Button saveButton;
+    private CustomEditText heightEditText;
+    private CustomEditText weightEditText;
+    private Spinner genderSpinner;
     private User user;
-    private boolean dateFormatWrong = false;
 
     public static ProfileFragment getInstance() {
         ProfileFragment fragment = new ProfileFragment();
@@ -58,7 +66,14 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_profile, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.profile_action_bar_items, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -71,75 +86,74 @@ public class ProfileFragment extends Fragment {
         birthdayEditText = getView().findViewById(R.id.edittext_profile_birthday);
         heightEditText = getView().findViewById(R.id.edittext_profile_height);
         weightEditText = getView().findViewById(R.id.edittext_profile_weight);
-        saveButton = getView().findViewById(R.id.button_profile_save);
 
         // get User data from database
         user = DBQueryHelper.findUser();
 
         if(user != null) {
             // initialize values
-            nameEditText.setHint(user.getName());
-            birthdayEditText.setHint(Util.getDateAsString(user.getBirthday()));
-            heightEditText.setHint(String.valueOf(user.getSize()));
-            weightEditText.setHint(String.valueOf(user.getWeight()));
+            nameEditText.setText(user.getName());
+            birthdayEditText.setText(Util.getDateAsString(user.getBirthday()));
+            heightEditText.setText(String.valueOf(user.getSize()));
+            weightEditText.setText(String.valueOf(user.getWeight()));
             setupGenderPicker();
-
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!nameEditText.getText().toString().isEmpty()) {
-                        user.setName(nameEditText.getText().toString());
-                    }
-
-                    if(!birthdayEditText.getText().toString().isEmpty()) {
-                        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
-                        try {
-                            Date newDate = df.parse(birthdayEditText.getText().toString());
-                            dateFormatWrong = false;
-                            user.setBirthday(newDate);
-                        } catch (ParseException e) {
-                            dateFormatWrong = true;
-                            e.printStackTrace();
-                        }
-                    }
-
-                    user.setGender(genderSpinner.getSelectedItem().toString());
-
-                    if(!heightEditText.getText().toString().isEmpty()) {
-                        user.setSize(Integer.parseInt(heightEditText.getText().toString()));
-                    }
-
-                    if(!weightEditText.getText().toString().isEmpty()) {
-                        user.setWeight(Double.parseDouble(weightEditText.getText().toString()));
-                    }
-
-                    if(dateFormatWrong) {
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                "Bitte Geburtsdatum überprüfen!",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        if(user.update()) {
-                            Toast.makeText(getActivity().getApplicationContext(),
-                                    R.string.saved_successfully,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
         }
+
+        birthdayEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear focus of edit text to hide keyboard
+                nameEditText.clearFocus();
+                heightEditText.clearFocus();
+                weightEditText.clearFocus();
+
+                Date date = Util.getStringAsDate(birthdayEditText.getText().toString());
+                assert date != null;
+                final int mYear = date.getYear() + 1900;
+                final int mMonth = date.getMonth();
+                final int mDay = date.getDate();
+
+                // Launch Date Picker Dialog
+                DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // Display Selected date in textbox
+                                if (year < mYear)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                if (monthOfYear < mMonth && year == mYear)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                if (dayOfMonth < mDay && year == mYear && monthOfYear == mMonth)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                Calendar c = Calendar.getInstance();
+                                c.set(year, monthOfYear, dayOfMonth);
+                                birthdayEditText.setText(Util.getDateAsString(c.getTime()));
+
+                            }
+                        }, mYear, mMonth, mDay);
+                dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+                dpd.show();
+            }
+        });
     }
 
     private void setupGenderPicker() {
         List<String> genderList = new ArrayList<>();
-        genderList.add("männlich");
-        genderList.add("weiblich");
+        genderList.add(getString(R.string.choose_gender));
+        genderList.add(getString(R.string.gender_male));
+        genderList.add(getString(R.string.gender_female));
 
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.intro_gender_picker_text_view, genderList);
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.profile_gender_picker_text_view, genderList);
         genderSpinner.setAdapter(genderAdapter);
 
-        if(user.getGender().equals("männlich")) {
+        if(user.getGender().equals(getString(R.string.gender_male))) {
             genderSpinner.setSelection(GENDER_MALE_POSITION);
-        } else {
+        } else if(user.getGender().equals(getString(R.string.gender_female))) {
             genderSpinner.setSelection(GENDER_FEMALE_POSITION);
         }
     }
@@ -152,5 +166,84 @@ public class ProfileFragment extends Fragment {
         // Set title bar
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.profile));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_save) {
+
+            if(!checkInputs()) {
+                return true;
+            } else {
+                user.setName(nameEditText.getText().toString());
+
+                SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
+                try {
+                    Date newDate = df.parse(birthdayEditText.getText().toString());
+                    user.setBirthday(newDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                user.setSize(Integer.parseInt(heightEditText.getText().toString()));
+                user.setWeight(Double.parseDouble(weightEditText.getText().toString()));
+                user.setGender(genderSpinner.getSelectedItem().toString());
+
+                if(user.update()) {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            R.string.saved_successfully,
+                            Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private boolean checkInputs() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getString(R.string.check_these_information));
+        int errorCounter = 0;
+
+        if (nameEditText.getText().toString().isEmpty()
+                || nameEditText.getText().toString().length() < 3) {
+            sb.append(getString(R.string.your_name));
+            errorCounter++;
+        }
+        if(genderSpinner.getSelectedItem().toString().equals(getString(R.string.choose_gender))) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_gender));
+            errorCounter++;
+        }
+        if(weightEditText.getText().toString().isEmpty()) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_weight));
+            errorCounter++;
+        }
+        if (heightEditText.getText().toString().isEmpty()) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_height));
+            errorCounter++;
+        }
+        if(birthdayEditText.getText().toString().isEmpty()) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_age));
+            errorCounter++;
+        }
+
+        if(errorCounter > 0) {
+            Toast.makeText(getContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }
