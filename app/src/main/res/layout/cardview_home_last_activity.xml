@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview_last_activity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/cardview_last_activity_titlebar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearLayout5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/icon_last_activity" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/last_activity"
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/imageview_lastActivity_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/icon_last_activity"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:id="@+id/button_share_last_activity"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:materialIcon="share_variant" />
+        </android.support.constraint.ConstraintLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardview_last_activity_titlebar">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cardview_last_activity_constraintlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
+                    app:layout_constraintHorizontal_bias="0.75"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
+                        android:id="@+id/textview_lastActivity_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        tools:text=" 0:02 Minuten"
+                        android:textSize="16sp"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_duration" />
+
+
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
+                        android:id="@+id/textview_lastActivity_calories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        tools:text=" 123 kcal"
+                        android:textSize="16sp"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_calories" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="32dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout3"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
+                        android:id="@+id/textview_lastActivity_repeats_or_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        tools:text=" 25 Push-Ups"
+                        android:textSize="16sp"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_counter" />
+
+
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
+                        android:id="@+id/textview_lastActivity_perMin_or_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        tools:text=" 1.23 P/m"
+                        android:textSize="16sp"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_speed" />
+
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
+                android:id="@+id/textview_lastActivity_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:layout_below="@+id/cardview_last_activity_constraintlayout"
+                android:text="01.01.1970"
+                android:textSize="14sp"
+                app:compoundDrawableHeight="20dp"
+                app:compoundDrawableWidth="20dp"
+                app:drawableStartVector="@drawable/icon_calendar" />
+
+            <TextView
+                android:id="@+id/text_last_activity_no_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:text="@string/no_last_activity"
+                android:visibility="invisible"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

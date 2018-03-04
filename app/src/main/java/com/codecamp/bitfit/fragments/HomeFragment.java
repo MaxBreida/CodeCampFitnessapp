@@ -29,6 +29,7 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.tolstykh.textviewrichdrawable.TextViewRichDrawable;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -108,54 +109,62 @@ public class HomeFragment extends Fragment {
         // initialize lastActivity view
         TextView lastActivityDuration = getView().findViewById(R.id.textview_lastActivity_duration);
         TextView lastActivityCalories = getView().findViewById(R.id.textview_lastActivity_calories);
-        TextView lastActivityPerMinOrSpeed = getView().findViewById(R.id.textview_lastActivity_perMin_or_speed);
-        TextView lastActivityRepeatsOrDistance = getView().findViewById(R.id.textview_lastActivity_repeats_or_distance);
+        TextViewRichDrawable lastActivityPerMinOrSpeed = getView().findViewById(R.id.textview_lastActivity_perMin_or_speed);
+        TextViewRichDrawable lastActivityRepeatsOrDistance = getView().findViewById(R.id.textview_lastActivity_repeats_or_distance);
         TextView lastActivityDate = getView().findViewById(R.id.textview_lastActivity_date);
+        TextView noActivityText = getView().findViewById(R.id.text_last_activity_no_activity);
+        View content = getView().findViewById(R.id.cardview_last_activity_constraintlayout);
         ImageView lastActivityIcon = getView().findViewById(R.id.imageview_lastActivity_icon);
 
         // set card content
-        if(lastActivity instanceof PushUps) {
+        if(lastActivity == null) {
+            content.setVisibility(View.INVISIBLE);
+            lastActivityDate.setVisibility(View.INVISIBLE);
+            noActivityText.setVisibility(View.VISIBLE);
+        }
+        else if(lastActivity instanceof PushUps) {
             PushUps pushUps = (PushUps) lastActivity;
             lastActivityCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(pushUps.getCalories())));
+                    String.format(" %s kcal", String.valueOf(pushUps.getCalories())));
             lastActivityDuration.setText(
-                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(pushUps.getDurationInMillis())));
+                    String.format(" %s min", Util.getMillisAsTimeString(pushUps.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format("PushUps/min: %s", String.valueOf(pushUps.getPushPerMin())));
+                    String.format(" %s P/min", String.valueOf(pushUps.getPushPerMin())));
             lastActivityRepeatsOrDistance.setText(
-                    String.format("Wiederholungen: %s", String.valueOf(pushUps.getRepeats())));
-            lastActivityDate.setText(
-                    String.format("Datum: %s", pushUps.getCurrentDate()));
+                    String.format(" %s Push-Up(s)", String.valueOf(pushUps.getRepeats())));
+            lastActivityDate.setText(String.format(" %s", pushUps.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_pushup_color);
         }
         else  if(lastActivity instanceof  Squat) {
             Squat squat = (Squat) lastActivity;
             lastActivityCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(squat.getCalories())));
+                    String.format(" %s kcal", String.valueOf(squat.getCalories())));
             lastActivityDuration.setText(
-                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(squat.getDurationInMillis())));
+                    String.format(" %s min", Util.getMillisAsTimeString(squat.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format("Sqauts/min: %s", String.valueOf(squat.getSquatPerMin())));
+                    String.format(" %s S/min", String.valueOf(squat.getSquatPerMin())));
             lastActivityRepeatsOrDistance.setText(
-                    String.format("Wiederholungen: %s", String.valueOf(squat.getRepeats())));
+                    String.format(" %s Squats", String.valueOf(squat.getRepeats())));
             lastActivityDate.setText(
-                    String.format("Datum: %s", squat.getCurrentDate()));
+                    String.format(" %s", squat.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_squat_color);
         }
         else if (lastActivity instanceof Run) {
             Run run = (Run) lastActivity;
             lastActivityCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(run.getCalories())));
+                    String.format(" %s kcal", String.valueOf(run.getCalories())));
             lastActivityDuration.setText(
-                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(run.getDurationInMillis())));
+                    String.format("%s Stunden", Util.getMillisAsTimeString(run.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format("Geschwindigkeit: %s", String.valueOf(run.getSpeed())));
+                    String.format(" %s km/h", String.valueOf(run.getSpeed())));
+            lastActivityPerMinOrSpeed.setDrawableStartVectorId(R.drawable.icon_speed);
             lastActivityRepeatsOrDistance.setText(
-                    String.format("Distanz: %s", String.valueOf(run.getDistance())));
+                    String.format(" %s km", String.valueOf(run.getDistance())));
+            lastActivityRepeatsOrDistance.setDrawableStartVectorId(R.drawable.icon_distance);
             lastActivityDate.setText(
-                    String.format("Datum: %s", run.getCurrentDate()));
+                    String.format(" %s", run.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_run_color);
         }
@@ -173,8 +182,8 @@ public class HomeFragment extends Fragment {
             bmi = calculateBMI(user);
 
             // set text in textviews
-            bmiHeight.setText(String.format("Größe: %s", String.valueOf(Util.getHeightInMeters(user.getSize()))));
-            bmiWeight.setText(String.format("Gewicht: %s", String.valueOf(user.getWeight())));
+            bmiHeight.setText(String.format(" %s m", String.valueOf(Util.getHeightInMeters(user.getSize()))));
+            bmiWeight.setText(String.format(" %s kg", String.valueOf(user.getWeight())));
             bmiValue.setText(String.format("BMI: %.2f", bmi));
         }
     }

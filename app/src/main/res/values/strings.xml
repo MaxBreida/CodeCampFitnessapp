@@ -64,5 +64,6 @@
     <string name="default_double_value">0.0</string>
     <string name="gender_male">männlich</string>
     <string name="gender_female">weiblich</string>
+    <string name="no_last_activity">Keine letzte Aktivität vorhanden!</string>
 
 </resources>
