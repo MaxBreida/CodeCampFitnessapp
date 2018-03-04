@@ -198,11 +198,13 @@ public class HomeFragment extends Fragment {
         TextView highscorePushupsDuration = getView().findViewById(R.id.textview_highscore_pushup_duration);
         TextView highscorePushupsPPM = getView().findViewById(R.id.textview_highscore_pushup_ppm);
         TextView highscorePushupsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
+        TextView noHighscoreText = getView().findViewById(R.id.text_highscore_pushups_no_highscore);
+        View content = getView().findViewById(R.id.cardview_highscore_pushups_content);
 
         // find pushup highscore
         PushUps highscorePushups = DBQueryHelper.findHighscorePushup();
 
-        if (highscorePushups != null) {
+        if (highscorePushups.getCurrentDate() != null) {
             // set text in textviews
             highscorePushupsCalories.setText(
                     String.format(" %s kcal", String.valueOf(highscorePushups.getCalories())));
@@ -214,6 +216,10 @@ public class HomeFragment extends Fragment {
                     String.format(" %s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
                     String.format(" %s min", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
+        } else {
+            noHighscoreText.setVisibility(View.VISIBLE);
+            content.setVisibility(View.INVISIBLE);
+            highscorePushupsDate.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -224,11 +230,13 @@ public class HomeFragment extends Fragment {
         TextView highscoreSquatsDuration = getView().findViewById(R.id.textview_highscore_squats_duration);
         TextView highscoreSquatsSPM = getView().findViewById(R.id.textview_highscore_squats_spm);
         TextView highscoreSquatsRepeats = getView().findViewById(R.id.textview_highscore_squats_repeats);
+        TextView noHighscoreText = getView().findViewById(R.id.text_highscore_squats_no_highscore);
+        View content = getView().findViewById(R.id.cardview_highscore_squats_content);
 
         // find pushup highscore
         Squat highscoreSquats = DBQueryHelper.findHighscoreSquat();
 
-        if (highscoreSquats != null) {
+        if (highscoreSquats.getCurrentDate() != null) {
             // set text in textviews
             highscoreSquatsCalories.setText(
                     String.format(" %s kcal", String.valueOf(highscoreSquats.getCalories())));
@@ -240,6 +248,10 @@ public class HomeFragment extends Fragment {
                     String.format(" %s", highscoreSquats.getCurrentDate()));
             highscoreSquatsDuration.setText(
                     String.format(" %s min", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
+        } else {
+            noHighscoreText.setVisibility(View.VISIBLE);
+            content.setVisibility(View.INVISIBLE);
+            highscoreSquatsDate.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -251,10 +263,12 @@ public class HomeFragment extends Fragment {
         TextView highscoreRunDuration = getView().findViewById(R.id.textview_highscore_run_duration);
         TextView highscoreRunSpeed = getView().findViewById(R.id.textview_highscore_run_speed);
         TextView highscoreRunDistance = getView().findViewById(R.id.textview_highscore_run_distance);
+        TextView noHighscoreText = getView().findViewById(R.id.text_highscore_run_no_highscore);
+        View content = getView().findViewById(R.id.cardview_highscore_run_content);
 
         Run highScoreRun = DBQueryHelper.findHighScoreRun();
 
-        if (highScoreRun != null) {
+        if (highScoreRun.getCurrentDate() != null) {
             highscoreRunCalories.setText(
                     String.format(" %s kcal", String.valueOf(highScoreRun.getCalories()))
             );
@@ -270,6 +284,10 @@ public class HomeFragment extends Fragment {
             highscoreRunSpeed.setText(
                     String.format(" %s km/h", String.valueOf(highScoreRun.getSpeed()))
             );
+        } else {
+            noHighscoreText.setVisibility(View.VISIBLE);
+            content.setVisibility(View.INVISIBLE);
+            highscoreRunDate.setVisibility(View.INVISIBLE);
         }
     }
 

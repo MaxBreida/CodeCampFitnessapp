@@ -65,5 +65,6 @@
     <string name="gender_male">männlich</string>
     <string name="gender_female">weiblich</string>
     <string name="no_last_activity">Keine letzte Aktivität vorhanden!</string>
+    <string name="no_highscore">Noch kein Highscore vorhanden!</string>
 
 </resources>
