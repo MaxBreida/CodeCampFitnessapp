@@ -2,6 +2,7 @@ package com.codecamp.bitfit.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -207,7 +209,9 @@ public class RunFragment extends WorkoutFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_statistics:
-                // TODO start statistics activity
+                // TODO start statistics activity. Why is here something with sharing a photo/squats at statistics?
+                getActivity().startActivity(new Intent(getActivity(), RunStatisticsActivity.class));
+
                 View but = getView().findViewById(R.id.button_share_highscore_squats);
                 if(but == null) return true;
                 Bitmap image = viewToBitmap(but);
