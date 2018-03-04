@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -182,8 +183,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp.setCalories(calcCalories());
         pushUp.setCurrentDate(Util.getCurrentDateAsString());
 
-        // save workout to database
+        // save workout to database and make Toast to confirm saving
         pushUp.save();
+        Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+
 
         // set as last activity
         new SharedPrefsHelper(getContext())

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -25,6 +26,7 @@ import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.FinishDialog;
 import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
@@ -160,7 +162,17 @@ public class SquatFragment extends WorkoutFragment {
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
                 // TODO: view acticity details and send them to database
-                createSquatObj();
+                currentSquat = createSquatObj();
+                //  new FinishDialog(getContext(), getString(R.string.ask_finish), currentSquat).show();
+
+                // save workout to database and make Toast to confirm saving
+                currentSquat.save();
+                Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+
+                // set as last workout
+                new SharedPrefsHelper(getContext())
+                        .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+
                 setToInitialState();
             }
         });
@@ -180,7 +192,7 @@ public class SquatFragment extends WorkoutFragment {
         squatCtr = 0;
     }
 
-    private void createSquatObj(){
+    private Squat createSquatObj(){
         long duration = finishTime-startTime; //duration in milliseconds
 
         //Set attributes of the squat object
@@ -194,12 +206,7 @@ public class SquatFragment extends WorkoutFragment {
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
         currentSquat.setRepeats(squatCtr);
 
-        // save object to database
-        currentSquat.save();
-
-        // set as last workout
-        new SharedPrefsHelper(getContext())
-                .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+        return currentSquat;
     }
 
     double calcSquatsPerMinute(long duration){
