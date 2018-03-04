@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView android:id="@+id/cardview_highscore_pushups"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview_highscore_pushups"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:id="@+id/cardview_highscore_pushups_titlebar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -21,18 +22,17 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:layout_alignParentStart="true"
-                    android:src="@drawable/icon_pushup_color"/>
+                    android:src="@drawable/icon_pushup_color" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
                     android:padding="16dp"
                     android:text="@string/highscore_pushups"
-                    />
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
@@ -41,81 +41,114 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
                 android:layout_centerVertical="true"
-                app:materialIcon="share_variant"
-                />
+                android:layout_marginEnd="16dp"
+                app:materialIcon="share_variant" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cardview_highscore_pushups_titlebar">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cardview_highscore_pushups_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp">
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="16dp">
 
                 <LinearLayout
+                    android:id="@+id/linearLayout7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignTop="@+id/cardview_highscore_pushups_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="18dp"
                     android:orientation="vertical"
-                    android:layout_marginStart="16dp"
-                    >
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
                         android:id="@+id/textview_highscore_pushup_duration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:text="Dauer: 1:23 Minuten"/>
+                        tools:text=" 1:23 min"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_duration" />
 
-                    <TextView
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
                         android:id="@+id/textview_highscore_pushup_calories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
                         android:layout_marginTop="4dp"
-                        android:text="Verbrauchte Kalorien: 123"/>
+                        tools:text=" 123 kcal"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_calories" />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linearLayout6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
                     android:orientation="vertical"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout7"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
                         android:id="@+id/textview_highscore_pushup_repeats"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:text="Push-Ups gesamt: 50"/>
+                        tools:text=" 50 Push-Up(s)"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_counter" />
 
-                    <TextView
+                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
                         android:id="@+id/textview_highscore_pushup_ppm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
                         android:layout_marginTop="4dp"
-                        android:text="Push-Ups/min: 5"/>
+                        tools:text=" 5 P/min"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        app:compoundDrawableHeight="25dp"
+                        app:compoundDrawableWidth="25dp"
+                        app:drawableStartVector="@drawable/icon_speed" />
                 </LinearLayout>
-            </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
-            <TextView
+            <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
                 android:id="@+id/textview_highscore_pushup_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="Datum: 01.01.1970"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"/>
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/cardview_highscore_pushups_content"
+                tools:text=" 01.01.1970"
+                android:textSize="14sp"
+                android:gravity="center"
+                app:compoundDrawableHeight="25dp"
+                app:compoundDrawableWidth="25dp"
+                app:drawableStartVector="@drawable/icon_calendar" />
         </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -102,7 +102,6 @@ public class HomeFragment extends Fragment {
         shareLastActivityToFacebook();
     }
 
-
     private void lastActivity() {
         // get last activity from shared prefs
         Workout lastActivity = DBQueryHelper.getLastWorkout(getContext());
@@ -145,7 +144,7 @@ public class HomeFragment extends Fragment {
             lastActivityPerMinOrSpeed.setText(
                     String.format(" %s S/min", String.valueOf(squat.getSquatPerMin())));
             lastActivityRepeatsOrDistance.setText(
-                    String.format(" %s Squats", String.valueOf(squat.getRepeats())));
+                    String.format(" %s Squat(s)", String.valueOf(squat.getRepeats())));
             lastActivityDate.setText(
                     String.format(" %s", squat.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
@@ -206,15 +205,15 @@ public class HomeFragment extends Fragment {
         if (highscorePushups != null) {
             // set text in textviews
             highscorePushupsCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highscorePushups.getCalories())));
+                    String.format(" %s kcal", String.valueOf(highscorePushups.getCalories())));
             highscorePushupsRepeats.setText(
-                    String.format("Wiederholungen: %s", String.valueOf(highscorePushups.getRepeats())));
+                    String.format(" %s Push-Up(s)", String.valueOf(highscorePushups.getRepeats())));
             highscorePushupsPPM.setText(
-                    String.format("PushUps/min: %s", String.valueOf(highscorePushups.getPushPerMin())));
+                    String.format(" %s P/min", String.valueOf(highscorePushups.getPushPerMin())));
             highscorePushupsDate.setText(
-                    String.format("Datum: %s", highscorePushups.getCurrentDate()));
+                    String.format(" %s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
-                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
+                    String.format(" %s min", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
         }
     }
 
@@ -232,15 +231,15 @@ public class HomeFragment extends Fragment {
         if (highscoreSquats != null) {
             // set text in textviews
             highscoreSquatsCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highscoreSquats.getCalories())));
+                    String.format(" %s kcal", String.valueOf(highscoreSquats.getCalories())));
             highscoreSquatsRepeats.setText(
-                    String.format("Wiederholungen: %s", String.valueOf(highscoreSquats.getRepeats())));
+                    String.format(" %s Squat(s)", String.valueOf(highscoreSquats.getRepeats())));
             highscoreSquatsSPM.setText(
-                    String.format("PushUps/min: %s", String.valueOf(highscoreSquats.getSquatPerMin())));
+                    String.format(" %s S/min", String.valueOf(highscoreSquats.getSquatPerMin())));
             highscoreSquatsDate.setText(
-                    String.format("Datum: %s", highscoreSquats.getCurrentDate()));
+                    String.format(" %s", highscoreSquats.getCurrentDate()));
             highscoreSquatsDuration.setText(
-                    String.format("Dauer: %s" + " Minuten", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
+                    String.format(" %s min", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
         }
     }
 
@@ -257,19 +256,19 @@ public class HomeFragment extends Fragment {
 
         if (highScoreRun != null) {
             highscoreRunCalories.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCalories()))
+                    String.format(" %s kcal", String.valueOf(highScoreRun.getCalories()))
             );
             highscoreRunDate.setText(
-                    String.format("Verbrauchte Kalorien: %s", String.valueOf(highScoreRun.getCurrentDate()))
+                    String.format(" %s", String.valueOf(highScoreRun.getCurrentDate()))
             );
             highscoreRunDuration.setText(
-                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDurationInMillis()))
+                    String.format(" %s min", String.valueOf(highScoreRun.getDurationInMillis()))
             );
             highscoreRunDistance.setText(
-                    String.format("Dauer: %s", String.valueOf(highScoreRun.getDistance()))
+                    String.format(" %s m", String.valueOf(highScoreRun.getDistance()))
             );
             highscoreRunSpeed.setText(
-                    String.format("Dauer: %s" + " Minuten", String.valueOf(highScoreRun.getSpeed()))
+                    String.format(" %s km/h", String.valueOf(highScoreRun.getSpeed()))
             );
         }
     }

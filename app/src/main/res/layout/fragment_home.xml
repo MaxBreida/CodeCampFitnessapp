@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.codecamp.bitfit.fragments.HomeFragment">
 
     <!-- TODO Highscore Reihenfolgen ueberarbeiten -->
@@ -56,6 +55,6 @@
         <!-- empty frame layout because of bottom bar .... -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"></FrameLayout>
+            android:layout_height="76dp"/>
     </LinearLayout>
 </ScrollView>
