@@ -38,13 +38,20 @@
         <!-- Statistics -->
         <activity
             android:name=".statistics.PushupStatisticsActivity"
+            android:label="PushUp Statistik"
             android:screenOrientation="portrait" />
         <activity
             android:name=".statistics.RunStatisticsActivity"
+            android:label="Run Statistik"
             android:screenOrientation="portrait" />
         <activity
             android:name=".statistics.SquatStatisticsActivity"
+            android:label="Squat Statistik"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".statistics.PushupHistoryActivity"
+            android:label="PushUp Verlauf"
+            android:screenOrientation="portrait"/>
 
         <!-- Provider Facebook add to App -->
         <meta-data
@@ -61,9 +68,6 @@
             android:authorities="com.facebook.app.FacebookContentProvider2029588297311884"
             android:exported="true" />
 
-        <activity android:name=".instructions.PushUpsInstructionsActivity" />
-        <activity android:name=".instructions.SquatsInstructionsActivity" />
-        <activity android:name=".instructions.RunInstructionsActivity"></activity>
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -42,6 +43,8 @@ dependencies {
     compile 'com.github.apl-devs:appintro:v4.2.2'
     // cardview
     compile 'com.android.support:cardview-v7:27.0.2'
+    // textviews with resizable icons
+    compile 'com.tolstykh.textviewrichdrawable:textview-rich-drawable:0.3.2'
 
     // if Java use this. If using Kotlin do NOT use this.
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"

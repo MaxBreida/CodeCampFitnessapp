@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.codecamp.bitfit.statistics.PushupStatisticsActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/barchart"
+                layout="@layout/pushups_statistics_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"/>
+
+            <include
+                android:id="@+id/linechart"
+                layout="@layout/pushups_statistics_last_seven"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/barchart"
+                android:layout_marginTop="8dp"/>
+
+            <Button
+                android:id="@+id/button_pushup_statistics_history"
+                android:layout_below="@+id/linechart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/history"
+                android:textColor="@color/white"
+                android:background="@drawable/custom_button"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

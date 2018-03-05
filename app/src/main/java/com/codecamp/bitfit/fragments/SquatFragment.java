@@ -8,14 +8,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
@@ -25,6 +26,7 @@ import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.FinishDialog;
 import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
@@ -36,21 +38,25 @@ import java.util.UUID;
  */
 public class SquatFragment extends WorkoutFragment {
 
+    User user = DBQueryHelper.findUser();
     private SensorManager sensorManager;
 
     private int squatCtr;
-
     private Squat currentSquat;
     private long startTime;
     private long finishTime;
+    private long elapsedTime;
+
     //Boolean variable to store if the workout was started, if not: no need to evaluate sensors
     private boolean workoutStarted;
 
     //GUI elements
     private TextView timeTextView;
-    private Button sqFinishButton;
+    private FloatingActionButton sqFinishButton;
     private TextView squatButton;
-
+    private TextView avgSquatsTextView;
+    private TextView caloriesTextView;
+    private View container;
 
     //Use an average value for the accelerometer output
     //Variable for the length of the array for the average value
@@ -62,7 +68,6 @@ public class SquatFragment extends WorkoutFragment {
     //average value, calculated later
     private double azAvg;
 
-
     enum SquatStates {
             SQUAT_DOWN,
             STAND_UP,
@@ -72,6 +77,25 @@ public class SquatFragment extends WorkoutFragment {
     private SquatStates squatState;
 
     private CountUpTimer squatTimer;
+
+    public SquatFragment() {
+        // Required empty public constructor
+    }
+
+    public static SquatFragment getInstance() {
+        SquatFragment fragment = new SquatFragment();
+
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_squat, container, false);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -83,12 +107,25 @@ public class SquatFragment extends WorkoutFragment {
                 SensorManager.SENSOR_DELAY_NORMAL);
 
         //find view elements
+        TextView avgTitleTextView = getView().findViewById(R.id.textview_cardview_avg_title);
+        avgTitleTextView.setText(getString(R.string.squats_per_min));
+
         squatButton = getView().findViewById(R.id.button_squat);
-        timeTextView = getView().findViewById(R.id.textview_squat_time);
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
+        timeTextView = getView().findViewById(R.id.textview_cardview_time);
+        avgSquatsTextView = getView().findViewById(R.id.textview_cardview_avg);
+        caloriesTextView = getView().findViewById(R.id.textview_cardview_calories);
+        container = getView().findViewById(R.id.container_squat_counter);
 
         //Initialize stopwatch
-        squatTimer = new CountUpTimer(1000, timeTextView);
+        squatTimer = new CountUpTimer(1000, timeTextView) {
+            @Override
+            public void onTick(long elapsedTime) {
+                setElapsedTime(elapsedTime);
+                avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
+                timeTextView.setText(Util.getMillisAsTimeString(elapsedTime));
+            }
+        };
 
         //Call initialization method
         setToInitialState();
@@ -103,9 +140,8 @@ public class SquatFragment extends WorkoutFragment {
                     workoutStarted = true;
                     squatTimer.start();
                     startTime = System.currentTimeMillis();
-                    timeTextView.setVisibility(View.VISIBLE);
+                    container.setVisibility(View.VISIBLE);
                     sqFinishButton.setVisibility(View.VISIBLE);
-                    squatButton.setVisibility(View.VISIBLE);
                 }
 
                 // Screen keep on Flag set
@@ -114,8 +150,6 @@ public class SquatFragment extends WorkoutFragment {
                 squatButton.setText(String.valueOf(squatCtr));
             }
         });
-
-
 
         sqFinishButton.setOnClickListener(new View.OnClickListener(){
 
@@ -128,14 +162,37 @@ public class SquatFragment extends WorkoutFragment {
                 getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
                 // TODO: view acticity details and send them to database
-                createSquatObj();
+                currentSquat = createSquatObj();
+                //  new FinishDialog(getContext(), getString(R.string.ask_finish), currentSquat).show();
+
+                // save workout to database and make Toast to confirm saving
+                currentSquat.save();
+                Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+
+                // set as last workout
+                new SharedPrefsHelper(getContext())
+                        .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+
                 setToInitialState();
             }
         });
 
     }
 
-    private void createSquatObj(){
+    private void setToInitialState() {
+        currentSquat = new Squat();
+        workoutStarted = false;
+        container.setVisibility(View.INVISIBLE);
+        sqFinishButton.setVisibility(View.INVISIBLE);
+        squatButton.setText(getString(R.string.start));
+        timeTextView.setText(getString(R.string.default_timer_value));
+        caloriesTextView.setText(R.string.default_double_value);
+        avgSquatsTextView.setText(R.string.default_double_value);
+        squatState = SquatStates.SQUAT_DOWN;
+        squatCtr = 0;
+    }
+
+    private Squat createSquatObj(){
         long duration = finishTime-startTime; //duration in milliseconds
 
         //Set attributes of the squat object
@@ -144,60 +201,36 @@ public class SquatFragment extends WorkoutFragment {
         currentSquat.setUser(currentUser);
         currentSquat.setId(UUID.randomUUID());
         currentSquat.setCurrentDate(Util.getCurrentDateAsString());
-        currentSquat.setCalories(calcCalories(duration));
+        currentSquat.setCalories(calcCalories());
         currentSquat.setDurationInMillis(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
         currentSquat.setRepeats(squatCtr);
 
-        // save object to database
-        currentSquat.save();
-
-        // set as last workout
-        new SharedPrefsHelper(getContext())
-                .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+        return currentSquat;
     }
 
     double calcSquatsPerMinute(long duration){
-        return ((squatCtr * 60000) / duration);
+        return Util.roundTwoDecimals(((double) squatCtr * 60000.0) / (double) duration);
     }
 
+    double calcCalories() {
+        // TODO use different values ?!?! This is just a first implementation, dunno which values to use
+        // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
 
-
-    double calcCalories(long duration) {
-        //Get user from database to get weight
-        User user = DBQueryHelper.findUser();
         double weight = user.getWeight();
 
-        //MET (metabolic equivalent of task) value for calculating calories
-        double metSquat = 5.0;
-        // calories are calculated by metSquat*weight*duration (in hours)
-        //duration[hours]=duration[msec]/3600000
+        // wayUp + wayDown = one push up
 
-        return metSquat*(duration/3600000)* weight;
-    }
+        //TODO other value than 0.5?!
+        double wayUp = ((weight*0.7 * 9.81 * 0.5) / 4.1868) / 1000;
+        double wayDown = wayUp / 2.0;
 
-    private void setToInitialState() {
-        currentSquat = new Squat();
-        workoutStarted = false;
-        squatButton.setVisibility(View.VISIBLE);
-        sqFinishButton.setVisibility(View.INVISIBLE);
-        squatButton.setText("Start");
-        timeTextView.setText("0:00");
-        timeTextView.setVisibility(View.VISIBLE);
-        squatState = SquatStates.SQUAT_DOWN;
-        squatCtr = 0;
-
+        return Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
     }
 
     public void onDestroy(){
         super.onDestroy();
         sensorManager.unregisterListener(listener);
-    }
-
-    public static SquatFragment getInstance() {
-        SquatFragment fragment = new SquatFragment();
-
-        return fragment;
     }
 
     private SensorEventListener listener = new SensorEventListener() {
@@ -246,6 +279,8 @@ public class SquatFragment extends WorkoutFragment {
 
                         //Display new value for squat counter
                         squatButton.setText(String.valueOf(squatCtr));
+                        avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
+                        caloriesTextView.setText(String.valueOf(calcCalories()));
                         squatState=SquatStates.SQUAT_DOWN;
                         break;
                     }
@@ -257,24 +292,9 @@ public class SquatFragment extends WorkoutFragment {
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
-
+            // Nothing here
         }
     };
-
-    public SquatFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        super.onCreateView(inflater, container, savedInstanceState);
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_squat, container, false);
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -318,4 +338,9 @@ public class SquatFragment extends WorkoutFragment {
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.squats));
     }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
+
 }

@@ -18,6 +18,8 @@ import com.codecamp.bitfit.util.DBQueryHelper;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 8712;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,11 +30,21 @@ public class MainActivity extends AppCompatActivity {
 
         // If user is initialized, then skip intro
         if (findUser == null) {
-            // start intro on first launch
-            startActivity(new Intent(this, IntroActivity.class));
+            // start intro on first launch, after that call initBottomNavigation in onActivityResult
+            startActivityForResult(new Intent(this, IntroActivity.class), REQUEST_CODE);
+        } else {
+            // user already in database, so we can call initBottomNavigation directly
+            initBottomNavigation();
         }
+    }
 
-        initBottomNavigation();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE) {
+            initBottomNavigation();
+        }
     }
 
     AHBottomNavigation bottomNavigation;

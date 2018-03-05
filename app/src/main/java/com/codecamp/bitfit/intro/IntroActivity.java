@@ -1,6 +1,6 @@
 package com.codecamp.bitfit.intro;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,31 +9,24 @@ import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
-import com.codecamp.bitfit.database.User_Table;
 import com.github.paolorotolo.appintro.AppIntro;
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by MaxBreida on 12.02.18.
  */
-
 public class IntroActivity extends AppIntro
         implements IntroFragmentNameAgeGender.OnNameBirthdayGenderChangedListener,
         IntroFragmentHeightWeight.OnHeightWeightChangedListener {
     private User user = new User();
     private String name;
-    private int day;
-    private int month;
-    private int year;
+    private Date birthday;
     private String gender;
     private int height;
     private double weight;
+    private boolean shouldAllowBack = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,9 +55,7 @@ public class IntroActivity extends AppIntro
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
 
-        // Check user input, for missing or incorrect entries
-       if (name == null || name.length() < 1 || weight == 0.0 || height == 0) {
-            Toast.makeText(getApplicationContext(), "Bitte überprüfe deine Angaben!", Toast.LENGTH_SHORT).show();
+        if(!checkInputs()) {
             return;
         }
 
@@ -74,23 +65,80 @@ public class IntroActivity extends AppIntro
         user.setWeight(weight);
         user.setSize(height);
         user.setGender(gender);
+        user.setBirthday(birthday);
 
-        // If not select the Date, set default
-        if (day != 0 && month != 0) {
-            user.setBirthday(new Date(year, month, day - 1900));
-        } else {
-            user.setBirthday(new Date(0, 0, 1));
-        }
         //Save user to database
         user.save();
 
+        Intent intent = new Intent();
+        intent.putExtra("result", 1);
+        setResult(RESULT_OK, intent);
+
+        // close activity after saving the user object
         finish();
+    }
+
+    private boolean checkInputs() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getString(R.string.check_these_information));
+        int errorCounter = 0;
+
+        if (name == null || name.length() < 3) {
+            sb.append(getString(R.string.your_name));
+            errorCounter++;
+        }
+        if(gender.equals(getString(R.string.choose_gender))) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_gender));
+            errorCounter++;
+        }
+        if(weight == 0.0) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_weight));
+            errorCounter++;
+        }
+        if (height == 0) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_height));
+            errorCounter++;
+        }
+        if(birthday == null) {
+            if(errorCounter > 0) {
+                sb.append(", ");
+            }
+            sb.append(getString(R.string.your_age));
+            errorCounter++;
+        }
+
+        if(errorCounter > 0) {
+            Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
     public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
         super.onSlideChanged(oldFragment, newFragment);
         // Do something when the slide changes.
+        if(newFragment instanceof IntroFragmentStart) {
+            shouldAllowBack = false;
+        } else {
+            shouldAllowBack = true;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (shouldAllowBack) {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -99,20 +147,9 @@ public class IntroActivity extends AppIntro
     }
 
     @Override
-    public void onDayChanged(int day) {
-        this.day = day;
+    public void onBirthdayChangedListener(Date birthday) {
+        this.birthday = birthday;
     }
-
-    @Override
-    public void onMonthChanged(int month) {
-        this.month = month;
-    }
-
-    @Override
-    public void onYearChanged(int year) {
-        this.year = year;
-    }
-
 
     @Override
     public void onGenderChangedListener(String gender) {

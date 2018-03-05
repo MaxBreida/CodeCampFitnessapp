@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.util.CustomEditText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,8 +22,8 @@ public class IntroFragmentHeightWeight extends Fragment {
 
     OnHeightWeightChangedListener callback;
 
-    private EditText weightEditText;
-    private EditText heigthEditText;
+    private CustomEditText weightEditText;
+    private CustomEditText heigthEditText;
 
     public IntroFragmentHeightWeight() {
         // Required empty public constructor

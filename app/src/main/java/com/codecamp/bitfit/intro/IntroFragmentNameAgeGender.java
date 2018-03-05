@@ -1,29 +1,31 @@
 package com.codecamp.bitfit.intro;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.util.CustomEditText;
+import com.codecamp.bitfit.util.NoNumbersInputFilter;
+import com.codecamp.bitfit.util.Util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,11 +33,12 @@ import java.util.List;
  */
 public class IntroFragmentNameAgeGender extends Fragment {
 
-    private EditText nameEditText;
-    private NumberPicker dayPicker;
-    private NumberPicker monthPicker;
-    private NumberPicker yearPicker;
+    private CustomEditText nameEditText;
+    private EditText birthdayEditText;
     private Spinner genderPicker;
+    private int mYear;
+    private int mMonth;
+    private int mDay;
 
     public IntroFragmentNameAgeGender() {
         // Required empty public constructor
@@ -48,27 +51,36 @@ public class IntroFragmentNameAgeGender extends Fragment {
         return inflater.inflate(R.layout.fragment_intro_fragment_name_age_gender, container, false);
     }
 
-    public EditText getNameEditText() {
-        return nameEditText;
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // initiate view stuff
         nameEditText = getView().findViewById(R.id.edittext_name);
-        dayPicker = getView().findViewById(R.id.number_picker_day);
-        monthPicker = getView().findViewById(R.id.number_picker_month);
-        yearPicker = getView().findViewById(R.id.number_picker_year);
+        birthdayEditText = getView().findViewById(R.id.edittext_birtday);
         genderPicker = getView().findViewById(R.id.genderpicker);
 
-        setupBirthdayPickers();
         setupGenderPicker();
         setupListeners();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    private void setupGenderPicker() {
+        List<String> genderList = new ArrayList<>();
+        genderList.add(getString(R.string.choose_gender));
+        genderList.add(getString(R.string.gender_male));
+        genderList.add(getString(R.string.gender_female));
+
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.intro_gender_picker_text_view, genderList);
+        genderPicker.setAdapter(genderAdapter);
+    }
+
     private void setupListeners() {
+        nameEditText.setFilters(new InputFilter[] {new NoNumbersInputFilter()});
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -86,27 +98,6 @@ public class IntroFragmentNameAgeGender extends Fragment {
             }
         });
 
-        dayPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                callback.onDayChanged(newVal);
-            }
-        });
-
-        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                callback.onMonthChanged(newVal);
-            }
-        });
-
-        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                callback.onYearChanged(newVal);
-            }
-        });
-
         genderPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -115,7 +106,47 @@ public class IntroFragmentNameAgeGender extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                // will use default value anyways, so nothing to do here
+            }
+        });
 
+        birthdayEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //clear focus of name text to hide keyboard
+                nameEditText.clearFocus();
+
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                // Launch Date Picker Dialog
+                DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // Display Selected date in textbox
+
+                                if (year < mYear)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                if (monthOfYear < mMonth && year == mYear)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                if (dayOfMonth < mDay && year == mYear && monthOfYear == mMonth)
+                                    view.updateDate(mYear,mMonth,mDay);
+
+                                c.set(year, monthOfYear, dayOfMonth);
+                                callback.onBirthdayChangedListener(c.getTime());
+                                birthdayEditText.setText(Util.getDateAsString(c.getTime()));
+
+                            }
+                        }, mYear, mMonth, mDay);
+                dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+                dpd.show();
             }
         });
     }
@@ -126,37 +157,13 @@ public class IntroFragmentNameAgeGender extends Fragment {
         callback = (OnNameBirthdayGenderChangedListener) getActivity();
     }
 
-    private void setupBirthdayPickers() {
-        dayPicker.setMinValue(1);
-        dayPicker.setMaxValue(31);
-
-        monthPicker.setMinValue(1);
-        monthPicker.setMaxValue(12);
-
-        yearPicker.setMinValue(1900);
-        yearPicker.setMaxValue(Calendar.getInstance().get(Calendar.YEAR));
-    }
-
-    private void setupGenderPicker() {
-        List<String> genderList = new ArrayList<>();
-        genderList.add("männlich");
-        genderList.add("weiblich");
-
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.gender_picker_text_view, genderList);
-        genderPicker.setAdapter(genderAdapter);
-    }
-
     // callbacks to activity
     OnNameBirthdayGenderChangedListener callback;
 
     public interface OnNameBirthdayGenderChangedListener {
         void onNameChanged(String name);
 
-        void onDayChanged(int day);
-
-        void onMonthChanged(int month);
-
-        void onYearChanged(int year);
+        void onBirthdayChangedListener(Date birthday);
 
         void onGenderChangedListener(String gender);
     }

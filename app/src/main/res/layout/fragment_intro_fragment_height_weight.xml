@@ -2,55 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codecamp.bitfit.intro.IntroFragmentHeightWeight"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    tools:context="com.codecamp.bitfit.intro.IntroFragmentHeightWeight">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
-        <LinearLayout
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/weight_input_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:textColorHint="@color/white">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_weight"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
-
-            <EditText
+            <com.codecamp.bitfit.util.CustomEditText
                 android:id="@+id/edittext_weight"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:hint="@string/your_weight"
+                android:inputType="numberDecimal"
                 android:textColor="@color/white"
-                android:inputType="numberDecimal"/>
-        </LinearLayout>
+                android:textSize="18sp" />
+        </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/birthday_input_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="32dp">
+            android:layout_marginTop="32dp"
+            android:textColorHint="@color/white">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_height"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
-
-            <EditText
+            <com.codecamp.bitfit.util.CustomEditText
                 android:id="@+id/edittext_height"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:hint="@string/your_height"
+                android:inputType="number"
                 android:textColor="@color/white"
-                android:inputType="number"/>
-        </LinearLayout>
+                android:textSize="18sp" />
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 </RelativeLayout>
