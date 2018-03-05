@@ -49,6 +49,10 @@
             android:label="Squat Statistik"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".statistics.PushupHistoryActivity"
+            android:label="PushUp Verlauf"
+            android:screenOrientation="portrait"/>
+
         <!-- Provider Facebook add to App -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -64,9 +68,6 @@
             android:authorities="com.facebook.app.FacebookContentProvider2029588297311884"
             android:exported="true" />
 
-        <activity android:name=".instructions.PushUpsInstructionsActivity" />
-        <activity android:name=".instructions.SquatsInstructionsActivity" />
-        <activity android:name=".instructions.RunInstructionsActivity"></activity>
     </application>
 
 </manifest>

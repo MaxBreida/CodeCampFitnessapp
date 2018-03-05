@@ -66,5 +66,8 @@
     <string name="gender_female">weiblich</string>
     <string name="no_last_activity">Keine letzte Aktivität vorhanden!</string>
     <string name="no_highscore">Noch kein Highscore vorhanden!</string>
+    <string name="current_month">Aktueller Monat</string>
+    <string name="last_7_workouts">Letzte 7 Workouts</string>
+    <string name="history">Verlauf</string>
 
 </resources>

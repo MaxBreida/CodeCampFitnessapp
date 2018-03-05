@@ -10,13 +10,22 @@ import android.widget.TextView;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.util.Util;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by nils_ on 02.03.2018.
  */
-
 class PushupAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
@@ -45,22 +54,22 @@ class PushupAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup parent) {
-        View rowView = mInflater.inflate(R.layout.activity_pushup_statistics, parent, false);
+        view = mInflater.inflate(R.layout.history_pushup_item, parent, false);
 
-        TextView dateTextView = (TextView) rowView.findViewById(R.id.textview_pushupitem_date);
-        TextView durationTextView = (TextView) rowView.findViewById(R.id.textview_pushup_duration);
-        TextView repeatsTextView = (TextView) rowView.findViewById(R.id.textview_pushup_repeats);
-        TextView caloriesTextView = (TextView) rowView.findViewById(R.id.textview_pushup_calories);
-        TextView ppmTextView = (TextView) rowView.findViewById(R.id.textview_pushup_ppm);
+        TextView dateTextView = view.findViewById(R.id.textview_pushupitem_date);
+        TextView durationTextView = view.findViewById(R.id.textview_pushupitem_duration);
+        TextView repeatsTextView = view.findViewById(R.id.textview_pushupitem_repeats);
+        TextView caloriesTextView = view.findViewById(R.id.textview_pushupitem_calories);
+        TextView ppmTextView = view.findViewById(R.id.textview_pushupitem_ppm);
 
         PushUps pushUp = (PushUps) getItem(i);
 
-        dateTextView.setText(" " + pushUp.getCurrentDate());
-        durationTextView.setText("Dauer: " + Util.getMillisAsTimeString(pushUp.getDurationInMillis()));
-        repeatsTextView.setText("Wiederholungen: " + pushUp.getRepeats());
-        caloriesTextView.setText("Verbrauchte Kalorien: " + pushUp.getCalories());
-        ppmTextView.setText("Pushups/min: " + pushUp.getPushPerMin());
+        dateTextView.setText(String.format(" %s", pushUp.getCurrentDate()));
+        durationTextView.setText(String.format(" %s", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
+        repeatsTextView.setText(String.format(" %d", pushUp.getRepeats()));
+        caloriesTextView.setText(String.format(" %s", pushUp.getCalories()));
+        ppmTextView.setText(String.format(" %s", pushUp.getPushPerMin()));
 
-        return rowView;
+        return view;
     }
 }
