@@ -38,12 +38,15 @@
         <!-- Statistics -->
         <activity
             android:name=".statistics.PushupStatisticsActivity"
+            android:label="PushUp Statistik"
             android:screenOrientation="portrait" />
         <activity
             android:name=".statistics.RunStatisticsActivity"
+            android:label="Run Statistik"
             android:screenOrientation="portrait" />
         <activity
             android:name=".statistics.SquatStatisticsActivity"
+            android:label="Squat Statistik"
             android:screenOrientation="portrait" />
 
         <!-- Provider Facebook add to App -->
