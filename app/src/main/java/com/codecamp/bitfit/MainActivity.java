@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         if(permissions[0].equals("android.permission.ACCESS_FINE_LOCATION")) {
             if (grantResults[0] == -1) { // access location permission denied
-                bottomNavigation.setCurrentItem(0); // return to home screen
+                // return to home screen and tell user that the run workout doesn't work without location permissions
+                bottomNavigation.setCurrentItem(0);
                 tabSelectLstener.onTabSelected(0,false);
                 // TODO: tell this greedy boy that "no location permission = no run workouts"!
             }
