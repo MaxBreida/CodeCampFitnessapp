@@ -275,6 +275,8 @@ public class HomeFragment extends Fragment {
 
     // Share stuff to Facebook
     private void shareBMIToFacebook() {
+        // TODO: repair? doesn't seem to work anymore, at least not with the FB app installed
+        // TODO: ask if user wants to share cardview or link to informative BMI results page
 
         final MaterialIconView shareBMIButton = getView().findViewById(R.id.button_share_bmi);
         shareBMIButton.setOnClickListener(new View.OnClickListener() {
@@ -285,7 +287,7 @@ public class HomeFragment extends Fragment {
                     genderUrlFormat = 0;
                 }
 
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + 1900 + "&gk=";
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(urlToBmiCalculator))
                         .setQuote(user.getName() + " BMI: " + Double.toString(Math.rint(bmi * 100) / 100))
