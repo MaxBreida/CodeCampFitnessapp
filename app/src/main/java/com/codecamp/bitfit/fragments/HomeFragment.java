@@ -2,7 +2,6 @@ package com.codecamp.bitfit.fragments;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -310,7 +309,7 @@ public class HomeFragment extends Fragment {
 
             MaterialIconView shareBut = (MaterialIconView) shareButton;
 
-            Bitmap bitmap = viewToBitmap(targetView);
+            Bitmap bitmap = Util.viewToBitmap(targetView);
 
             SharePhoto photo = new SharePhoto.Builder()
                     .setBitmap(bitmap)
@@ -342,13 +341,6 @@ public class HomeFragment extends Fragment {
     private void shareLastActivityToFacebook() {
         MaterialIconView shareLastActivityButton = getView().findViewById(R.id.button_share_last_activity);
         shareLastActivityButton.setOnClickListener(shareParentCardViewOnClick);
-    }
-
-    public Bitmap viewToBitmap(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -78,7 +79,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
@@ -286,7 +287,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
                 return true;
             case R.id.action_share:
-                // TODO start share intent
+                // TODO lots of testing + persistent cardview values
+                shareFragmentViewOnClick(getView().findViewById(R.id.container_pushup_counter));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

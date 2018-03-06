@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -31,8 +29,6 @@ import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -73,7 +69,7 @@ public class RunFragment extends WorkoutFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_run, container, false);
@@ -198,45 +194,32 @@ public class RunFragment extends WorkoutFragment {
         }
     };
 
-    public Bitmap viewToBitmap(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_statistics:
-                // TODO start statistics activity. Why is here something with sharing a photo/squats at statistics?
-                getActivity().startActivity(new Intent(getActivity(), RunStatisticsActivity.class));
-
-                View but = getView().findViewById(R.id.button_share_highscore_squats);
-                if(but == null) return true;
-                Bitmap image = viewToBitmap(but);
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(image)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-                ShareDialog.show(activity, content);
+                // TODO start statistics activity.
+                activity.startActivity(new Intent(getActivity(), RunStatisticsActivity.class));
                 return true;
             case R.id.action_share:
-                // TODO start share intent
-
-                StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
-                for (int i = 0; i < points.size(); i++) {
-                    googleMapsLink.append(points.get(i).latitude).append(",").append(points.get(i).longitude).append("/");
+                // TODO ask which sharing method the user wants and use the right one:
+                if(true) { // picture of view method
+                    // TODO lots of testing + persistent cardview values
+                    shareFragmentViewOnClick(getView().findViewById(R.id.run_data_cardview));
                 }
+                else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
+                    StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
+                    for (int i = 0; i < points.size(); i++) {
+                        googleMapsLink.append(points.get(i).latitude).append(",").append(points.get(i).longitude).append("/");
+                    }
 
-                ShareLinkContent content1 = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse(googleMapsLink.toString() + "data=!3m1!4b1!4m2!4m1!3e2"))
-                        .setQuote("")
-                        .build();
+                    ShareLinkContent content1 = new ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse(googleMapsLink.toString() + "data=!3m1!4b1!4m2!4m1!3e2"))
+                            .setQuote("")
+                            .build();
 
-                ShareDialog.show(activity, content1);
+                    ShareDialog.show(activity, content1);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
