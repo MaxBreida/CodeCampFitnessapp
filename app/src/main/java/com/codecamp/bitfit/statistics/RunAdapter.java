@@ -47,19 +47,20 @@ class RunAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup parent) {
         View rowView = mInflater.inflate(R.layout.activity_run_statistics, parent, false);
 
-        TextView dateTextView = (TextView) rowView.findViewById(R.id.textview_runitem_date);
+        // can't resolve all of those ids, so i'm commenting it out for now (did someone forget to push some xmls, or is it a problem on my end?)
+        /*TextView dateTextView = (TextView) rowView.findViewById(R.id.textview_runitem_date);
         TextView durationTextView = (TextView) rowView.findViewById(R.id.textview_runitem_duration);
         TextView distanceTextView = (TextView) rowView.findViewById(R.id.textview_runitem_distance);
         TextView caloriesTextView = (TextView) rowView.findViewById(R.id.textview_runitem_calories);
-        TextView speedTextView = (TextView) rowView.findViewById(R.id.textview_runitem_speed);
+        TextView speedTextView = (TextView) rowView.findViewById(R.id.textview_runitem_speed);*/
 
         Run run = (Run) getItem(i);
 
-        dateTextView.setText(" " + run.getCurrentDate());
+        /*dateTextView.setText(" " + run.getCurrentDate());
         durationTextView.setText("Dauer: " + Util.getMillisAsTimeString(run.getDurationInMillis()));
         distanceTextView.setText("Distanz: " + Util.roundTwoDecimals(run.getDistance()));
         caloriesTextView.setText("Verbrauchte Kalorien: " + run.getCalories());
-        speedTextView.setText("Geschwindigkeit: " + Util.roundTwoDecimals(run.getSpeed()));
+        speedTextView.setText("Geschwindigkeit: " + Util.roundTwoDecimals(run.getSpeed()));*/
 
         return rowView;
     }
