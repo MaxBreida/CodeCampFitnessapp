@@ -1,6 +1,9 @@
 package com.codecamp.bitfit.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.view.View;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
@@ -103,5 +106,12 @@ public class Util {
         d = Math.round(d * 100);
         d = d/100;
         return d;
+    }
+
+    public static Bitmap viewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 }
