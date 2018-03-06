@@ -42,26 +42,6 @@ public class HomeFragment extends Fragment {
 
     private double bmi;
 
-    // bmi share to Facebook
-    private MaterialIconView shareBMIButton;
-    private int genderUrlFormat = 1;
-
-    // highsore pushups share to Facebook
-    private MaterialIconView shareHighScorePushUpsButton;
-    private CardView highscorePushupsCardview;
-
-    // highscore Squat share to Facebook
-    private MaterialIconView shareHighScoreSquatsButton;
-    private CardView highscoreSquatsCardview;
-
-    // highscore Runnin share to Facebook
-    private MaterialIconView shareHighScoreRunButton;
-    private CardView highscoreRunCardview;
-
-    // share last activity to Facebook
-    private MaterialIconView shareLastActivityButton;
-    private CardView lastActivityCardview;
-
     public static HomeFragment getInstance() {
         HomeFragment fragment = new HomeFragment();
 
@@ -101,6 +81,8 @@ public class HomeFragment extends Fragment {
         shareHighScoreRunToFacebook();
         shareLastActivityToFacebook();
     }
+
+    // TODO check for code repetition, looks quite repetitive at some points
 
     private void lastActivity() {
         // get last activity from shared prefs
@@ -294,11 +276,11 @@ public class HomeFragment extends Fragment {
     // Share stuff to Facebook
     private void shareBMIToFacebook() {
 
-        shareBMIButton = getView().findViewById(R.id.button_share_bmi);
+        final MaterialIconView shareBMIButton = getView().findViewById(R.id.button_share_bmi);
         shareBMIButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int genderUrlFormat = 1;
                 if (user.getGender() != "männlich") {
                     genderUrlFormat = 0;
                 }
@@ -313,96 +295,51 @@ public class HomeFragment extends Fragment {
                 shareBMIButton.setColor(Color.parseColor("#DDDDDD"));
             }
         });
-
     }
 
-    private void shareHighScorePushUpsToFacebook() {
-        shareHighScorePushUpsButton = getView().findViewById(R.id.button_share_highscore_pushups);
-        highscorePushupsCardview = getView().findViewById(R.id.cardview_highscore_pushups);
-
-        shareHighScorePushUpsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = viewToBitmap(highscorePushupsCardview);
-
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(bitmap)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-
-                ShareDialog.show(getActivity(), content);
-                shareHighScorePushUpsButton.setColor(Color.parseColor("#DDDDDD"));
+    View.OnClickListener shareParentCardViewOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View shareButton) {
+            View targetView = shareButton;
+            // gets parent view till it reaches a CardView
+            while(!targetView.getClass().equals(CardView.class)){
+                targetView = (View) targetView.getParent();
             }
-        });
+
+            MaterialIconView shareBut = (MaterialIconView) shareButton;
+
+            Bitmap bitmap = viewToBitmap(targetView);
+
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(bitmap)
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+
+            ShareDialog.show(getActivity(), content);
+            shareBut.setColor(Color.parseColor("#DDDDDD"));
+        }
+    };
+
+    private void shareHighScorePushUpsToFacebook() {
+        MaterialIconView shareHighScorePushUpsButton = getView().findViewById(R.id.button_share_highscore_pushups);
+        shareHighScorePushUpsButton.setOnClickListener(shareParentCardViewOnClick);
     }
 
     private void shareHighScoreSquatToFacebook() {
-        shareHighScoreSquatsButton = getView().findViewById(R.id.button_share_highscore_squats);
-        highscoreSquatsCardview = getView().findViewById(R.id.cardview_highscore_squats);
-
-        shareHighScoreSquatsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = viewToBitmap(highscoreSquatsCardview);
-
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(bitmap)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-
-                ShareDialog.show(getActivity(), content);
-                shareHighScoreSquatsButton.setColor(Color.parseColor("#DDDDDD"));
-            }
-        });
+        MaterialIconView shareHighScoreSquatsButton = getView().findViewById(R.id.button_share_highscore_squats);
+        shareHighScoreSquatsButton.setOnClickListener(shareParentCardViewOnClick);
     }
 
     private void shareHighScoreRunToFacebook() {
-        shareHighScoreRunButton = getView().findViewById(R.id.button_share_highscore_run);
-        highscoreRunCardview = getView().findViewById(R.id.cardview_highscore_run);
-
-        shareHighScoreRunButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = viewToBitmap(highscoreRunCardview);
-
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(bitmap)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-
-                ShareDialog.show(getActivity(), content);
-                shareHighScoreRunButton.setColor(Color.parseColor("#DDDDDD"));
-            }
-        });
+        MaterialIconView shareHighScoreRunButton = getView().findViewById(R.id.button_share_highscore_run);
+        shareHighScoreRunButton.setOnClickListener(shareParentCardViewOnClick);
     }
 
     private void shareLastActivityToFacebook() {
-
-        shareLastActivityButton = getView().findViewById(R.id.button_share_last_activity);
-        lastActivityCardview = getView().findViewById(R.id.cardview_last_activity);
-
-        shareLastActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = viewToBitmap(lastActivityCardview);
-
-                SharePhoto photo = new SharePhoto.Builder()
-                        .setBitmap(bitmap)
-                        .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
-                        .addPhoto(photo)
-                        .build();
-
-                ShareDialog.show(getActivity(), content);
-                shareLastActivityButton.setColor(Color.parseColor("#DDDDDD"));
-            }
-        });
+        MaterialIconView shareLastActivityButton = getView().findViewById(R.id.button_share_last_activity);
+        shareLastActivityButton.setOnClickListener(shareParentCardViewOnClick);
     }
 
     public Bitmap viewToBitmap(View view) {
