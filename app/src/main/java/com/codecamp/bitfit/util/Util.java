@@ -108,6 +108,12 @@ public class Util {
         return d;
     }
 
+    public static String floatToXPrecisionString(float num, int precision){
+        // US locale to ensure that we get a "." (dot) notation instead of a "," (comma) notation
+        String format = "%.".concat(String.valueOf(precision)).concat("f");
+        return String.format(java.util.Locale.US, format, num);
+    }
+
     public static Bitmap viewToBitmap(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
