@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.POWER_SERVICE;
+import static com.codecamp.bitfit.util.Util.floatToXPrecisionString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +62,9 @@ public class RunFragment extends WorkoutFragment {
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView; // avoid using getView() each time it's needed
+    CountUpTimer runDurationTimer;
+    long runDuration = 0;
+    View dataCard;
 
     public static RunFragment getInstance() {
 
@@ -86,9 +90,11 @@ public class RunFragment extends WorkoutFragment {
         // taking care of the infamous "may be null" warnings
         if(getActivity() != null)
             activity = getActivity();
-        if(getView() != null)
+        if(getView() != null) {
             mainView = view;
-        // TODO: else unexpected error notification
+            dataCard = mainView.findViewById(R.id.run_data_cardview);
+        }
+        // TODO: else unexpected error notifications
 
         // setting up map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -122,7 +128,7 @@ public class RunFragment extends WorkoutFragment {
                 wakeLock.acquire(36000000);
 
                 if(runDurationTimer == null)
-                    setupTimer((TextView) mainView.findViewById(R.id.textview_run_duration));
+                    setupTimer((TextView) dataCard.findViewById(R.id.textview_run_duration));
                 else
                     runDurationTimer.reset();
 
@@ -165,18 +171,28 @@ public class RunFragment extends WorkoutFragment {
         @Override
         public void onLocationChanged(Location location) {
             if(location != null && location.getAccuracy() <= 25){
+                // set a point if accuracy is good enough
                 LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
                 points.add(curPos);
                 line.setPoints(points);
                 if(previousLoc != null){
                     runningDistance += location.distanceTo(previousLoc);
+                    TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
+                    distanceText.setText(floatToXPrecisionString(runningDistance/1000, 2));
                 }
                 else{
                     LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
                 }
                 previousLoc = location;
+
+                if(location.hasSpeed()){
+                    // set speed if the location manager can provide those readings
+                    TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
+                    float curSpeed = location.getSpeed();
+                    speedText.setText(floatToXPrecisionString(curSpeed, 1).concat("km/h"));
+                }
             }
         }
 
@@ -227,7 +243,7 @@ public class RunFragment extends WorkoutFragment {
                 // TODO ask which sharing method the user wants and use the right one:
                 if(true) { // picture of view method
                     // TODO lots of testing + persistent cardview values
-                    shareFragmentViewOnClick(mainView.findViewById(R.id.run_data_cardview));
+                    shareFragmentViewOnClick(dataCard);
                 }
                 else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
                     StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
@@ -248,8 +264,6 @@ public class RunFragment extends WorkoutFragment {
         }
     }
 
-    CountUpTimer runDurationTimer;
-    long runDuration = 0;
     public void setupTimer(final TextView view){
         runDurationTimer = new CountUpTimer(1000, view) {
             @Override
