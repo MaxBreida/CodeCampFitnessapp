@@ -24,10 +24,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
+import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.util.Util;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,6 +60,7 @@ public class RunFragment extends WorkoutFragment {
     PowerManager powerManager; // required for wakelock creation
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
     FragmentActivity activity; // avoid using getActivity() all the time
+    View mainView; // avoid using getView() each time it's needed
 
     public static RunFragment getInstance() {
 
@@ -79,77 +83,79 @@ public class RunFragment extends WorkoutFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // taking care of the infamous may be "null" warnings
+        // taking care of the infamous "may be null" warnings
         if(getActivity() != null)
             activity = getActivity();
+        if(getView() != null)
+            mainView = view;
         // TODO: else unexpected error notification
 
+        // setting up map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mapReady);
 
+        // setting wakelock
         powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
-        final FloatingActionButton startStopBut = getView().findViewById(R.id.button_start_stop_run);
-        startStopBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(startStopBut.isActivated()){
-                    setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
+        // setting up the start / stop button
+        mainView.findViewById(R.id.button_start_stop_run).setOnClickListener(startStopButListener);
+    }
 
-                    lm.removeUpdates(locListener);
-                    wakeLock.release();
+    View.OnClickListener startStopButListener = new View.OnClickListener() {
+        FloatingActionButton startStopButton;
+
+        @Override
+        public void onClick(View view) {
+            startStopButton = (FloatingActionButton) view;
+            if(startStopButton.isActivated()){
+                setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
+
+                runDurationTimer.stop();
+
+                lm.removeUpdates(locListener);
+                wakeLock.release();
+            }
+            else{
+                setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
+
+                wakeLock.acquire(36000000);
+
+                if(runDurationTimer == null)
+                    setupTimer((TextView) mainView.findViewById(R.id.textview_run_duration));
+                else
+                    runDurationTimer.reset();
+
+                runDurationTimer.start();
+
+                startRunIfAllIsSet();
+            }
+        }
+
+        private void startRunIfAllIsSet() {
+            if (checkPermission()) {
+                lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
+                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                    // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+                }
+                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
                 }
                 else{
-                    setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
-
-                    wakeLock.acquire(36000000);
-
-                    startRunIfAllIsSet();
+                    Criteria criteria = new Criteria();
+                    criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                    lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
                 }
             }
-
-            private void startRunIfAllIsSet() {
-                if (checkPermission()) {
-                    lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-
-                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                        // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-                    }
-                    if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                        // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                    }
-                    else{
-                        Criteria criteria = new Criteria();
-                        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-                        lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
-                    }
-                }
-            }
-
-            private void setButton(boolean active, int color, int resId){
-                startStopBut.setActivated(active);
-                startStopBut.setBackgroundTintList(ColorStateList.valueOf(color));
-                startStopBut.setImageResource(resId);
-            }
-        });
-    }
-
-    private boolean checkPermission() {
-        if(permissionGranted())
-            return true;
-        else{
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            return false;
         }
-    }
 
-    private boolean permissionGranted() {
-        return ContextCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED;
-    }
+        private void setButton(boolean active, int color, int resId){
+            startStopButton.setActivated(active);
+            startStopButton.setBackgroundTintList(ColorStateList.valueOf(color));
+            startStopButton.setImageResource(resId);
+        }
+    };
 
     LocationListener locListener = new LocationListener() {
 
@@ -194,6 +200,22 @@ public class RunFragment extends WorkoutFragment {
         }
     };
 
+    private boolean checkPermission() {
+        if(permissionGranted())
+            return true;
+        else{
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return false;
+        }
+    }
+
+    private boolean permissionGranted() {
+        return ContextCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -205,7 +227,7 @@ public class RunFragment extends WorkoutFragment {
                 // TODO ask which sharing method the user wants and use the right one:
                 if(true) { // picture of view method
                     // TODO lots of testing + persistent cardview values
-                    shareFragmentViewOnClick(getView().findViewById(R.id.run_data_cardview));
+                    shareFragmentViewOnClick(mainView.findViewById(R.id.run_data_cardview));
                 }
                 else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
                     StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
@@ -224,6 +246,18 @@ public class RunFragment extends WorkoutFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    CountUpTimer runDurationTimer;
+    long runDuration = 0;
+    public void setupTimer(final TextView view){
+        runDurationTimer = new CountUpTimer(1000, view) {
+            @Override
+            public void onTick(long elapsedTime) {
+                runDuration = elapsedTime;
+                view.setText(Util.getMillisAsTimeString(elapsedTime));
+            }
+        };
     }
 
     @Override
