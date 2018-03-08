@@ -108,7 +108,8 @@ public class Util {
         return d;
     }
 
-    public static String floatToXPrecisionString(float num, int precision){
+    // TODO: forbid the usage of anything other than float or double (I forgot how to do it elegantly, gotta google)
+    public static <T> String decNumToXPrecisionString(T num, int precision){
         // US locale to ensure that we get a "." (dot) notation instead of a "," (comma) notation
         String format = "%.".concat(String.valueOf(precision)).concat("f");
         return String.format(java.util.Locale.US, format, num);
