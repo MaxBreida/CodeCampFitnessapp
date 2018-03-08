@@ -28,8 +28,10 @@ import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.codecamp.bitfit.util.CountUpTimer;
+import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -45,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.POWER_SERVICE;
-import static com.codecamp.bitfit.util.Util.floatToXPrecisionString;
+import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,6 +66,7 @@ public class RunFragment extends WorkoutFragment {
     View mainView; // avoid using getView() each time it's needed
     CountUpTimer runDurationTimer;
     long runDuration = 0;
+    int avgSpeed;
     View dataCard;
 
     public static RunFragment getInstance() {
@@ -179,7 +182,7 @@ public class RunFragment extends WorkoutFragment {
                 if(previousLoc != null){
                     runningDistance += location.distanceTo(previousLoc);
                     TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
-                    distanceText.setText(floatToXPrecisionString(runningDistance/1000, 2));
+                    distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
                 }
                 else{
                     LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -191,9 +194,23 @@ public class RunFragment extends WorkoutFragment {
                     // set speed if the location manager can provide those readings
                     TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
                     float curSpeed = location.getSpeed();
-                    speedText.setText(floatToXPrecisionString(curSpeed, 1).concat("km/h"));
+                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
                 }
+
+                // set Calories
+                TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
+                calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
             }
+        }
+
+        private double getCurrentCalories() {
+            // TODO: fix errors, overhaul and add values for female users
+            double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
+            User user = DBQueryHelper.findUser();
+            double ageParameter = (user.getAge() + 1900) * 0.074;
+            double weightParameter = user.getWeight() * 0.05741;
+            double heartRate = avgSpeed * (46 / 8.04672) + 80;
+            return (ageParameter - weightParameter + (heartRate * 0.4472) - 20.4022) * runDuration / 4.184;
         }
 
         @Override
