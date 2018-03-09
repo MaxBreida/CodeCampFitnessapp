@@ -108,11 +108,10 @@ public class Util {
         return d;
     }
 
-    // TODO: forbid the usage of anything other than float or double (I forgot how to do it elegantly, gotta google)
-    public static <T> String decNumToXPrecisionString(T num, int precision){
-        // US locale to ensure that we get a "." (dot) notation instead of a "," (comma) notation
+    public static String decNumToXPrecisionString(Number num, int precision){
         String format = "%.".concat(String.valueOf(precision)).concat("f");
         return String.format(java.util.Locale.US, format, num);
+        // US locale to ensure that we get a "." (dot) notation instead of a "," (comma) notation
     }
 
     public static Bitmap viewToBitmap(View view) {
