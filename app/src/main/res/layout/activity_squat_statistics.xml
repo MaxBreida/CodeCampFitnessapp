@@ -75,14 +75,16 @@
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:text="Dauer: 1:23 Minuten"/>
+                           android:text="@string/durationInMillis"
+                           />
 
                        <TextView
                            android:id="@+id/textview_squatitem_calories"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:text="Verbrauchte Kalorien: 50"/>
+                           android:text="@string/calories"
+                           />
 
 
                    </LinearLayout>
@@ -99,7 +101,8 @@
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:text="Anzahl Squats: 123"/>
+                           android:text="Wiederholungen"
+                           />
 
 
                        <TextView
@@ -107,7 +110,8 @@
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:textSize="14sp"
-                           android:text="Squats/min: 5"/>
+                           android:text="@string/squats_per_min"
+                           />
                    </LinearLayout>
                </LinearLayout>
 

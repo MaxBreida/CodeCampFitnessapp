@@ -50,7 +50,7 @@ public class RunStatisticsActivity extends ListActivity {
         dummyRun.setDistance(distance);
         //TODO: Check why this calculation has no effect here or change the dummyCreator
         //DummyCreator could be changed so that the speed would be an input and not calculated
-        dummyRun.setSpeed((distance/((double) 60*durationAsSeconds)));
+        dummyRun.setSpeed(Util.roundTwoDecimals(distance/((double) 60*durationAsSeconds)));
 
         dummyRun.save();
     }

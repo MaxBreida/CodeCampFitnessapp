@@ -42,7 +42,7 @@
     <string name="gender">Geschlecht:</string>
     <string name="age">Alter:</string>
     <string name="height">Größe (in cm):</string>
-    <string name="weight">Gewicht (in kg):</string>
+    <string name="weightInKG">Gewicht (in kg):</string>
     <string name="birthday">Geburtstag:</string>
     <string name="save">Speichern</string>
     <string name="instructions">Instructions</string>

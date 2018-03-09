@@ -32,7 +32,6 @@ import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -202,10 +201,14 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private double calcCalories() {
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
 
-        double weight = user.getWeight();
+        double weightPushed = user.getWeightInKG()*0.7;
+
+        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
+        //Factor 100 to get from cm to meter
+        double heightPushed = user.getSizeInCM()*3/8*100;
 
         // wayUp + wayDown = one push up
-        double wayUp = ((weight*0.7 * 9.81 * 0.3) / 4.1868) / 1000;
+        double wayUp = ((weightPushed*heightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
         return Util.roundTwoDecimals((wayDown + wayUp) * (double) count);

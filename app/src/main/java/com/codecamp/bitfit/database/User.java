@@ -29,10 +29,10 @@ public class User extends BaseModel {
     String name;
 
     @Column
-    int size;
+    int sizeInCM;
 
     @Column
-    double weight;
+    double weightInKG;
 
     @Column
     Date birthday;
@@ -57,20 +57,20 @@ public class User extends BaseModel {
         this.name = name;
     }
 
-    public int getSize() {
-        return size;
+    public int getSizeInCM() {
+        return sizeInCM;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setSizeInCM(int sizeInCM) {
+        this.sizeInCM = sizeInCM;
     }
 
-    public double getWeight() { return weight; }
+    public double getWeightInKG() { return weightInKG; }
 
-    public double getWeightInLbs() { return weight * 2.2046226218487755; }
+    public double getWeightInLbs() { return weightInKG * 2.2046226218487755; }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setWeightInKG(double weightInKG) {
+        this.weightInKG = weightInKG;
     }
 
     public Date getBirthday() {

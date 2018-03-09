@@ -162,14 +162,14 @@ public class HomeFragment extends Fragment {
             bmi = calculateBMI(user);
 
             // set text in textviews
-            bmiHeight.setText(String.format(" %s m", String.valueOf(Util.getHeightInMeters(user.getSize()))));
-            bmiWeight.setText(String.format(" %s kg", String.valueOf(user.getWeight())));
+            bmiHeight.setText(String.format(" %s m", String.valueOf(Util.getHeightInMeters(user.getSizeInCM()))));
+            bmiWeight.setText(String.format(" %s kg", String.valueOf(user.getWeightInKG())));
             bmiValue.setText(String.format("BMI: %.2f", bmi));
         }
     }
 
     private double calculateBMI(User user) {
-        return user.getWeight() / Math.pow(Util.getHeightInMeters(user.getSize()), 2);
+        return user.getWeightInKG() / Math.pow(Util.getHeightInMeters(user.getSizeInCM()), 2);
     }
 
     private void highscorePushups() {
@@ -286,7 +286,7 @@ public class HomeFragment extends Fragment {
                     genderUrlFormat = 0;
                 }
 
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSizeInCM() + "&wk=" + user.getWeightInKG() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(urlToBmiCalculator))
                         .setQuote(user.getName() + " BMI: " + Double.toString(Math.rint(bmi * 100) / 100))

@@ -2,7 +2,6 @@ package com.codecamp.bitfit.fragments;
 
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -22,11 +20,9 @@ import android.widget.Toast;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
-import com.codecamp.bitfit.statistics.PushupStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CustomEditText;
 import com.codecamp.bitfit.util.DBQueryHelper;
-import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.Util;
 
 import java.text.ParseException;
@@ -94,8 +90,8 @@ public class ProfileFragment extends Fragment {
             // initialize values
             nameEditText.setText(user.getName());
             birthdayEditText.setText(Util.getDateAsString(user.getBirthday()));
-            heightEditText.setText(String.valueOf(user.getSize()));
-            weightEditText.setText(String.valueOf(user.getWeight()));
+            heightEditText.setText(String.valueOf(user.getSizeInCM()));
+            weightEditText.setText(String.valueOf(user.getWeightInKG()));
             setupGenderPicker();
         }
 
@@ -185,8 +181,8 @@ public class ProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                user.setSize(Integer.parseInt(heightEditText.getText().toString()));
-                user.setWeight(Double.parseDouble(weightEditText.getText().toString()));
+                user.setSizeInCM(Integer.parseInt(heightEditText.getText().toString()));
+                user.setWeightInKG(Double.parseDouble(weightEditText.getText().toString()));
                 user.setGender(genderSpinner.getSelectedItem().toString());
 
                 if(user.update()) {

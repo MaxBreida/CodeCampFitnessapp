@@ -27,6 +27,7 @@ import com.codecamp.bitfit.statistics.SquatStatisticsActivity;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
+//import com.codecamp.bitfit.util.FinishDialog;
 import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
@@ -163,7 +164,7 @@ public class SquatFragment extends WorkoutFragment {
 
                 // TODO: view acticity details and send them to database
                 currentSquat = createSquatObj();
-                //  new FinishDialog(getContext(), getString(R.string.ask_finish), currentSquat).show();
+//                  new FinishDialog(getContext(), "Workout beenden", currentSquat).show();
 
                 // save workout to database and make Toast to confirm saving
                 currentSquat.save();
@@ -214,15 +215,18 @@ public class SquatFragment extends WorkoutFragment {
     }
 
     double calcCalories() {
-        // TODO use different values ?!?! This is just a first implementation, dunno which values to use
+        // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
 
-        double weight = user.getWeight();
+        //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
+        double weightPushed = user.getWeightInKG()*0.5;
+        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
+        //Factor 100 to get from cm to meter
+        double heightPushed = user.getSizeInCM()*1/4*100;
 
-        // wayUp + wayDown = one push up
+        // wayUp + wayDown = one squat
 
-        //TODO other value than 0.5?!
-        double wayUp = ((weight*0.7 * 9.81 * 0.5) / 4.1868) / 1000;
+        double wayUp = ((heightPushed*weightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
         return Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);

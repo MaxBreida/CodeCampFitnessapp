@@ -62,8 +62,8 @@ public class IntroActivity extends AppIntro
         // User initialize
         user.setId(UUID.randomUUID());
         user.setName(name);
-        user.setWeight(weight);
-        user.setSize(height);
+        user.setWeightInKG(weight);
+        user.setSizeInCM(height);
         user.setGender(gender);
         user.setBirthday(birthday);
 
