@@ -66,7 +66,6 @@ public class RunFragment extends WorkoutFragment {
     View mainView; // avoid using getView() each time it's needed
     CountUpTimer runDurationTimer;
     long runDuration = 0;
-    int avgSpeed;
     View dataCard;
 
     public static RunFragment getInstance() {
@@ -204,13 +203,22 @@ public class RunFragment extends WorkoutFragment {
         }
 
         private double getCurrentCalories() {
-            // TODO: fix errors, overhaul and add values for female users
-            double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
+            // TODO: lots of testing & why does it go negative? Dumb formula?
+            // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
+            // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
+            // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
             User user = DBQueryHelper.findUser();
-            double ageParameter = (user.getAge() + 1900) * 0.074;
-            double weightParameter = user.getWeight() * 0.05741;
+            boolean m = user.isMale();
+            double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
             double heartRate = avgSpeed * (46 / 8.04672) + 80;
-            return (ageParameter - weightParameter + (heartRate * 0.4472) - 20.4022) * runDuration / 4.184;
+            double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
+            double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
+            double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
+            heartRateParameter -= ((m) ? 55.0969 : 20.4022);
+            double cals = ageParameter - weightParameter + heartRateParameter;
+            cals *= (runDuration / (4.184 * 60000));
+            if(cals < 0) cals = 0;
+            return cals;
         }
 
         @Override
