@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -64,9 +65,9 @@ public class User extends BaseModel {
         this.size = size;
     }
 
-    public double getWeight() {
-        return weight;
-    }
+    public double getWeight() { return weight; }
+
+    public double getWeightInLbs() { return weight * 2.2046226218487755; }
 
     public void setWeight(double weight) {
         this.weight = weight;
@@ -80,21 +81,24 @@ public class User extends BaseModel {
         this.birthday = birthday;
     }
 
-    public String getGender() {
-        return gender;
-    }
+    public String getGender() { return gender; }
 
     public void setGender(String gender) {
         this.gender = gender;
     }
 
+    public boolean isMale() { return !isFemale(); }
+
+    public boolean isFemale(){ return gender.startsWith("w"); }
+
     public int getAge() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.US);
+        // setting locale to US to ensure that we get ASCII digits instead of (e.g.) arabic digits
         Date curDate = Calendar.getInstance().getTime();
         int curD = Integer.parseInt(df.format(curDate));
-        int bday = Integer.parseInt(df.format(birthday));
-        int age = ((curD - bday) / 10000);
-        return age;
+        int bDay = Integer.parseInt(df.format(birthday));
+        int age = ((curD - bDay) / 10000);
+        return age + 1900;
     }
 
 
