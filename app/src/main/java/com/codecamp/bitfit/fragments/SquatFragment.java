@@ -51,6 +51,10 @@ public class SquatFragment extends WorkoutFragment {
     //Boolean variable to store if the workout was started, if not: no need to evaluate sensors
     private boolean workoutStarted;
 
+    //Values for calorie calculation
+    double weightPushed;
+    double heightPushed;
+
     //GUI elements
     private TextView timeTextView;
     private FloatingActionButton sqFinishButton;
@@ -191,6 +195,21 @@ public class SquatFragment extends WorkoutFragment {
         avgSquatsTextView.setText(R.string.default_double_value);
         squatState = SquatStates.SQUAT_DOWN;
         squatCtr = 0;
+
+        //values for calorie calculation
+        // TODO check values and approximation for body proportions
+        // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
+        //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
+        weightPushed = user.getWeightInKG()*0.5;
+        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
+
+        heightPushed =  (1/4)*(1/100)*(double)user.getSizeInCM();
+        // TODO: I don't know why this wouldn't work, could someone tell me?
+        // I think it has something to do with size being an int and casting stuff
+        // instead I'm first calculating in cm and then changing it to meter
+        double heightPushedInCm = (double) user.getSizeInCM()/4;
+        //Divide by 100 to get from cm to meter
+        heightPushed = (double) heightPushedInCm/100;
     }
 
     private Squat createSquatObj(){
@@ -215,20 +234,13 @@ public class SquatFragment extends WorkoutFragment {
     }
 
     double calcCalories() {
-        // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
-
-        //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
-        double weightPushed = user.getWeightInKG()*0.5;
-        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
-        //Factor 100 to get from cm to meter
-        double heightPushed = user.getSizeInCM()*1/4*100;
-
+        //weightPushed and heightPushed are initialized in setToInitialState() method
         // wayUp + wayDown = one squat
-
         double wayUp = ((heightPushed*weightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
+        double calorie = Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
         return Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
     }
 

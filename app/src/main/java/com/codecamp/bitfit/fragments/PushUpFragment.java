@@ -66,6 +66,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private double averageLightRange;
     private boolean lockPushUpsCount;
 
+    //Values for calorie calculation
+    double weightPushed;
+    double heightPushed;
+
 
     public static PushUpFragment getInstance() {
         PushUpFragment fragment = new PushUpFragment();
@@ -169,6 +173,22 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         maxLightRange = 0;
         minLightRange = 0;
         averageLightRange = 0;
+
+        //values for calorie calculation
+        // TODO check values and approximation for body proportions
+        // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
+        //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
+        weightPushed = user.getWeightInKG()*0.5;
+        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion,
+        //upper arm length is about 1 1/2 fields => 3/8*size
+
+        heightPushed =  (3/8)*(1/100)*(double)user.getSizeInCM();
+        // TODO: I don't know why this wouldn't work, could someone tell me?
+        // I think it has something to do with size being an int and casting stuff
+        // instead I'm first calculating in cm and then changing it to meter
+        double heightPushedInCm = (double) user.getSizeInCM()/4;
+        //Divide by 100 to get from cm to meter
+        heightPushed = (double) heightPushedInCm/100;
     }
 
     private void persistPushupObject() {
@@ -200,13 +220,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     private double calcCalories() {
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
-
-        double weightPushed = user.getWeightInKG()*0.7;
-
-        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
-        //Factor 100 to get from cm to meter
-        double heightPushed = user.getSizeInCM()*3/8*100;
-
+        //weightPushed and heightPushed are initialized in setToInitialState() method
         // wayUp + wayDown = one push up
         double wayUp = ((weightPushed*heightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
