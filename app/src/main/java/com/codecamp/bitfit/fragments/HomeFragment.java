@@ -286,7 +286,7 @@ public class HomeFragment extends Fragment {
                     genderUrlFormat = 0;
                 }
 
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + 1900 + "&gk=";
+                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSize() + "&wk=" + user.getWeight() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(urlToBmiCalculator))
                         .setQuote(user.getName() + " BMI: " + Double.toString(Math.rint(bmi * 100) / 100))
