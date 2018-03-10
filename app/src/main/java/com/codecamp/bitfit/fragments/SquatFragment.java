@@ -44,9 +44,12 @@ public class SquatFragment extends WorkoutFragment {
 
     private int squatCtr;
     private Squat currentSquat;
+    //Time variables
     private long startTime;
     private long finishTime;
     private long elapsedTime;
+    private long pauseTime;
+    private long resumeTime;
 
     //Boolean variable to store if the workout was started, if not: no need to evaluate sensors
     private boolean workoutStarted;
@@ -61,6 +64,9 @@ public class SquatFragment extends WorkoutFragment {
     private TextView squatButton;
     private TextView avgSquatsTextView;
     private TextView caloriesTextView;
+    private FloatingActionButton sqResumeButton;
+    private TextView resumeTextView;
+    private TextView quitTextView;
     private View container;
 
     //Use an average value for the accelerometer output
@@ -79,7 +85,14 @@ public class SquatFragment extends WorkoutFragment {
             COUNT
     }
 
+    enum QuitButtonStates {
+        STOP_CLICK,
+        SAVE_CLICK
+    }
+
     private SquatStates squatState;
+
+    private QuitButtonStates quitState;
 
     private CountUpTimer squatTimer;
 
@@ -117,6 +130,10 @@ public class SquatFragment extends WorkoutFragment {
 
         squatButton = getView().findViewById(R.id.button_squat);
         sqFinishButton = getView().findViewById(R.id.button_squat_quit);
+        sqResumeButton = getView().findViewById(R.id.button_squat_resume);
+        resumeTextView = getView().findViewById(R.id.textView_squat_resume);
+        quitTextView = getView().findViewById(R.id.textView_squat_quit);
+
         timeTextView = getView().findViewById(R.id.textview_cardview_time);
         avgSquatsTextView = getView().findViewById(R.id.textview_cardview_avg);
         caloriesTextView = getView().findViewById(R.id.textview_cardview_calories);
@@ -157,28 +174,48 @@ public class SquatFragment extends WorkoutFragment {
         });
 
         sqFinishButton.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View view) {
-                squatTimer.stop();
-                finishTime = System.currentTimeMillis();
+                if(quitState.equals(QuitButtonStates.STOP_CLICK)){
+                    squatTimer.stop();
+                    pauseTime = System.currentTimeMillis();
+                    workoutStarted = false;
 
-                // Screen keep on Flag set
-                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    sqResumeButton.setVisibility(View.VISIBLE);
+                    resumeTextView.setVisibility(View.VISIBLE);
+                    quitTextView.setVisibility(View.VISIBLE);
 
-                // TODO: view acticity details and send them to database
-                currentSquat = createSquatObj();
-//                  new FinishDialog(getContext(), "Workout beenden", currentSquat).show();
+                    quitState = QuitButtonStates.SAVE_CLICK;
+                    // Screen keep on Flag set
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                } else if(quitState.equals(QuitButtonStates.SAVE_CLICK)){
+                    finishTime = System.currentTimeMillis();
+                    currentSquat = createSquatObj();
+                    // save workout to database and make Toast to confirm saving
+                    currentSquat.save();
+                    Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+                    // set as last workout
+                    new SharedPrefsHelper(getContext())
+                            .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
 
-                // save workout to database and make Toast to confirm saving
-                currentSquat.save();
-                Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+                    setToInitialState();
+                }
+            }
+        });
 
-                // set as last workout
-                new SharedPrefsHelper(getContext())
-                        .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+        // TODO make CountUpTimer not be resetted
+        sqResumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quitState = QuitButtonStates.STOP_CLICK;
+                workoutStarted = true;
 
-                setToInitialState();
+                sqResumeButton.setVisibility(View.INVISIBLE);
+                resumeTextView.setVisibility(View.INVISIBLE);
+                quitTextView.setVisibility(View.INVISIBLE);
+
+                squatTimer.start();
+                resumeTime = System.currentTimeMillis();
             }
         });
 
@@ -193,7 +230,13 @@ public class SquatFragment extends WorkoutFragment {
         timeTextView.setText(getString(R.string.default_timer_value));
         caloriesTextView.setText(R.string.default_double_value);
         avgSquatsTextView.setText(R.string.default_double_value);
+
+        sqResumeButton.setVisibility(View.INVISIBLE);
+        quitTextView.setVisibility(View.INVISIBLE);
+        resumeTextView.setVisibility(View.INVISIBLE);
+
         squatState = SquatStates.SQUAT_DOWN;
+        quitState = QuitButtonStates.STOP_CLICK;
         squatCtr = 0;
         //values for calorie calculation
         // TODO check values and approximation for body proportions
@@ -206,7 +249,9 @@ public class SquatFragment extends WorkoutFragment {
     }
 
     private Squat createSquatObj(){
-        long duration = finishTime-startTime; //duration in milliseconds
+        // TODO: I need to check if this is really giving right values
+        // I had one workout where a time about 25300000:44 was saved (it wasn't that long ;D)
+        long duration = finishTime-startTime-(resumeTime-pauseTime); //duration in milliseconds
 
         //Set attributes of the squat object
         User currentUser = DBQueryHelper.findUser();
@@ -270,22 +315,18 @@ public class SquatFragment extends WorkoutFragment {
                     case SQUAT_DOWN:
                         if(azAvg>0){
                             // Linear acceleration sensor has a slight negative offset
-                            System.out.println("Switching to state stand up");
                             squatState = SquatStates.STAND_UP;
                         }
                         break;
                     case STAND_UP:
                         if(azAvg<0){
                             // While standing up: acceleration is positive
-                            System.out.println("Switching to state count");
                             squatState = SquatStates.COUNT;
                         }
 
                         break;
                     case COUNT:
                         squatCtr++;
-                        System.out.println("Squat counted! Switching to state squat down");
-
                         //Display new value for squat counter
                         squatButton.setText(String.valueOf(squatCtr));
                         avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
@@ -318,7 +359,9 @@ public class SquatFragment extends WorkoutFragment {
                 getActivity().startActivity(new Intent(getActivity(), SquatStatisticsActivity.class));
                 return true;
             case R.id.action_share:
-                // TODO lots of testing + persistent cardview values
+                // TODO lots of testing + persistent cardview values, rethink where sharing would best be placed
+                // My opinion: Sharing should be possible from the "Finish workout?" screen
+                //(which is not yet created), from here you'd share a not yet finished workout
                 shareFragmentViewOnClick(getView().findViewById(R.id.container_squat_counter));
                 return true;
             default:
