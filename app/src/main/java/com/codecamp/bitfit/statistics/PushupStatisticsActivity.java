@@ -20,8 +20,10 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -203,6 +205,19 @@ public class PushupStatisticsActivity extends AppCompatActivity {
 
         BarDataSet dataSet = new BarDataSet(entries, "Wiederholungen pro Tag");
         dataSet.setValueTextSize(12);
+        dataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                if(currentData.equals(PushUpData.REPETITIONS)) {
+                    return String.valueOf((int) value);
+                }
+                else if (currentData.equals(PushUpData.CALORIES)) {
+                    return String.format("%.2f", value);
+                }
+                // shouldnt come this far
+                return null;
+            }
+        });
 
         // set bar color
         if(currentData.equals(PushUpData.REPETITIONS)) {
@@ -285,6 +300,19 @@ public class PushupStatisticsActivity extends AppCompatActivity {
         }
 
         LineDataSet dataSet = new LineDataSet(entries, "Wiederholungen pro Workout");
+        dataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                if(currentData.equals(PushUpData.REPETITIONS)) {
+                    return String.valueOf((int) value);
+                }
+                else if (currentData.equals(PushUpData.CALORIES)) {
+                    return String.format("%.2f", value);
+                }
+                // shouldnt come this far
+                return null;
+            }
+        });
         // set line color and label
         if(currentData.equals(PushUpData.REPETITIONS)) {
             dataSet.setColor(getResources().getColor(R.color.lightBlue));

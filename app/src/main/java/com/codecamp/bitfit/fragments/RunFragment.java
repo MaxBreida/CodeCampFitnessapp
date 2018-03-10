@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
@@ -54,7 +55,7 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
  */
 
 // TODO: test offline functionality, implement if necessary
-public class RunFragment extends WorkoutFragment {
+public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
@@ -118,6 +119,9 @@ public class RunFragment extends WorkoutFragment {
         public void onClick(View view) {
             startStopButton = (FloatingActionButton) view;
             if(startStopButton.isActivated()){
+                // tell mainactivity that the workout is stopped
+                callback.workoutInProgress(false);
+
                 setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
 
                 runDurationTimer.stop();
@@ -126,6 +130,9 @@ public class RunFragment extends WorkoutFragment {
                 wakeLock.release();
             }
             else{
+                // tell mainactivity that a workout is in progress
+                callback.workoutInProgress(true);
+
                 setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
 
                 wakeLock.acquire(36000000);
@@ -334,5 +341,10 @@ public class RunFragment extends WorkoutFragment {
         // Set title bar
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
+    }
+
+    @Override
+    public void stopWorkoutOnFragmentChange() {
+        // stop workout here
     }
 }

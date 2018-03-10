@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.User;
@@ -37,7 +38,7 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PushUpFragment extends WorkoutFragment implements SensorEventListener {
+public class PushUpFragment extends WorkoutFragment implements SensorEventListener, OnDialogInteractionListener {
 
     // current User
     User user = DBQueryHelper.findUser();
@@ -130,6 +131,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     workoutStarted = true;
                     countUpTimer.start();
                     startTime = System.currentTimeMillis();
+                    callback.workoutInProgress(true);
                 } else {
                     // increment count and set text
                     count++;
@@ -146,14 +148,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                persistPushupObject();
-
-                // Screen keep on Flag clear
-                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-                // set to initial state
-                setToInitialState();
-                countUpTimer.stop();
+                stopWorkout();
             }
         });
     }
@@ -181,6 +176,19 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         //upper arm length is about 1 1/2 fields => 3/8*size
         heightPushed =  ((double) user.getSizeInCM() * 3) / (100 * 8);
         //Divide by 100 to get from cm to meter, multiply with 3/8 for body proportion adjustments
+    }
+
+    private void stopWorkout() {
+        callback.workoutInProgress(false);
+
+        persistPushupObject();
+
+        // Screen keep on Flag clear
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // set to initial state
+        setToInitialState();
+        countUpTimer.stop();
     }
 
     private void persistPushupObject() {
@@ -309,5 +317,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
+    }
+
+    @Override
+    public void stopWorkoutOnFragmentChange() {
+        stopWorkout();
     }
 }
