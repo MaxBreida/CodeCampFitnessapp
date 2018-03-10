@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.database.User;
@@ -37,7 +38,7 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SquatFragment extends WorkoutFragment {
+public class SquatFragment extends WorkoutFragment implements OnDialogInteractionListener {
 
     User user = DBQueryHelper.findUser();
     private SensorManager sensorManager;
@@ -160,6 +161,7 @@ public class SquatFragment extends WorkoutFragment {
                 // show quit button if we started push ups
                 if(!workoutStarted) {
                     workoutStarted = true;
+                    callback.workoutInProgress(true);
                     squatTimer.start();
                     startTime = System.currentTimeMillis();
                     container.setVisibility(View.VISIBLE);
@@ -189,16 +191,7 @@ public class SquatFragment extends WorkoutFragment {
                     // Screen keep on Flag set
                     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 } else if(quitState.equals(QuitButtonStates.SAVE_CLICK)){
-                    finishTime = System.currentTimeMillis();
-                    currentSquat = createSquatObj();
-                    // save workout to database and make Toast to confirm saving
-                    currentSquat.save();
-                    Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
-                    // set as last workout
-                    new SharedPrefsHelper(getContext())
-                            .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
-
-                    setToInitialState();
+                    stopWorkout();
                 }
             }
         });
@@ -246,6 +239,21 @@ public class SquatFragment extends WorkoutFragment {
         //Factor for the height pushed = size/4, approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
         heightPushed = (double) user.getSizeInCM() / (100 * 4);
         //Divide by 100 to get from cm to meter and divide by 4 to adjust the value to body proportions
+    }
+
+    private void stopWorkout() {
+        callback.workoutInProgress(false);
+
+        finishTime = System.currentTimeMillis();
+        currentSquat = createSquatObj();
+        // save workout to database and make Toast to confirm saving
+        currentSquat.save();
+        Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
+        // set as last workout
+        new SharedPrefsHelper(getContext())
+                .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
+
+        setToInitialState();
     }
 
     private Squat createSquatObj(){
@@ -396,4 +404,8 @@ public class SquatFragment extends WorkoutFragment {
         this.elapsedTime = elapsedTime;
     }
 
+    @Override
+    public void stopWorkoutOnFragmentChange() {
+        stopWorkout();
+    }
 }

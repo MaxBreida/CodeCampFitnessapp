@@ -1,8 +1,10 @@
 package com.codecamp.bitfit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -13,12 +15,16 @@ import com.codecamp.bitfit.fragments.ProfileFragment;
 import com.codecamp.bitfit.fragments.PushUpFragment;
 import com.codecamp.bitfit.fragments.RunFragment;
 import com.codecamp.bitfit.fragments.SquatFragment;
+import com.codecamp.bitfit.fragments.WorkoutFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
 import com.codecamp.bitfit.util.DBQueryHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WorkoutFragment.OnWorkoutInProgressListener{
 
     private static final int REQUEST_CODE = 8712;
+    private boolean workoutInProgress = false;
+
+    private OnDialogInteractionListener callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +78,53 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.addItem(profile);
 
         // Set listeners
-        bottomNavigation.setOnTabSelectedListener(tabSelectLstener);
+        bottomNavigation.setOnTabSelectedListener(tabSelectListener);
 
         // set start tab
         bottomNavigation.setCurrentItem(0);
-        tabSelectLstener.onTabSelected(0,false);
+        tabSelectListener.onTabSelected(0,false);
     }
 
-    AHBottomNavigation.OnTabSelectedListener tabSelectLstener = new AHBottomNavigation.OnTabSelectedListener() {
+    AHBottomNavigation.OnTabSelectedListener tabSelectListener = new AHBottomNavigation.OnTabSelectedListener() {
         @Override
-        public boolean onTabSelected(int position, boolean wasSelected) {
+        public boolean onTabSelected(final int position, final boolean wasSelected) {
+            if(workoutInProgress) {
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Workout noch nicht beendet!")
+                        .setMessage("Du hast deinen Workout noch nicht beendet. Willst du ihn jetzt beenden und speichern?")
+                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user wants to stop workout and save, so lets do this here
+                                callback.stopWorkoutOnFragmentChange();
+
+                                // change fragment after saving workout
+                                bottomNavigation.setCurrentItem(position);
+                                changeFragment(position, wasSelected);
+
+                                // cancel dialog
+                                workoutInProgress = false;
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // just dismiss this dialog
+                                dialog.cancel();
+                            }
+                        }).create();
+
+                dialog.show();
+                return false;
+            }
+
+            changeFragment(position, wasSelected);
+
+            return true;
+        }
+
+        private void changeFragment(int position, boolean wasSelected) {
             // only select item if it wasn't selected before
             if (!wasSelected) {
                 // select the fragment
@@ -92,14 +135,17 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         PushUpFragment pushUpFragment = PushUpFragment.getInstance();
+                        callback = pushUpFragment;
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, pushUpFragment).commit();
                         break;
                     case 2:
                         SquatFragment squatFragment = SquatFragment.getInstance();
+                        callback = squatFragment;
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
                         break;
                     case 3:
                         RunFragment runFragment = RunFragment.getInstance();
+                        callback = runFragment;
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, runFragment).commit();
                         break;
                     case 4:
@@ -110,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
-            return true;
         }
     };
 
@@ -124,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults[0] == -1) { // access location permission denied
                 // return to home screen and tell user that the run workout doesn't work without location permissions
                 bottomNavigation.setCurrentItem(0);
-                tabSelectLstener.onTabSelected(0,false);
+                tabSelectListener.onTabSelected(0,false);
                 // TODO: tell this greedy boy that "no location permission = no run workouts"!
             }
             else { // access location permission granted
@@ -132,8 +177,13 @@ public class MainActivity extends AppCompatActivity {
                 *  hence, this is the simplest way of restoring all functions to their initial state.
                 *  Furthermore, the user couldn't do anything without location permissions anyways,
                 *  so nothing gets discarded and the user shouldn't even notice a change in the app. */
-                tabSelectLstener.onTabSelected(3,false);
+                tabSelectListener.onTabSelected(3,false);
             }
         }
+    }
+
+    @Override
+    public void workoutInProgress(boolean inProgress) {
+        this.workoutInProgress = inProgress;
     }
 }

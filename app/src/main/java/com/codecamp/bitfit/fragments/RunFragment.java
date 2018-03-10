@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
@@ -54,7 +55,7 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
  */
 
 // TODO: test offline functionality, implement if necessary
-public class RunFragment extends WorkoutFragment {
+public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
@@ -334,5 +335,10 @@ public class RunFragment extends WorkoutFragment {
         // Set title bar
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
+    }
+
+    @Override
+    public void stopWorkoutOnFragmentChange() {
+        // stop workout here
     }
 }

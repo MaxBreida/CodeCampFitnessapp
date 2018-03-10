@@ -11,7 +11,11 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.database.User;
+import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.Util;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
@@ -19,10 +23,16 @@ import com.facebook.share.widget.ShareDialog;
 
 public class WorkoutFragment extends Fragment {
 
+    // callbacks to activity
+    WorkoutFragment.OnWorkoutInProgressListener callback;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        this.callback = (MainActivity) getActivity();
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -46,5 +56,9 @@ public class WorkoutFragment extends Fragment {
 
         if(getActivity() != null)
             ShareDialog.show(getActivity(), content);
+    }
+
+    public interface OnWorkoutInProgressListener {
+        void workoutInProgress(boolean inProgress);
     }
 }
