@@ -244,6 +244,10 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private void stopWorkout() {
         callback.workoutInProgress(false);
 
+        // TODO: use the countUpTimer for this:
+        // System.currentTimeMillis isn't suited for timers and gotta use our optimized countUpTimer for this anyways
+        // for more information: https://developer.android.com/reference/android/os/SystemClock.html
+        // I would suggest just using the global elapsedTime variable (which gets updated every second) for this
         finishTime = System.currentTimeMillis();
         currentSquat = createSquatObj();
         // save workout to database and make Toast to confirm saving
