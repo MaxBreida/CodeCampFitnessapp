@@ -1,10 +1,13 @@
 package com.codecamp.bitfit.statistics;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 
@@ -16,20 +19,29 @@ public class SquatStatisticsActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //TODO: Check why he doesn't find the listView by id when using setContentView (is sCV required?)
         setContentView(R.layout.activity_squat_statistics);
 
-        if(DBQueryHelper.findAllSquats().isEmpty()){
-            fillTableWithDummies();    //Fill table with dummy squats if the squat database is empty (for testing purpose)
+        if(!DBQueryHelper.findAllSquats().isEmpty()){
+            List<Squat> allSquats = DBQueryHelper.findAllSquats();
+
+            SquatAdapter squatItemAdapter = new SquatAdapter(this, allSquats);
+
+            setListAdapter(squatItemAdapter);
+        } else {
+            //            fillTableWithDummies();    //Fill table with dummy squats if the squat database is empty (for testing purpose)
+            Toast.makeText(this.getApplicationContext(), "Noch keine Workouts vorhanden, bitte \"Zurück\" gehen", Toast.LENGTH_LONG).show();
+
+            //TODO: Find a way to go back to SquatFragment from there
+
+//            First try: analog to MainActivity => not working because getSupportFragmentManager not defined here,
+//            SquatFragment squatFragment = SquatFragment.getInstance();
+////            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
+//
+//            This simple solution doesn't work
+//            Intent i = new Intent(SquatStatisticsActivity.this,SquatFragment.class);
+//            startActivity(i);
         }
 
-        List<Squat> allSquats = DBQueryHelper.findAllSquats();
-
-        SquatAdapter squatItemAdapter = new SquatAdapter(this, allSquats);
-
-
-        setListAdapter(squatItemAdapter);
 
     }
 
