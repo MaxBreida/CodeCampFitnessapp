@@ -182,13 +182,8 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion,
         //upper arm length is about 1 1/2 fields => 3/8*size
 
-        heightPushed =  (3/8)*(1/100)*(double)user.getSizeInCM();
-        // TODO: I don't know why this wouldn't work, could someone tell me?
-        // I think it has something to do with size being an int and casting stuff
-        // instead I'm first calculating in cm and then changing it to meter
-        double heightPushedInCm = (double) user.getSizeInCM()/4;
-        //Divide by 100 to get from cm to meter
-        heightPushed = (double) heightPushedInCm/100;
+        heightPushed =  ((double) user.getSizeInCM() * 3) / (100 * 8);
+        //Divide by 100 to get from cm to meter, multiply with 3/8 for body proportion adjustments
     }
 
     private void persistPushupObject() {
