@@ -21,6 +21,10 @@ public abstract class CountUpTimer {
     private long base;
     private TextView textView;
 
+    public CountUpTimer(long interval) {
+        this.interval = interval;
+    }
+
     public CountUpTimer(long interval, TextView textView) {
         this.interval = interval;
         this.textView = textView;
