@@ -29,17 +29,8 @@ public class SquatStatisticsActivity extends ListActivity {
             setListAdapter(squatItemAdapter);
         } else {
             //            fillTableWithDummies();    //Fill table with dummy squats if the squat database is empty (for testing purpose)
-            Toast.makeText(this.getApplicationContext(), "Noch keine Workouts vorhanden, bitte \"Zurück\" gehen", Toast.LENGTH_LONG).show();
-
-            //TODO: Find a way to go back to SquatFragment from there
-
-//            First try: analog to MainActivity => not working because getSupportFragmentManager not defined here,
-//            SquatFragment squatFragment = SquatFragment.getInstance();
-////            getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
-//
-//            This simple solution doesn't work
-//            Intent i = new Intent(SquatStatisticsActivity.this,SquatFragment.class);
-//            startActivity(i);
+            Toast.makeText(this.getApplicationContext(), "Noch keine Workouts zum Anzeigen vorhanden", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
 
