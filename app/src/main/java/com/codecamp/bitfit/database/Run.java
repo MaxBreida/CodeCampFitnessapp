@@ -14,25 +14,20 @@ import java.util.UUID;
 
 public class Run extends Workout {
     @Column
-    Double distance;
-
-    @Column
-    Double speed;
+    double distance;
 
     // Getter and Setter
-    public Double getDistance() {
+    public double getDistanceInKm() {
         return distance;
     }
 
-    public void setDistance(Double distance) {
+    public void setDistanceInKm(double distance) {
         this.distance = distance;
     }
 
-    public Double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
+    public double getAverageKmh() {
+        return distance * 3600000 / durationInMillis;
+        // optimized calculation for dividing durationInMillis by 1000 to get seconds,
+        // by 60 to get minutes and another 60 to get hours (=) 3600000 and finally get km / h
     }
 }
