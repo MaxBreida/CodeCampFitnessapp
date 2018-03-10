@@ -17,7 +17,7 @@ public abstract class CountUpTimer {
 
     private final long interval;
     private long base;
-    private long newBase;
+    private long stopTime;
     private TextView textView;
 
     public CountUpTimer(long interval) {
@@ -33,18 +33,14 @@ public abstract class CountUpTimer {
         base = SystemClock.elapsedRealtime();
         handler.sendMessage(handler.obtainMessage(MSG));
     }
-    
-    public void pause(){
-        newBase = SystemClock.elapsedRealtime();
-        handler.removeMessages(MSG);
-    }
 
     public void resume(){
-        base = SystemClock.elapsedRealtime() - (newBase - base);
+        base = SystemClock.elapsedRealtime() - (stopTime - base);
         handler.sendMessage(handler.obtainMessage(MSG));
     }
 
-    public void stop() {
+    public void stop(){
+        stopTime = SystemClock.elapsedRealtime();
         handler.removeMessages(MSG);
     }
 
