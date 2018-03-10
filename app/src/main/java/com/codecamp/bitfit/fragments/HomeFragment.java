@@ -141,10 +141,10 @@ public class HomeFragment extends Fragment {
             lastActivityDuration.setText(
                     String.format("%s Stunden", Util.getMillisAsTimeString(run.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format("%s km/h", String.valueOf(run.getSpeed())));
+                    String.format("%s km/h", String.valueOf(run.getAverageKmh())));
             perMinOrSpeedImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_speed));
             lastActivityRepeatsOrDistance.setText(
-                    String.format("%s km", String.valueOf(run.getDistance())));
+                    String.format("%s km", String.valueOf(run.getDistanceInKm())));
             repeatsOrDistanceImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_distance));
             lastActivityDate.setText(
                     String.format("%s", run.getCurrentDate()));
@@ -268,10 +268,10 @@ public class HomeFragment extends Fragment {
                     String.format("%s min", String.valueOf(highScoreRun.getDurationInMillis()))
             );
             highscoreRunDistance.setText(
-                    String.format("%s m", String.valueOf(highScoreRun.getDistance()))
+                    String.format("%s m", String.valueOf(highScoreRun.getDistanceInKm()))
             );
             highscoreRunSpeed.setText(
-                    String.format("%s km/h", String.valueOf(highScoreRun.getSpeed()))
+                    String.format("%s km/h", String.valueOf(highScoreRun.getAverageKmh()))
             );
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
