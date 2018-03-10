@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
-import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.database.Run;
+import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.DBQueryHelper;
@@ -28,7 +28,6 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
-import com.tolstykh.textviewrichdrawable.TextViewRichDrawable;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -89,29 +88,33 @@ public class HomeFragment extends Fragment {
         // initialize lastActivity view
         TextView lastActivityDuration = getView().findViewById(R.id.textview_lastActivity_duration);
         TextView lastActivityCalories = getView().findViewById(R.id.textview_lastActivity_calories);
-        TextViewRichDrawable lastActivityPerMinOrSpeed = getView().findViewById(R.id.textview_lastActivity_perMin_or_speed);
-        TextViewRichDrawable lastActivityRepeatsOrDistance = getView().findViewById(R.id.textview_lastActivity_repeats_or_distance);
+        TextView lastActivityPerMinOrSpeed = getView().findViewById(R.id.textview_lastActivity_perMin_or_speed);
+        ImageView perMinOrSpeedImageView = getView().findViewById(R.id.image_last_activity_counter);
+        TextView lastActivityRepeatsOrDistance = getView().findViewById(R.id.textview_lastActivity_repeats_or_distance);
+        ImageView repeatsOrDistanceImageView = getView().findViewById(R.id.image_last_activity_per_min);
         TextView lastActivityDate = getView().findViewById(R.id.textview_lastActivity_date);
         TextView noActivityText = getView().findViewById(R.id.text_last_activity_no_activity);
         View content = getView().findViewById(R.id.cardview_last_activity_constraintlayout);
         ImageView lastActivityIcon = getView().findViewById(R.id.imageview_lastActivity_icon);
+        ImageView calendarImage = getView().findViewById(R.id.image_lastActivity_date);
 
         // set card content
         if(lastActivity == null) {
             content.setVisibility(View.INVISIBLE);
             lastActivityDate.setVisibility(View.INVISIBLE);
             noActivityText.setVisibility(View.VISIBLE);
+            calendarImage.setVisibility(View.INVISIBLE);
         }
         else if(lastActivity instanceof PushUps) {
             PushUps pushUps = (PushUps) lastActivity;
             lastActivityCalories.setText(
-                    String.format(" %s kcal", String.valueOf(pushUps.getCalories())));
+                    String.format("%s kcal", String.valueOf(pushUps.getCalories())));
             lastActivityDuration.setText(
-                    String.format(" %s min", Util.getMillisAsTimeString(pushUps.getDurationInMillis())));
+                    String.format("%s min", Util.getMillisAsTimeString(pushUps.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format(" %s P/min", String.valueOf(pushUps.getPushPerMin())));
+                    String.format("%s P/min", String.valueOf(pushUps.getPushPerMin())));
             lastActivityRepeatsOrDistance.setText(
-                    String.format(" %s Push-Up(s)", String.valueOf(pushUps.getRepeats())));
+                    String.format("%s Push-Up(s)", String.valueOf(pushUps.getRepeats())));
             lastActivityDate.setText(String.format(" %s", pushUps.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_pushup_color);
@@ -119,32 +122,32 @@ public class HomeFragment extends Fragment {
         else  if(lastActivity instanceof  Squat) {
             Squat squat = (Squat) lastActivity;
             lastActivityCalories.setText(
-                    String.format(" %s kcal", String.valueOf(squat.getCalories())));
+                    String.format("%s kcal", String.valueOf(squat.getCalories())));
             lastActivityDuration.setText(
-                    String.format(" %s min", Util.getMillisAsTimeString(squat.getDurationInMillis())));
+                    String.format("%s min", Util.getMillisAsTimeString(squat.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format(" %s S/min", String.valueOf(squat.getSquatPerMin())));
+                    String.format("%s S/min", String.valueOf(squat.getSquatPerMin())));
             lastActivityRepeatsOrDistance.setText(
-                    String.format(" %s Squat(s)", String.valueOf(squat.getRepeats())));
+                    String.format("%s Squat(s)", String.valueOf(squat.getRepeats())));
             lastActivityDate.setText(
-                    String.format(" %s", squat.getCurrentDate()));
+                    String.format("%s", squat.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_squat_color);
         }
         else if (lastActivity instanceof Run) {
             Run run = (Run) lastActivity;
             lastActivityCalories.setText(
-                    String.format(" %s kcal", String.valueOf(run.getCalories())));
+                    String.format("%s kcal", String.valueOf(run.getCalories())));
             lastActivityDuration.setText(
                     String.format("%s Stunden", Util.getMillisAsTimeString(run.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
-                    String.format(" %s km/h", String.valueOf(run.getSpeed())));
-            lastActivityPerMinOrSpeed.setDrawableStartVectorId(R.drawable.icon_speed);
+                    String.format("%s km/h", String.valueOf(run.getSpeed())));
+            perMinOrSpeedImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_speed));
             lastActivityRepeatsOrDistance.setText(
-                    String.format(" %s km", String.valueOf(run.getDistance())));
-            lastActivityRepeatsOrDistance.setDrawableStartVectorId(R.drawable.icon_distance);
+                    String.format("%s km", String.valueOf(run.getDistance())));
+            repeatsOrDistanceImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_distance));
             lastActivityDate.setText(
-                    String.format(" %s", run.getCurrentDate()));
+                    String.format("%s", run.getCurrentDate()));
             lastActivityIcon.setVisibility(View.VISIBLE);
             lastActivityIcon.setImageResource(R.drawable.icon_run_color);
         }
@@ -162,8 +165,8 @@ public class HomeFragment extends Fragment {
             bmi = calculateBMI(user);
 
             // set text in textviews
-            bmiHeight.setText(String.format(" %s m", String.valueOf(Util.getHeightInMeters(user.getSizeInCM()))));
-            bmiWeight.setText(String.format(" %s kg", String.valueOf(user.getWeightInKG())));
+            bmiHeight.setText(String.format("%s m", String.valueOf(Util.getHeightInMeters(user.getSizeInCM()))));
+            bmiWeight.setText(String.format("%s kg", String.valueOf(user.getWeightInKG())));
             bmiValue.setText(String.format("BMI: %.2f", bmi));
         }
     }
@@ -181,6 +184,7 @@ public class HomeFragment extends Fragment {
         TextView highscorePushupsRepeats = getView().findViewById(R.id.textview_highscore_pushup_repeats);
         TextView noHighscoreText = getView().findViewById(R.id.text_highscore_pushups_no_highscore);
         View content = getView().findViewById(R.id.cardview_highscore_pushups_content);
+        ImageView calendarImage = getView().findViewById(R.id.image_highscore_pushup_date);
 
         // find pushup highscore
         PushUps highscorePushups = DBQueryHelper.findHighscorePushup();
@@ -188,19 +192,20 @@ public class HomeFragment extends Fragment {
         if (highscorePushups.getCurrentDate() != null) {
             // set text in textviews
             highscorePushupsCalories.setText(
-                    String.format(" %s kcal", String.valueOf(highscorePushups.getCalories())));
+                    String.format("%s kcal", String.valueOf(highscorePushups.getCalories())));
             highscorePushupsRepeats.setText(
-                    String.format(" %s Push-Up(s)", String.valueOf(highscorePushups.getRepeats())));
+                    String.format("%s Push-Up(s)", String.valueOf(highscorePushups.getRepeats())));
             highscorePushupsPPM.setText(
-                    String.format(" %s P/min", String.valueOf(highscorePushups.getPushPerMin())));
+                    String.format("%s P/min", String.valueOf(highscorePushups.getPushPerMin())));
             highscorePushupsDate.setText(
-                    String.format(" %s", highscorePushups.getCurrentDate()));
+                    String.format("%s", highscorePushups.getCurrentDate()));
             highscorePushupsDuration.setText(
-                    String.format(" %s min", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
+                    String.format("%s min", Util.getMillisAsTimeString(highscorePushups.getDurationInMillis())));
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
             content.setVisibility(View.INVISIBLE);
             highscorePushupsDate.setVisibility(View.INVISIBLE);
+            calendarImage.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -213,6 +218,7 @@ public class HomeFragment extends Fragment {
         TextView highscoreSquatsRepeats = getView().findViewById(R.id.textview_highscore_squats_repeats);
         TextView noHighscoreText = getView().findViewById(R.id.text_highscore_squats_no_highscore);
         View content = getView().findViewById(R.id.cardview_highscore_squats_content);
+        ImageView calendarImage = getView().findViewById(R.id.image_highscore_squats_date);
 
         // find pushup highscore
         Squat highscoreSquats = DBQueryHelper.findHighscoreSquat();
@@ -220,19 +226,20 @@ public class HomeFragment extends Fragment {
         if (highscoreSquats.getCurrentDate() != null) {
             // set text in textviews
             highscoreSquatsCalories.setText(
-                    String.format(" %s kcal", String.valueOf(highscoreSquats.getCalories())));
+                    String.format("%s kcal", String.valueOf(highscoreSquats.getCalories())));
             highscoreSquatsRepeats.setText(
-                    String.format(" %s Squat(s)", String.valueOf(highscoreSquats.getRepeats())));
+                    String.format("%s Squat(s)", String.valueOf(highscoreSquats.getRepeats())));
             highscoreSquatsSPM.setText(
-                    String.format(" %s S/min", String.valueOf(highscoreSquats.getSquatPerMin())));
+                    String.format("%s S/min", String.valueOf(highscoreSquats.getSquatPerMin())));
             highscoreSquatsDate.setText(
-                    String.format(" %s", highscoreSquats.getCurrentDate()));
+                    String.format("%s", highscoreSquats.getCurrentDate()));
             highscoreSquatsDuration.setText(
-                    String.format(" %s min", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
+                    String.format("%s min", Util.getMillisAsTimeString(highscoreSquats.getDurationInMillis())));
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
             content.setVisibility(View.INVISIBLE);
             highscoreSquatsDate.setVisibility(View.INVISIBLE);
+            calendarImage.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -246,29 +253,31 @@ public class HomeFragment extends Fragment {
         TextView highscoreRunDistance = getView().findViewById(R.id.textview_highscore_run_distance);
         TextView noHighscoreText = getView().findViewById(R.id.text_highscore_run_no_highscore);
         View content = getView().findViewById(R.id.cardview_highscore_run_content);
+        ImageView calendarImage = getView().findViewById(R.id.image_highscore_run_date);
 
         Run highScoreRun = DBQueryHelper.findHighScoreRun();
 
         if (highScoreRun.getCurrentDate() != null) {
             highscoreRunCalories.setText(
-                    String.format(" %s kcal", String.valueOf(highScoreRun.getCalories()))
+                    String.format("%s kcal", String.valueOf(highScoreRun.getCalories()))
             );
             highscoreRunDate.setText(
-                    String.format(" %s", String.valueOf(highScoreRun.getCurrentDate()))
+                    String.format("%s", String.valueOf(highScoreRun.getCurrentDate()))
             );
             highscoreRunDuration.setText(
-                    String.format(" %s min", String.valueOf(highScoreRun.getDurationInMillis()))
+                    String.format("%s min", String.valueOf(highScoreRun.getDurationInMillis()))
             );
             highscoreRunDistance.setText(
-                    String.format(" %s m", String.valueOf(highScoreRun.getDistance()))
+                    String.format("%s m", String.valueOf(highScoreRun.getDistance()))
             );
             highscoreRunSpeed.setText(
-                    String.format(" %s km/h", String.valueOf(highScoreRun.getSpeed()))
+                    String.format("%s km/h", String.valueOf(highScoreRun.getSpeed()))
             );
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
             content.setVisibility(View.INVISIBLE);
             highscoreRunDate.setVisibility(View.INVISIBLE);
+            calendarImage.setVisibility(View.INVISIBLE);
         }
     }
 

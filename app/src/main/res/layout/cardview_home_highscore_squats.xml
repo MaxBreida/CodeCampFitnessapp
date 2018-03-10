@@ -72,28 +72,45 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_squats_duration"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text=" 1:23 min"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_duration" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_squats_calories"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_duration"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_squats_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            tools:text="1:23 min"
+                            android:textSize="16sp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        tools:text=" 123 kcal"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_calories" />
+                        android:layout_marginTop="4dp">
+
+                    <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_calories"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_squats_calories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            tools:text="123 kcal"
+                            android:textSize="16sp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -109,46 +126,73 @@
                     app:layout_constraintStart_toEndOf="@+id/linearLayout8"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_squats_repeats"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text=" 50 Squat(s)"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_counter" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_squats_spm"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_counter"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_squats_repeats"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="50 Squat(s)"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:layout_marginStart="4dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        tools:text=" 5 S/min"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_speed" />
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_speed"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_squats_spm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            tools:text="5 S/min"
+                            android:textSize="16sp"
+                            android:gravity="center" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
 
-            <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                android:id="@+id/textview_highscore_squats_date"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                tools:text=" 01.01.1970"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
                 android:layout_below="@id/cardview_highscore_squats_content"
                 android:layout_alignParentEnd="true"
-                android:gravity="center"
-                app:compoundDrawableHeight="20dp"
-                app:compoundDrawableWidth="20dp"
-                app:drawableStartVector="@drawable/icon_calendar" />
+                >
+
+                <ImageView
+                    android:id="@+id/image_highscore_squats_date"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/icon_calendar"/>
+
+                <TextView
+                    android:id="@+id/textview_highscore_squats_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:textSize="14sp"
+                    tools:text=" 01.01.1970"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/text_highscore_squats_no_highscore"

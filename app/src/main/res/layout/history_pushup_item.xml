@@ -65,28 +65,44 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_pushupitem_duration"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_duration"
-                        tools:text=" 1:23 min" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_pushupitem_calories"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_duration"/>
+
+                        <TextView
+                            android:id="@+id/textview_pushupitem_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            tools:text="1:23 min" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_calories"
-                        tools:text=" 123 kcal" />
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_calories"/>
+
+                        <TextView
+                            android:id="@+id/textview_pushupitem_calories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:layout_marginStart="4dp"
+                            android:textSize="16sp"
+                            tools:text="123 kcal" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -102,28 +118,44 @@
                     app:layout_constraintStart_toEndOf="@+id/linearLayout7"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_pushupitem_repeats"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_counter"
-                        tools:text=" 50 Push-Up(s)" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_pushupitem_ppm"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_counter"/>
+
+                        <TextView
+                            android:id="@+id/textview_pushupitem_repeats"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:layout_marginStart="4dp"
+                            android:textSize="16sp"
+                            tools:text="50 Push-Up(s)" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_speed"
-                        tools:text=" 5 P/min" />
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_speed"/>
+
+                        <TextView
+                            android:id="@+id/textview_pushupitem_ppm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            tools:text="5 P/min" />
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
         </RelativeLayout>

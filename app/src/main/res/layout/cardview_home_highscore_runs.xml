@@ -72,28 +72,45 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_run_duration"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text=" 1:23 min"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_duration" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_run_distance"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_duration"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_run_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            tools:text="1:23 min"
+                            android:textSize="16sp"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        tools:text=" 7 km"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_distance" />
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_distance"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_run_distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            tools:text="7 km"
+                            android:textSize="16sp"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -109,45 +126,70 @@
                     app:layout_constraintStart_toEndOf="@+id/linearLayout10"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_run_calories"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text=" 123 kcal"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_calories" />
+                        android:layout_height="wrap_content">
 
-                    <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                        android:id="@+id/textview_highscore_run_speed"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_calories"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_run_calories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            tools:text="123 kcal"
+                            android:textSize="16sp"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        tools:text=" 7 km/h"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        app:compoundDrawableHeight="25dp"
-                        app:compoundDrawableWidth="25dp"
-                        app:drawableStartVector="@drawable/icon_speed" />
+                        android:layout_marginTop="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/icon_speed"/>
+
+                        <TextView
+                            android:id="@+id/textview_highscore_run_speed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="4dp"
+                            tools:text=" 7 km/h"
+                            android:textSize="16sp"
+                            android:gravity="center"/>
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
 
-            <com.tolstykh.textviewrichdrawable.TextViewRichDrawable
-                android:id="@+id/textview_highscore_run_date"
-                android:layout_below="@id/cardview_highscore_run_content"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text=" 01.01.1970"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_alignParentEnd="true"
-                android:textSize="14sp"
-                android:gravity="center"
-                app:compoundDrawableHeight="25dp"
-                app:compoundDrawableWidth="25dp"
-                app:drawableStartVector="@drawable/icon_calendar" />
+                android:layout_below="@id/cardview_highscore_run_content"
+                android:layout_alignParentEnd="true">
+
+                <ImageView
+                    android:id="@+id/image_highscore_run_date"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/icon_calendar"/>
+
+                <TextView
+                    android:id="@+id/textview_highscore_run_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    tools:text="01.01.1970"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/text_highscore_run_no_highscore"

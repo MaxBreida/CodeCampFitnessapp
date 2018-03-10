@@ -64,11 +64,11 @@ class PushupAdapter extends BaseAdapter {
 
         PushUps pushUp = (PushUps) getItem(i);
 
-        dateTextView.setText(String.format(" %s", pushUp.getCurrentDate()));
-        durationTextView.setText(String.format(" %s", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
-        repeatsTextView.setText(String.format(" %d", pushUp.getRepeats()));
-        caloriesTextView.setText(String.format(" %s", pushUp.getCalories()));
-        ppmTextView.setText(String.format(" %s", pushUp.getPushPerMin()));
+        dateTextView.setText(String.format("%s", pushUp.getCurrentDate()));
+        durationTextView.setText(String.format("%s min", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
+        repeatsTextView.setText(String.format("%d Push-Up(s)", pushUp.getRepeats()));
+        caloriesTextView.setText(String.format("%s kcal", pushUp.getCalories()));
+        ppmTextView.setText(String.format("%s P/min", pushUp.getPushPerMin()));
 
         return view;
     }
