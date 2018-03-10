@@ -39,8 +39,7 @@ public class Util {
 
     /**
      * convert milliseconds to human readable string
-     *
-     * @param millis
+     * @param millis milliseconds
      * @return String in minute:seconds format
      */
     public static String getMillisAsTimeString(long millis) {
@@ -52,9 +51,8 @@ public class Util {
 
     /**
      * calculates height in m from height in cm
-     *
-     * @param heightInCM
-     * @return height in m
+     * @param heightInCM the height in CM that shall be converted to meters
+     * @return height in meters
      */
     public static double getHeightInMeters(int heightInCM) {
         return (double) heightInCM / 100;
@@ -72,6 +70,7 @@ public class Util {
 
     /**
      * generates a string of any given date object
+     * @param date the date as a Date object
      * @return date as string in german date format
      */
     public static String getDateAsString(Date date) {
@@ -80,8 +79,8 @@ public class Util {
     }
 
     /**
-     * convers a string to a date object
-     * @param string
+     * converts a string to a date object
+     * @param string the date as a string
      * @return date
      */
     public static Date getStringAsDate(String string) {
@@ -99,7 +98,7 @@ public class Util {
 
     /**
      * Does what the method title says
-     * @param d
+     * @param d the decimal value that shall be rounded
      * @return rounded double value
      */
     public static double roundTwoDecimals(double d) {
@@ -108,12 +107,23 @@ public class Util {
         return d;
     }
 
+    /**
+     * Returns a given number as a string and that with a set amount of decimal places.
+     * @param num the initial number
+     * @param precision determines how many decimal places the returned string number should have
+     * @return string of the number with the preferred amount of decimal places
+     */
     public static String decNumToXPrecisionString(Number num, int precision){
         String format = "%.".concat(String.valueOf(precision)).concat("f");
         return String.format(java.util.Locale.US, format, num);
         // US locale to ensure that we get a "." (dot) notation instead of a "," (comma) notation
     }
 
+    /**
+     * Converts a view to a bitmap image.
+     * @param view the view that shall be converted
+     * @return the bitmap image
+     */
     public static Bitmap viewToBitmap(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
