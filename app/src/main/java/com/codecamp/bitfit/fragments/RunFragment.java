@@ -119,6 +119,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         public void onClick(View view) {
             startStopButton = (FloatingActionButton) view;
             if(startStopButton.isActivated()){
+                // tell mainactivity that the workout is stopped
+                callback.workoutInProgress(false);
+
                 setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
 
                 runDurationTimer.stop();
@@ -127,6 +130,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 wakeLock.release();
             }
             else{
+                // tell mainactivity that a workout is in progress
+                callback.workoutInProgress(true);
+
                 setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
 
                 wakeLock.acquire(36000000);
