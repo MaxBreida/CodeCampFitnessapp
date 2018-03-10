@@ -195,22 +195,14 @@ public class SquatFragment extends WorkoutFragment {
         avgSquatsTextView.setText(R.string.default_double_value);
         squatState = SquatStates.SQUAT_DOWN;
         squatCtr = 0;
-
         //values for calorie calculation
         // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
         //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
         weightPushed = user.getWeightInKG()*0.5;
-        //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
-
+        //Factor for the height pushed = size/4, approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
         heightPushed = (double) user.getSizeInCM() / (100 * 4);
         //Divide by 100 to get from cm to meter and divide by 4 to adjust the value to body proportions
-        /* TODO: pick your favorite, kind sir :D    and same for the PushUpFragment issue
-            Reply to: I don't know why this wouldn't work, could someone tell me?
-         */
-        double pushy1 = (1/4.0)*(1.0/100)*(double)user.getSizeInCM();
-        double pushy2 = (1/(double)4)*((double)1/100)*(double)user.getSizeInCM();
-        double pushy3 = 0.25 * 0.01 * (double)user.getSizeInCM();
     }
 
     private Squat createSquatObj(){

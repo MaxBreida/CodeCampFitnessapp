@@ -173,15 +173,12 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         maxLightRange = 0;
         minLightRange = 0;
         averageLightRange = 0;
-
         //values for calorie calculation
         // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
-        //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
         weightPushed = user.getWeightInKG()*0.5;
         //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion,
         //upper arm length is about 1 1/2 fields => 3/8*size
-
         heightPushed =  ((double) user.getSizeInCM() * 3) / (100 * 8);
         //Divide by 100 to get from cm to meter, multiply with 3/8 for body proportion adjustments
     }
