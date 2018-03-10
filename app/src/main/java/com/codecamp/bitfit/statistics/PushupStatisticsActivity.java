@@ -54,13 +54,7 @@ public class PushupStatisticsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: Check why setContentView would replace data from first pushup with the one from master layout
         setContentView(R.layout.activity_pushup_statistics);
-
-        // TODO remove
-//        if(DBQueryHelper.findAllPushUps().isEmpty()){
-//            fillTableWithDummies();    //Fill table with dummy squats if the squat database is empty (for testing purpose)
-//        }
 
         final List<PushUps> allPushUps = DBQueryHelper.findAllPushUps();
 
@@ -165,7 +159,6 @@ public class PushupStatisticsActivity extends AppCompatActivity {
             }
         });
         
-//        setListAdapter(pushupAdapter);
     }
 
     private void fillBarchart(List<PushUps> allPushUps) {
@@ -235,9 +228,9 @@ public class PushupStatisticsActivity extends AppCompatActivity {
         }
         float maxValue = Collections.max(entryValues);
         barChart.getAxisLeft().setAxisMinimum(0);
-        barChart.getAxisLeft().setAxisMaximum(maxValue + 5);
+        barChart.getAxisLeft().setAxisMaximum(maxValue + (float) (maxValue * 0.1));
         barChart.getAxisRight().setAxisMinimum(0);
-        barChart.getAxisRight().setAxisMaximum(maxValue + 5);
+        barChart.getAxisRight().setAxisMaximum(maxValue + (float) (maxValue * 0.1));
 
         // remove description label
         Description description = new Description();
@@ -329,26 +322,5 @@ public class PushupStatisticsActivity extends AppCompatActivity {
         // refresh chart
         lineChart.invalidate();
     }
-
-    protected void fillTableWithDummies(){
-        createDummyPushup(8, 25, "10.03.2018");
-        createDummyPushup(4, 12, "30.03.2018");
-        createDummyPushup(16, 51, "18.03.2018");
-        createDummyPushup(24, 123, "24.03.2018");
-    }
-
-    protected  void createDummyPushup(int noOfPushups, long durationAsSeconds, String date){
-        PushUps dummyPushup = new PushUps();
-
-        dummyPushup.setId(UUID.randomUUID());
-        dummyPushup.setCurrentDate(date);
-        dummyPushup.setDurationInMillis(1000*durationAsSeconds);
-        dummyPushup.setCalories(100);
-        dummyPushup.setRepeats(noOfPushups);
-        dummyPushup.setPushPerMin((double) (noOfPushups/(60*durationAsSeconds)));
-
-        dummyPushup.save();
-    }
-
 
 }
