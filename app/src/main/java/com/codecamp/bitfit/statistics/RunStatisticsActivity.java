@@ -37,7 +37,7 @@ public class RunStatisticsActivity extends ListActivity {
         createDummyRun(2, 15*60);
         createDummyRun(4, 30*60);
         createDummyRun(11, 100*60);
-        createDummyRun(4, 30*60);
+        createDummyRun(0.5, 30*60);
     }
 
     protected  void createDummyRun(double distance, long durationAsSeconds){
@@ -48,9 +48,13 @@ public class RunStatisticsActivity extends ListActivity {
         dummyRun.setDurationInMillis(1000*durationAsSeconds);
         dummyRun.setCalories(100);
         dummyRun.setDistance(distance);
-        //TODO: Check why this calculation has no effect here or change the dummyCreator
+        //Check why this calculation has no effect here or change the dummyCreator
+        // ^ the numbers are getting too small, got something like 0.00003, that gets rounded to 0
+        // to get hours for the kmh value you might wanna divide instead of multiplying 60 to the seconds
+
         //DummyCreator could be changed so that the speed would be an input and not calculated
-        dummyRun.setSpeed(Util.roundTwoDecimals(distance/((double) 60*durationAsSeconds)));
+        dummyRun.setSpeed(Util.roundTwoDecimals(distance / (durationAsSeconds / (double) 3600)));
+        // going from seconds to hours by dividing by ( 60 * 60 = ) 3600
 
         dummyRun.save();
     }
