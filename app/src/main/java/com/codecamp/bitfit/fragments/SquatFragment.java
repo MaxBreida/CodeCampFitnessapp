@@ -203,13 +203,14 @@ public class SquatFragment extends WorkoutFragment {
         weightPushed = user.getWeightInKG()*0.5;
         //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
 
-        heightPushed =  (1/4)*(1/100)*(double)user.getSizeInCM();
-        // TODO: I don't know why this wouldn't work, could someone tell me?
-        // I think it has something to do with size being an int and casting stuff
-        // instead I'm first calculating in cm and then changing it to meter
-        double heightPushedInCm = (double) user.getSizeInCM()/4;
-        //Divide by 100 to get from cm to meter
-        heightPushed = (double) heightPushedInCm/100;
+        heightPushed = (double) user.getSizeInCM() / (100 * 4);
+        //Divide by 100 to get from cm to meter and divide by 4 to adjust the value to body proportions
+        /* TODO: pick your favorite, kind sir :D    and same for the PushUpFragment issue
+            Reply to: I don't know why this wouldn't work, could someone tell me?
+         */
+        double pushy1 = (1/4.0)*(1.0/100)*(double)user.getSizeInCM();
+        double pushy2 = (1/(double)4)*((double)1/100)*(double)user.getSizeInCM();
+        double pushy3 = 0.25 * 0.01 * (double)user.getSizeInCM();
     }
 
     private Squat createSquatObj(){
