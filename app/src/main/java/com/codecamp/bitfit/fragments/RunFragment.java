@@ -60,13 +60,14 @@ public class RunFragment extends WorkoutFragment {
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
     LocationManager lm; // location manager that keeps track of current location
-    PowerManager powerManager; // required for wakelock creation
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
     FragmentActivity activity; // avoid using getActivity() all the time
-    View mainView; // avoid using getView() each time it's needed
-    CountUpTimer runDurationTimer;
+    View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
+    boolean allowDataUpdate = false; // determines whether or not the database can update automatically
     long runDuration = 0;
-    View dataCard;
+
+    // run duration timer and a timer for saving the data of a run to the database
+    CountUpTimer runDurationTimer, SaveDataTimer;
 
     public static RunFragment getInstance() {
 
@@ -103,7 +104,7 @@ public class RunFragment extends WorkoutFragment {
         mapFragment.getMapAsync(mapReady);
 
         // setting wakelock
-        powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
+        PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
         // setting up the start / stop button
@@ -130,7 +131,7 @@ public class RunFragment extends WorkoutFragment {
                 wakeLock.acquire(36000000);
 
                 if(runDurationTimer == null)
-                    setupTimer((TextView) dataCard.findViewById(R.id.textview_run_duration));
+                    setupRunDurationTimer((TextView) dataCard.findViewById(R.id.textview_run_duration));
                 else
                     runDurationTimer.reset();
 
@@ -203,7 +204,7 @@ public class RunFragment extends WorkoutFragment {
         }
 
         private double getCurrentCalories() {
-            // TODO: lots of testing & why does it go negative? Dumb formula?
+            // TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
             // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
             // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
             // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
@@ -217,6 +218,7 @@ public class RunFragment extends WorkoutFragment {
             heartRateParameter -= ((m) ? 55.0969 : 20.4022);
             double cals = ageParameter - weightParameter + heartRateParameter;
             cals *= (runDuration / (4.184 * 60000));
+            // this formula might not be suited for very short runs, preventing negative calorie values:
             if(cals < 0) cals = 0;
             return cals;
         }
@@ -289,14 +291,40 @@ public class RunFragment extends WorkoutFragment {
         }
     }
 
-    public void setupTimer(final TextView view){
-        runDurationTimer = new CountUpTimer(1000, view) {
+    public void setupRunDurationTimer(final TextView view){
+        runDurationTimer = new CountUpTimer(1000, view) { // 1000 millisecs = every second
             @Override
             public void onTick(long elapsedTime) {
                 runDuration = elapsedTime;
                 view.setText(Util.getMillisAsTimeString(elapsedTime));
             }
         };
+    }
+
+    /** Since writing to the database every second, or on every data change would be too much,
+     * it's only being done every minute (on the next data change), that way we go rather easy
+     * on the device's storage unit, which has a limited lifespan in terms of write actions. */
+    public void setupDataSavingInterval(){ // TODO: BOOKMARK, continue here with the database implementation
+        SaveDataTimer = new CountUpTimer(60000) { // 60000 millisecs = every minute
+            int previousAmountOfPoints = 0;
+            @Override
+            public void onTick(long elapsedTime) {
+                if (previousAmountOfPoints < points.size()){
+                    updateDatabase();
+                    previousAmountOfPoints = points.size();
+                }
+                else {
+                    allowDataUpdate = true;
+                }
+            }
+        };
+    }
+
+    public void updateDatabase() {
+        // since it's going to be updated now we can block all other update attempts for now,
+        // this actually prevents simultaneous write conflicts as well
+        allowDataUpdate = false;
+
     }
 
     @Override
