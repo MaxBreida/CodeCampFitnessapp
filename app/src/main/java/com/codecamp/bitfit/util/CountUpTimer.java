@@ -9,8 +9,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.widget.TextView;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Simple timer class which count up until stopped.
  * Inspired by {@link android.os.CountDownTimer}
@@ -19,7 +17,7 @@ public abstract class CountUpTimer {
 
     private final long interval;
     private long base;
-    private long prevBase;
+    private long newBase;
     private TextView textView;
 
     public CountUpTimer(long interval) {
@@ -35,15 +33,14 @@ public abstract class CountUpTimer {
         base = SystemClock.elapsedRealtime();
         handler.sendMessage(handler.obtainMessage(MSG));
     }
-
-    // TODO: test pause and resume
+    
     public void pause(){
-        prevBase = base;
+        newBase = SystemClock.elapsedRealtime();
         handler.removeMessages(MSG);
     }
 
     public void resume(){
-        base = SystemClock.elapsedRealtime() - (SystemClock.elapsedRealtime() - prevBase);
+        base = SystemClock.elapsedRealtime() - (newBase - base);
         handler.sendMessage(handler.obtainMessage(MSG));
     }
 
