@@ -74,7 +74,7 @@ public class WorkoutFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void shareFragmentViewOnClick(final View fragmentView) {
+    public void shareFragmentViewOnClick(View fragmentView) {
         Bitmap bitmap = Util.viewToBitmap(fragmentView);
 
         // get cache file dir
@@ -104,24 +104,6 @@ public class WorkoutFragment extends Fragment {
             shareIntent.putExtra(Intent.EXTRA_TEXT, "Sieh dir meinen letzten Workout an!");
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
-        }
-    }
-
-    /**
-     * After sharing our image, we want to delete the created file so the user has no unnecessary
-     * photos on his device. So we wait for activity result and delete the temp file.
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_SHARE_ACTION) {
-            // delete temp file
-            ContentResolver contentResolver = getActivity().getContentResolver();
-            contentResolver.delete(Uri.parse(filePath), null, null);
         }
     }
 
