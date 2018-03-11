@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
@@ -37,6 +38,8 @@ public class PushupStatisticsActivity extends AppCompatActivity {
     private BarChart barChart;
     private LineChart lineChart;
     private PushUpData currentData;
+    private List<PushUps> allPushUps;
+
 
     private enum PushUpData{
         REPETITIONS,
@@ -58,112 +61,116 @@ public class PushupStatisticsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_pushup_statistics);
 
-        final List<PushUps> allPushUps = DBQueryHelper.findAllPushUps();
+        if(!DBQueryHelper.findAllPushUps().isEmpty()) {
+            allPushUps = DBQueryHelper.findAllPushUps();
 
-        barChart = findViewById(R.id.last_month_chart);
-        lineChart = findViewById(R.id.last_seven_workouts_chart);
-        currentData = PushUpData.REPETITIONS;
+            barChart = findViewById(R.id.last_month_chart);
+            lineChart = findViewById(R.id.last_seven_workouts_chart);
+            currentData = PushUpData.REPETITIONS;
 
-        // on click listeners to set chart data (repetitions or calories)
-        barChart.setOnChartGestureListener(new OnChartGestureListener() {
-            @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+            fillBarchart();
+            fillLinechart();
 
-            }
+            // on click listeners to set chart data (repetitions or calories)
+            barChart.setOnChartGestureListener(new OnChartGestureListener() {
+                @Override
+                public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
-            @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+                }
 
-            }
+                @Override
+                public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
-            @Override
-            public void onChartLongPressed(MotionEvent me) {
+                }
 
-            }
+                @Override
+                public void onChartLongPressed(MotionEvent me) {
 
-            @Override
-            public void onChartDoubleTapped(MotionEvent me) {
+                }
 
-            }
+                @Override
+                public void onChartDoubleTapped(MotionEvent me) {
 
-            @Override
-            public void onChartSingleTapped(MotionEvent me) {
-                currentData = currentData.next();
-                fillBarchart(allPushUps);
-            }
+                }
 
-            @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+                @Override
+                public void onChartSingleTapped(MotionEvent me) {
+                    currentData = currentData.next();
+                    fillBarchart();
+                }
 
-            }
+                @Override
+                public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
 
-            @Override
-            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+                }
 
-            }
+                @Override
+                public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
 
-            @Override
-            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                }
 
-            }
-        });
-        lineChart.setOnChartGestureListener(new OnChartGestureListener() {
-            @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+                @Override
+                public void onChartTranslate(MotionEvent me, float dX, float dY) {
 
-            }
+                }
+            });
+            lineChart.setOnChartGestureListener(new OnChartGestureListener() {
+                @Override
+                public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
-            @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+                }
 
-            }
+                @Override
+                public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
-            @Override
-            public void onChartLongPressed(MotionEvent me) {
+                }
 
-            }
+                @Override
+                public void onChartLongPressed(MotionEvent me) {
 
-            @Override
-            public void onChartDoubleTapped(MotionEvent me) {
+                }
 
-            }
+                @Override
+                public void onChartDoubleTapped(MotionEvent me) {
 
-            @Override
-            public void onChartSingleTapped(MotionEvent me) {
-                currentData = currentData.next();
-                fillLinechart(allPushUps);
-            }
+                }
 
-            @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+                @Override
+                public void onChartSingleTapped(MotionEvent me) {
+                    currentData = currentData.next();
+                    fillLinechart();
+                }
 
-            }
+                @Override
+                public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
 
-            @Override
-            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+                }
 
-            }
+                @Override
+                public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
 
-            @Override
-            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                }
 
-            }
-        });
+                @Override
+                public void onChartTranslate(MotionEvent me, float dX, float dY) {
 
-        fillBarchart(allPushUps);
-        fillLinechart(allPushUps);
+                }
+            });
 
-        Button historyButton = findViewById(R.id.button_pushup_statistics_history);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), PushupHistoryActivity.class));
-            }
-        });
-        
+            Button historyButton = findViewById(R.id.button_pushup_statistics_history);
+            historyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getApplicationContext(), PushupHistoryActivity.class));
+                }
+            });
+        } else {
+            Toast.makeText(this.getApplicationContext(), "Noch keine Workouts zum Anzeigen vorhanden", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
-    private void fillBarchart(List<PushUps> allPushUps) {
+    private void fillBarchart() {
         List<BarEntry> entries = new ArrayList<>();
         Calendar c = Calendar.getInstance();
         int currentMonth = c.get(Calendar.MONTH);
@@ -268,7 +275,7 @@ public class PushupStatisticsActivity extends AppCompatActivity {
         barChart.invalidate();
     }
 
-    private void fillLinechart(List<PushUps> allPushUps) {
+    private void fillLinechart() {
 
         List<Entry> entries = new ArrayList<>();
 
