@@ -35,10 +35,10 @@ public class RunStatisticsActivity extends ListActivity {
         createDummyRun(2, 15*60);
         createDummyRun(4, 30*60);
         createDummyRun(11, 100*60);
-        createDummyRun(0.5, 30*60);
+        createDummyRun(0.5f, 30*60);
     }
 
-    protected  void createDummyRun(double distance, long durationAsSeconds){
+    protected  void createDummyRun(float distance, long durationAsSeconds){
         Run dummyRun = new Run();
 
         dummyRun.setRandomId();

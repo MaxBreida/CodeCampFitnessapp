@@ -14,14 +14,14 @@ import java.util.UUID;
 
 public class Run extends Workout {
     @Column
-    double distance;
+    float distance;
 
     // Getter and Setter
-    public double getDistanceInKm() {
+    public float getDistanceInKm() {
         return distance;
     }
 
-    public void setDistanceInKm(double distance) {
+    public void setDistanceInKm(float distance) {
         this.distance = distance;
     }
 
