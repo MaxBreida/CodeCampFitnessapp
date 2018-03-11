@@ -272,7 +272,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         double wayUp = ((weightPushed*heightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
-        return (wayDown + wayUp) * (double) count;
+        return Util.roundTwoDecimals((wayDown + wayUp) * (double) count);
     }
 
     @Override

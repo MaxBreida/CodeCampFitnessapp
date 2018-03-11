@@ -277,7 +277,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         double wayDown = wayUp / 2.0;
 
         double calorie = Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
-        return (wayDown + wayUp) * (double) squatCtr;
+        return Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
     }
 
     public void onDestroy(){

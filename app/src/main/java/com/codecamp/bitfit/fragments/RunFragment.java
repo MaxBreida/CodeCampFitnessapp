@@ -10,7 +10,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -35,8 +34,6 @@ import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,7 +47,6 @@ import java.util.List;
 
 import static android.content.Context.POWER_SERVICE;
 import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
-import static com.codecamp.bitfit.util.Util.roundTwoDecimals;
 
 /**
  * A simple {@link Fragment} subclass.
