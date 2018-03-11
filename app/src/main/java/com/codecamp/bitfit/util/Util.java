@@ -110,7 +110,7 @@ public class Util {
      * @return rounded value
      */
     public static double roundTwoDecimals(double d) {
-        return  Math.round(d * 100) / 100.0f;
+        return  Math.round(d * 100) / 100.0;
     }
     public static float roundTwoDecimals(float d) {
         return  Math.round(d * 100) / 100.0f;
