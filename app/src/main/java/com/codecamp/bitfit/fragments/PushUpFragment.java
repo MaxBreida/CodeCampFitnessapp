@@ -307,7 +307,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 return true;
             case R.id.action_share:
                 // TODO lots of testing + persistent cardview values
-                shareFragmentViewOnClick(getView().findViewById(R.id.container_pushup_counter));
+                Util.shareViewOnClick(getActivity(),
+                        getView().findViewById(R.id.container_pushup_counter),
+                        String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

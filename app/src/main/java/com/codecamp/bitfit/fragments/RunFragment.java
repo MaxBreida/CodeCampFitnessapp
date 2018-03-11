@@ -308,7 +308,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // TODO ask which sharing method the user wants and use the right one:
                 if(true) { // picture of view method
                     // TODO lots of testing + persistent cardview values
-                    shareFragmentViewOnClick(dataCard);
+                    Util.shareViewOnClick(getActivity(),
+                            dataCard,
+                            String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
                 }
                 else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
                     StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
