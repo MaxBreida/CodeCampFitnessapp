@@ -311,23 +311,15 @@ public class HomeFragment extends Fragment {
         @Override
         public void onClick(View shareButton) {
             View targetView = shareButton;
-            // gets parent view till it reaches a CardView
+            // gets parent view till it reaches the desired CardView
             while(!targetView.getClass().equals(CardView.class)){
                 targetView = (View) targetView.getParent();
             }
 
             MaterialIconView shareBut = (MaterialIconView) shareButton;
 
-            Bitmap bitmap = Util.viewToBitmap(targetView);
+            Util.shareViewOnClick(getActivity(), targetView, "Look at them stats boiiis!");
 
-            SharePhoto photo = new SharePhoto.Builder()
-                    .setBitmap(bitmap)
-                    .build();
-            SharePhotoContent content = new SharePhotoContent.Builder()
-                    .addPhoto(photo)
-                    .build();
-
-            ShareDialog.show(getActivity(), content);
             shareBut.setColor(Color.parseColor("#DDDDDD"));
         }
     };
