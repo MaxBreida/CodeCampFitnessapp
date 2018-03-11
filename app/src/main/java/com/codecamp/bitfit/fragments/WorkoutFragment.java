@@ -74,39 +74,6 @@ public class WorkoutFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void shareFragmentViewOnClick(View fragmentView) {
-        Bitmap bitmap = Util.viewToBitmap(fragmentView);
-
-        // get cache file dir
-        File cachePath = new File(getContext().getCacheDir(), "images");
-        cachePath.mkdirs();
-
-        // save image in cache folder
-        try {
-            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-            stream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // share image
-        File imagePath = new File(getContext().getCacheDir(), "images");
-        File newFile = new File(imagePath, "image.png");
-        Uri contentUri = FileProvider.getUriForFile(getContext(), "com.codecamp.bitfit.fileprovider", newFile);
-        if(contentUri != null) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-            shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sieh dir meinen letzten Workout an!");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
-        }
-    }
-
     /**
      * tells the mainactivity if a workout is in progress or not
      */

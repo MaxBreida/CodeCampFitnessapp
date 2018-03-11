@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/pushups_current_month_text"
+        android:id="@+id/current_month_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/current_month"
@@ -17,13 +17,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/pushups_last_month_chart"
+        android:id="@+id/last_month_chart"
         android:layout_width="395dp"
         android:layout_height="300dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pushups_current_month_text"
+        app:layout_constraintTop_toBottomOf="@+id/current_month_text"
         app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

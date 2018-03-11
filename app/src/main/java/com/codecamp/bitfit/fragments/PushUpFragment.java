@@ -272,7 +272,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         double wayUp = ((weightPushed*heightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
-        return Util.roundTwoDecimals((wayDown + wayUp) * (double) count);
+        return (wayDown + wayUp) * (double) count;
     }
 
     @Override
@@ -352,7 +352,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 return true;
             case R.id.action_share:
                 // TODO lots of testing + persistent cardview values
-                shareFragmentViewOnClick(getView().findViewById(R.id.container_pushup_counter));
+                Util.shareViewOnClick(getActivity(),
+                        getView().findViewById(R.id.container_pushup_counter),
+                        String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

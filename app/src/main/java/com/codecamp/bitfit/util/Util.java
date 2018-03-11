@@ -1,8 +1,12 @@
 package com.codecamp.bitfit.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 
 import com.codecamp.bitfit.R;
@@ -17,6 +21,10 @@ import com.codecamp.bitfit.database.Workout;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -99,12 +107,13 @@ public class Util {
     /**
      * Does what the method title says
      * @param d the decimal value that shall be rounded
-     * @return rounded double value
+     * @return rounded value
      */
     public static double roundTwoDecimals(double d) {
-        d = Math.round(d * 100);
-        d = d/100;
-        return d;
+        return  Math.round(d * 100) / 100.0f;
+    }
+    public static float roundTwoDecimals(float d) {
+        return  Math.round(d * 100) / 100.0f;
     }
 
     /**
@@ -129,5 +138,44 @@ public class Util {
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
+    }
+
+    /**
+     * starts the share intent menu and lets the user share his workout
+     * @param activity context
+     * @param shareView view to get shared
+     * @param shareMessage the messsage passed with the view
+     */
+    public static void shareViewOnClick(Activity activity, View shareView, String shareMessage) {
+        Bitmap bitmap = Util.viewToBitmap(shareView);
+
+        // get cache file dir
+        File cachePath = new File(activity.getCacheDir(), "images");
+        cachePath.mkdirs();
+
+        // save image in cache folder
+        try {
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // share image
+        File imagePath = new File(activity.getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.png");
+        Uri contentUri = FileProvider.getUriForFile(activity, "com.codecamp.bitfit.fileprovider", newFile);
+        if(contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(contentUri, activity.getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            activity.startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
+        }
     }
 }

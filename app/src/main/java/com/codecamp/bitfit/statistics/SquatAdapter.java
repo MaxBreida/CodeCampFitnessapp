@@ -46,22 +46,22 @@ public class SquatAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup parent) {
-       View rowView = mInflater.inflate(R.layout.activity_squat_statistics, parent, false);
+       view = mInflater.inflate(R.layout.history_squat_item, parent, false);
 
-       TextView dateTextView = (TextView) rowView.findViewById(R.id.textview_squatitem_date);
-       TextView durationTextView = (TextView) rowView.findViewById(R.id.textview_squatitem_duration);
-       TextView repeatsTextView = (TextView) rowView.findViewById(R.id.textview_squatitem_repeats);
-       TextView caloriesTextView = (TextView) rowView.findViewById(R.id.textview_squatitem_calories);
-       TextView spmTextView = (TextView) rowView.findViewById(R.id.textview_squatitem_spm);
+       TextView dateTextView = view.findViewById(R.id.textview_squatitem_date);
+       TextView durationTextView = view.findViewById(R.id.textview_squatitem_duration);
+       TextView repeatsTextView = view.findViewById(R.id.textview_squatitem_repeats);
+       TextView caloriesTextView = view.findViewById(R.id.textview_squatitem_calories);
+       TextView spmTextView = view.findViewById(R.id.textview_squatitem_spm);
 
        Squat squat = (Squat) getItem(i);
 
-       dateTextView.setText(" " + squat.getCurrentDate());
-       durationTextView.setText("Dauer: " + Util.getMillisAsTimeString(squat.getDurationInMillis()));
-       repeatsTextView.setText("Wiederholungen: " + squat.getRepeats());
-       caloriesTextView.setText("Verbrauchte Kalorien: " + squat.getCalories());
-       spmTextView.setText("Squats/min: " + squat.getSquatPerMin());
+       dateTextView.setText(String.format("%s", squat.getCurrentDate()));
+       durationTextView.setText(String.format("%s min", Util.getMillisAsTimeString(squat.getDurationInMillis())));
+       repeatsTextView.setText(String.format("%d Squat(s)", squat.getRepeats()));
+       caloriesTextView.setText(String.format("%s kcal", squat.getCalories()));
+       spmTextView.setText(String.format("%s S/min", squat.getSquatPerMin()));
 
-       return rowView;
+       return view;
     }
 }

@@ -51,7 +51,7 @@ public class Workout extends BaseModel {
     }
 
     public void setCalories(double calories) {
-        this.calories = calories;
+        this.calories = Util.roundTwoDecimals(calories);
     }
 
     public String getCurrentDate() {

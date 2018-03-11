@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codecamp.bitfit">
 
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- TODO: check if this is still required for something (initially it was needed for the sharing)-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- TODO: check if this is still required for something (initially it was needed for the sharing) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- location services for the running fragment -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- wake lock to keep the running app on in the background once the screen is turned off -->
 
+    <!-- wake lock to keep the running app on in the background once the screen is turned off -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -16,12 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.codecamp.bitfit.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
@@ -57,9 +56,13 @@
             android:name=".statistics.SquatStatisticsActivity"
             android:label="Squat Statistik"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".statistics.PushupHistoryActivity"
+        <activity
+            android:name=".statistics.PushupHistoryActivity"
             android:label="PushUp Verlauf"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".statistics.SquatHistoryActivity"
+            android:label="Squat Verlauf"
             android:screenOrientation="portrait"/>
 
         <!-- Provider Facebook add to App -->
