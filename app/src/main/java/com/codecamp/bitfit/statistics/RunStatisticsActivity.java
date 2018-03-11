@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Run;
 import com.codecamp.bitfit.util.DBQueryHelper;
-import com.codecamp.bitfit.util.Util;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class RunStatisticsActivity extends ListActivity {
         Run dummyRun = new Run();
 
         dummyRun.setRandomId();
-        dummyRun.setCurrentDate(Util.getCurrentDateAsString());
+        dummyRun.setCurrentDate();
         dummyRun.setDurationInMillis(1000*durationAsSeconds);
         dummyRun.setCalories(100);
         dummyRun.setDistanceInKm(distance);

@@ -9,7 +9,6 @@ import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.util.DBQueryHelper;
-import com.codecamp.bitfit.util.Util;
 
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class SquatStatisticsActivity extends ListActivity {
         Squat dummySquat = new Squat();
 
         dummySquat.setRandomId();
-        dummySquat.setCurrentDate(Util.getCurrentDateAsString());
+        dummySquat.setCurrentDate();
         dummySquat.setDurationInMillis(1000*durationAsSeconds);
         dummySquat.setCalories(100);
         dummySquat.setRepeats(noOfSquats);

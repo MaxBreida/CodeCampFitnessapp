@@ -1,5 +1,6 @@
 package com.codecamp.bitfit.database;
 
+import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -33,9 +34,9 @@ public class Workout extends BaseModel {
         this.id = id;
     }
 
-    public void setRandomId() {
-        setId(UUID.randomUUID());
-    }
+    public void setRandomId() { setId(UUID.randomUUID()); }
+
+    public boolean hasId() { return id != null; }
 
     public long getDurationInMillis() {
         return durationInMillis;
@@ -57,8 +58,8 @@ public class Workout extends BaseModel {
         return currentDate;
     }
 
-    public void setCurrentDate(String currentDate) {
-        this.currentDate = currentDate;
+    public void setCurrentDate() {
+        this.currentDate = Util.getCurrentDateAsString();
     }
 
     // initialized user for One to Many relation

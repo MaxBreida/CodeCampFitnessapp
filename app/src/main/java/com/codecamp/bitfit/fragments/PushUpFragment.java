@@ -203,7 +203,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);
         pushUp.setCalories(calcCalories());
-        pushUp.setCurrentDate(Util.getCurrentDateAsString());
+        pushUp.setCurrentDate();
 
         // save workout to database and make Toast to confirm saving
         pushUp.save();

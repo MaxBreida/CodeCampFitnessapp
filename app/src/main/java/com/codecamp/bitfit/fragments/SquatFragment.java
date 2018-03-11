@@ -268,7 +268,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
         currentSquat.setUser(currentUser);
         currentSquat.setRandomId();
-        currentSquat.setCurrentDate(Util.getCurrentDateAsString());
+        currentSquat.setCurrentDate();
         currentSquat.setCalories(calcCalories());
         currentSquat.setDurationInMillis(duration);
         currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
