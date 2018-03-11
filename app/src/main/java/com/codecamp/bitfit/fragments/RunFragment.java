@@ -210,7 +210,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         @Override
         public void onLocationChanged(Location location) {
-            if(location != null && location.getAccuracy() <= 25){
+            if(location != null && location.getAccuracy() <= 25){ // precision tolerance = 25 meters
                 // set a point if accuracy is good enough
                 LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
@@ -307,7 +307,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             case R.id.action_share:
                 // TODO ask which sharing method the user wants and use the right one:
                 if(true) { // picture of view method
-                    // TODO lots of testing + persistent cardview values
                     shareFragmentViewOnClick(dataCard);
                 }
                 else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
@@ -366,7 +365,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // TODO: check for issues with the saving, the values seem to be a little bit off
         database.setDistanceInKm(runningDistance);
         database.setDurationInMillis(runDuration);
-        database.setCalories(roundTwoDecimals(getCurrentCalories())); // TODO: do the rounding in the database class
+        database.setCalories(getCurrentCalories());
         database.save();
     }
 
