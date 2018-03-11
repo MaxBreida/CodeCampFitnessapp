@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -73,84 +75,36 @@ public class WorkoutFragment extends Fragment {
     }
 
     public void shareFragmentViewOnClick(final View fragmentView) {
-        // Permission handling
-        Dexter.withActivity(getActivity())
-                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        // permission was granted so now we can do the sharing
-                        Bitmap bitmap = Util.viewToBitmap(fragmentView);
-                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes);
+        Bitmap bitmap = Util.viewToBitmap(fragmentView);
 
-                        filePath = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),
-                                bitmap, "Title", null);
+        // get cache file dir
+        File cachePath = new File(getContext().getCacheDir(), "images");
+        cachePath.mkdirs();
 
-                        if(filePath != null && !filePath.equals("")) {
-                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        // save image in cache folder
+        try {
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                            Uri uri = Uri.parse(filePath);
-
-                            shareIntent.setData(uri);
-                            shareIntent.setType("image/png");
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sieh dir meinen letzten Workout an!");
-
-                            // start share activity
-                            if(getActivity() != null)
-                                startActivityForResult(Intent.createChooser(shareIntent, "Teile deinen Workout via..."), REQUEST_SHARE_ACTION);
-
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        if (response.isPermanentlyDenied()) {
-                            // navigate user to app settings
-                            showSettingsDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        // continue to ask user for permission
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-    }
-
-    /**
-     * Showing Alert Dialog with Settings option
-     * Navigates user to app settings
-     */
-    private void showSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.need_permission);
-        builder.setMessage(R.string.need_permission_storage_message);
-        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                openSettings();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
-
-    }
-
-    // navigating user to app settings
-    private void openSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 101);
+        // share image
+        File imagePath = new File(getContext().getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.png");
+        Uri contentUri = FileProvider.getUriForFile(getContext(), "com.codecamp.bitfit.fileprovider", newFile);
+        if(contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(contentUri, getActivity().getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sieh dir meinen letzten Workout an!");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
+        }
     }
 
     /**
