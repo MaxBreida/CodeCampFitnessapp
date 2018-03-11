@@ -382,5 +382,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     @Override
     public void stopWorkoutOnFragmentChange() {
         // stop workout here
+        updateDatabase();
     }
 }
