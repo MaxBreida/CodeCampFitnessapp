@@ -1,9 +1,6 @@
 package com.codecamp.bitfit.fragments;
 
-
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,10 +21,6 @@ import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareDialog;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -72,12 +65,13 @@ public class HomeFragment extends Fragment {
         // inflates bmi card with values
         bmi();
 
-        // initialized Facebook share buttons
-        shareBMIToFacebook();
-        shareHighScorePushUpsToFacebook();
-        shareHighScoreSquatToFacebook();
-        shareHighScoreRunToFacebook();
-        shareLastActivityToFacebook();
+        // initialize share buttons
+        initializeShareButton(R.id.button_share_bmi, "Whoa, was für ein BMI!");
+        initializeShareButton(R.id.button_share_highscore_pushups, "Oha, hab starke Ärmchen!");
+        initializeShareButton(R.id.button_share_highscore_squats, "Niemals den Bein-Tag überspringen!");
+        // english obviously sounds better, never skip leg day #memes
+        initializeShareButton(R.id.button_share_highscore_run, "Ha, schneller als Sonic!");
+        initializeShareButton(R.id.button_share_last_activity, "War wiedermal fleißig!");
     }
 
     // TODO check for code repetition, looks quite repetitive at some points
@@ -281,67 +275,29 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    // Share stuff to Facebook
-    private void shareBMIToFacebook() {
-        // TODO: repair? doesn't seem to work anymore, at least not with the FB app installed
-        // TODO: ask if user wants to share cardview or link to informative BMI results page
-
-        final MaterialIconView shareBMIButton = getView().findViewById(R.id.button_share_bmi);
-        shareBMIButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int genderUrlFormat = 1;
-                if (user.isFemale()) {
-                    genderUrlFormat = 0;
-                }
-
-                String urlToBmiCalculator = "https://de.smartbmicalculator.com/ergebnis.html?unit=0&hc=" + user.getSizeInCM() + "&wk=" + user.getWeightInKG() + "&us=" + genderUrlFormat + "&ua=" + user.getAge() + "&gk=";
-                ShareLinkContent content = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse(urlToBmiCalculator))
-                        .setQuote(user.getName() + " BMI: " + Double.toString(Math.rint(bmi * 100) / 100))
-                        .build();
-
-                ShareDialog.show(getActivity(), content);
-                shareBMIButton.setColor(Color.parseColor("#DDDDDD"));
-            }
-        });
-    }
-
     View.OnClickListener shareParentCardViewOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View shareButton) {
             View targetView = shareButton;
-            // gets parent view till it reaches the desired CardView
+            // gets parent view till it reaches the desired CardView object
             while(!targetView.getClass().equals(CardView.class)){
                 targetView = (View) targetView.getParent();
             }
 
             MaterialIconView shareBut = (MaterialIconView) shareButton;
 
-            Util.shareViewOnClick(getActivity(), targetView, "Look at them stats boiiis!");
+            Util.shareViewOnClick(getActivity(), targetView, shareButton.getContentDescription().toString());
 
             shareBut.setColor(Color.parseColor("#DDDDDD"));
         }
     };
 
-    private void shareHighScorePushUpsToFacebook() {
-        MaterialIconView shareHighScorePushUpsButton = getView().findViewById(R.id.button_share_highscore_pushups);
-        shareHighScorePushUpsButton.setOnClickListener(shareParentCardViewOnClick);
-    }
-
-    private void shareHighScoreSquatToFacebook() {
-        MaterialIconView shareHighScoreSquatsButton = getView().findViewById(R.id.button_share_highscore_squats);
-        shareHighScoreSquatsButton.setOnClickListener(shareParentCardViewOnClick);
-    }
-
-    private void shareHighScoreRunToFacebook() {
-        MaterialIconView shareHighScoreRunButton = getView().findViewById(R.id.button_share_highscore_run);
-        shareHighScoreRunButton.setOnClickListener(shareParentCardViewOnClick);
-    }
-
-    private void shareLastActivityToFacebook() {
-        MaterialIconView shareLastActivityButton = getView().findViewById(R.id.button_share_last_activity);
-        shareLastActivityButton.setOnClickListener(shareParentCardViewOnClick);
+    // using the content description to set the text that should be shared by clicking the button
+    private void initializeShareButton(int butRes, String msg) {
+        String spam = "\nHol dir jetzt die BitFit app auf PirateBay und zeige auch du deinen Freunden wie cool du bist!";
+        MaterialIconView shareButton = getView().findViewById(butRes);
+        shareButton.setContentDescription(msg + spam);
+        shareButton.setOnClickListener(shareParentCardViewOnClick);
     }
 
     @Override
