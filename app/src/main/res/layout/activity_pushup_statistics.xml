@@ -14,7 +14,7 @@
 
             <include
                 android:id="@+id/barchart"
-                layout="@layout/pushups_statistics_month"
+                layout="@layout/statistics_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
@@ -22,7 +22,7 @@
 
             <include
                 android:id="@+id/linechart"
-                layout="@layout/pushups_statistics_last_seven"
+                layout="@layout/statistics_last_seven"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/barchart"

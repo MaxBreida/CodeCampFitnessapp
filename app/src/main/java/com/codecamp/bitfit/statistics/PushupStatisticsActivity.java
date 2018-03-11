@@ -60,8 +60,8 @@ public class PushupStatisticsActivity extends AppCompatActivity {
 
         final List<PushUps> allPushUps = DBQueryHelper.findAllPushUps();
 
-        barChart = findViewById(R.id.pushups_last_month_chart);
-        lineChart = findViewById(R.id.pushups_last_seven_workouts_chart);
+        barChart = findViewById(R.id.last_month_chart);
+        lineChart = findViewById(R.id.last_seven_workouts_chart);
         currentData = PushUpData.REPETITIONS;
 
         // on click listeners to set chart data (repetitions or calories)
@@ -171,6 +171,7 @@ public class PushupStatisticsActivity extends AppCompatActivity {
         for(int i=0; i<allPushUps.size(); i++) {
             PushUps pushUps = allPushUps.get(i);
             Date pushupDate = Util.getStringAsDate(pushUps.getCurrentDate());
+            boolean entryAdded = false;
 
             float data = 0;
             if(currentData.equals(PushUpData.REPETITIONS))
@@ -192,12 +193,13 @@ public class PushupStatisticsActivity extends AppCompatActivity {
                             float entryValue = entry.getY();
                             // set new value of day
                             entry.setY(entryValue + data);
-                            break;
-                        } else {
-                            // if not add a new one
-                            entries.add(new BarEntry(pushupDate.getDate(), data));
+                            entryAdded = true;
                             break;
                         }
+                    }
+
+                    if(!entryAdded) {
+                        entries.add(new BarEntry(pushupDate.getDate(), data));
                     }
                 }
             }
