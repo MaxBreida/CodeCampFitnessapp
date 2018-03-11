@@ -99,12 +99,13 @@ public class Util {
     /**
      * Does what the method title says
      * @param d the decimal value that shall be rounded
-     * @return rounded double value
+     * @return rounded value
      */
     public static double roundTwoDecimals(double d) {
-        d = Math.round(d * 100);
-        d = d/100;
-        return d;
+        return  Math.round(d * 100) / 100.0f;
+    }
+    public static float roundTwoDecimals(float d) {
+        return  Math.round(d * 100) / 100.0f;
     }
 
     /**
