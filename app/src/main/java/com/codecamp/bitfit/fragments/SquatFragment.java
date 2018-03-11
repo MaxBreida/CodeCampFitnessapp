@@ -56,11 +56,11 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     //GUI elements
     private TextView timeTextView;
-    private FloatingActionButton sqFinishButton;
+    private FloatingActionButton finishButton;
     private TextView squatButton;
     private TextView avgSquatsTextView;
     private TextView caloriesTextView;
-    private FloatingActionButton sqResumeButton;
+    private FloatingActionButton resumeButton;
     private TextView resumeTextView;
     private TextView quitTextView;
     private View container;
@@ -80,14 +80,14 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             STAND_UP,
             COUNT
     }
+    private SquatStates squatState;
 
+    //Quit button states indicate if the button was clicked the first time
+    //("Stop") with possibility of resuming or second time(final quit with "SAVE")
     enum QuitButtonStates {
         STOP_CLICK,
         SAVE_CLICK
     }
-
-    private SquatStates squatState;
-
     private QuitButtonStates quitState;
 
     private CountUpTimer squatTimer;
@@ -125,10 +125,10 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         avgTitleTextView.setText(getString(R.string.squats_per_min));
 
         squatButton = getView().findViewById(R.id.button_squat);
-        sqFinishButton = getView().findViewById(R.id.button_squat_quit);
-        sqResumeButton = getView().findViewById(R.id.button_squat_resume);
+        finishButton = getView().findViewById(R.id.button_squat_quit);
+        resumeButton = getView().findViewById(R.id.button_squat_resume);
         resumeTextView = getView().findViewById(R.id.textView_squat_resume);
-        quitTextView = getView().findViewById(R.id.textView_squat_quit);
+        quitTextView = getView().findViewById(R.id.textview_squat_quit);
 
         timeTextView = getView().findViewById(R.id.textview_cardview_time);
         avgSquatsTextView = getView().findViewById(R.id.textview_cardview_avg);
@@ -159,7 +159,8 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                     callback.workoutInProgress(true);
                     squatTimer.start();
                     container.setVisibility(View.VISIBLE);
-                    sqFinishButton.setVisibility(View.VISIBLE);
+                    finishButton.setVisibility(View.VISIBLE);
+                    squatButton.setEnabled(false);
                 }
 
                 // Screen keep on Flag set
@@ -169,17 +170,15 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             }
         });
 
-        sqFinishButton.setOnClickListener(new View.OnClickListener(){
+        finishButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 if(quitState.equals(QuitButtonStates.STOP_CLICK)){
                     squatTimer.stop();
                     workoutStarted = false;
-
-                    sqResumeButton.setVisibility(View.VISIBLE);
+                    resumeButton.setVisibility(View.VISIBLE);
                     resumeTextView.setVisibility(View.VISIBLE);
                     quitTextView.setVisibility(View.VISIBLE);
-
                     quitState = QuitButtonStates.SAVE_CLICK;
                     // Screen keep on Flag set
                     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -190,13 +189,13 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         });
 
         // TODO make CountUpTimer not be resetted
-        sqResumeButton.setOnClickListener(new View.OnClickListener() {
+        resumeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 quitState = QuitButtonStates.STOP_CLICK;
                 workoutStarted = true;
 
-                sqResumeButton.setVisibility(View.INVISIBLE);
+                resumeButton.setVisibility(View.INVISIBLE);
                 resumeTextView.setVisibility(View.INVISIBLE);
                 quitTextView.setVisibility(View.INVISIBLE);
 
@@ -210,13 +209,14 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         currentSquat = new Squat();
         workoutStarted = false;
         container.setVisibility(View.INVISIBLE);
-        sqFinishButton.setVisibility(View.INVISIBLE);
+        finishButton.setVisibility(View.INVISIBLE);
         squatButton.setText(getString(R.string.start));
         timeTextView.setText(getString(R.string.default_timer_value));
         caloriesTextView.setText(R.string.default_double_value);
         avgSquatsTextView.setText(R.string.default_double_value);
 
-        sqResumeButton.setVisibility(View.INVISIBLE);
+        squatButton.setEnabled(true);
+        resumeButton.setVisibility(View.INVISIBLE);
         quitTextView.setVisibility(View.INVISIBLE);
         resumeTextView.setVisibility(View.INVISIBLE);
 

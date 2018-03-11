@@ -48,13 +48,17 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private TextView pushUpButton;
     private TextView caloriesTextView;
     private TextView avgPushupsTextView;
+    private FloatingActionButton resumeButton;
+    private TextView finishTextView;
+    private TextView resumeTextView;
 
     // fragment stuff
     private boolean workoutStarted;
+    //additional boolean variable indicating that the workout was already started but is paused now
+    private boolean workoutPaused;
     private int count;
     private CountUpTimer countUpTimer;
     private PushUps pushUp;
-    private long startTime;
     private long elapsedTime;
 
     // sensor stuff
@@ -69,6 +73,13 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     double weightPushed;
     double heightPushed;
 
+    //Quit button states indicate if the button was clicked the first time
+    //("Stop") with possibility of resuming or second time(final quit with "SAVE")
+    enum QuitButtonStates {
+        STOP_CLICK,
+        SAVE_CLICK
+    }
+    private QuitButtonStates quitState;
 
     public static PushUpFragment getInstance() {
         PushUpFragment fragment = new PushUpFragment();
@@ -103,6 +114,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         timeTextView = getView().findViewById(R.id.textview_cardview_time);
         finishButton = getView().findViewById(R.id.button_pushup_quit);
         pushUpButton = getView().findViewById(R.id.button_pushup);
+        finishTextView = getView().findViewById(R.id.textview_pushup_quit);
+        resumeButton = getView().findViewById(R.id.button_pushup_resume);
+        resumeTextView = getView().findViewById(R.id.textview_pushup_resume);
+        resumeButton.setVisibility(View.INVISIBLE);
+        resumeTextView.setVisibility(View.INVISIBLE);
         avgPushupsTextView = getView().findViewById(R.id.textview_cardview_avg);
         caloriesTextView = getView().findViewById(R.id.textview_cardview_calories);
         container = getView().findViewById(R.id.container_pushup_counter);
@@ -128,13 +144,16 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     finishButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
-                    startTime = System.currentTimeMillis();
                     callback.workoutInProgress(true);
                 } else {
+                    // click at the screen with the nose as an alternative to the
+                    // light sensor (e.g. if the light is bad)
                     // increment count and set text
-                    count++;
-                    avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
-                    caloriesTextView.setText(String.valueOf(calcCalories()));
+                    if(!workoutPaused){ // Only count via button if workout not paused
+                        count++;
+                        avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
+                        caloriesTextView.setText(String.valueOf(calcCalories()));
+                    }
                 }
                 // Screen keep on Flag set
                 getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -146,21 +165,48 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopWorkout();
+                if(quitState.equals(QuitButtonStates.STOP_CLICK)){
+                    countUpTimer.stop();
+                    finishTextView.setVisibility(View.VISIBLE);
+                    resumeButton.setVisibility(View.VISIBLE);
+                    resumeTextView.setVisibility(View.VISIBLE);
+                    workoutStarted = false;
+                    workoutPaused = true;
+                    quitState = QuitButtonStates.SAVE_CLICK;
+                    pushUpButton.setEnabled(false);
+                } else {
+                    stopWorkout();
+                }
+            }
+        });
+
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishTextView.setVisibility(View.INVISIBLE);
+                resumeButton.setVisibility(View.INVISIBLE);
+                resumeTextView.setVisibility(View.INVISIBLE);
+                countUpTimer.resume();
+                workoutPaused = false;
+                pushUpButton.setEnabled(true);
             }
         });
     }
 
     private void setToInitialState() {
         pushUp = new PushUps();
-        startTime = 0;
         workoutStarted = false;
+        workoutPaused = false;
         container.setVisibility(View.INVISIBLE);
         finishButton.setVisibility(View.INVISIBLE);
+        finishTextView.setVisibility(View.INVISIBLE);
+        resumeButton.setVisibility(View.INVISIBLE);
+        resumeTextView.setVisibility(View.INVISIBLE);
         pushUpButton.setText(R.string.start);
         timeTextView.setText(R.string.default_timer_value);
         caloriesTextView.setText(R.string.default_double_value);
         avgPushupsTextView.setText(R.string.default_double_value);
+        quitState = QuitButtonStates.STOP_CLICK;
         count = 0;
         lockPushUpsCount = false;
         maxLightRange = 0;
@@ -179,6 +225,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private void stopWorkout() {
         callback.workoutInProgress(false);
 
+        countUpTimer.stop();
         persistPushupObject();
 
         // Screen keep on Flag clear
@@ -186,7 +233,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
         // set to initial state
         setToInitialState();
-        countUpTimer.stop();
     }
 
     private void persistPushupObject() {
@@ -194,13 +240,12 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         // System.currentTimeMillis isn't suited for timers and gotta use our optimized countUpTimer for this anyways
         // for more information: https://developer.android.com/reference/android/os/SystemClock.html
         // I would suggest just using the global elapsedTime variable (which gets updated every second) for this
-        long duration = System.currentTimeMillis() - startTime;
 
         // set pushup object
         pushUp.setUser(user);
         pushUp.setRandomId();
-        pushUp.setDurationInMillis(duration);
-        pushUp.setPushPerMin(calcPushupsPerMinute(duration));
+        pushUp.setDurationInMillis(elapsedTime);
+        pushUp.setPushPerMin(calcPushupsPerMinute(elapsedTime));
         pushUp.setRepeats(count);
         pushUp.setCalories(calcCalories());
         pushUp.setCurrentDate();
@@ -251,7 +296,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         // Search for light sensor, only start at workoutstart
         // TODO calibration
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-            if (event.values != null && workoutStarted) {
+            if (event.values != null && workoutStarted && !workoutPaused) {
                 // calculation light range
                 if (maxLightRange < event.values[0]) {
 
