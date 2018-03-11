@@ -33,6 +33,10 @@ public class Workout extends BaseModel {
         this.id = id;
     }
 
+    public void setRandomId() {
+        setId(UUID.randomUUID());
+    }
+
     public long getDurationInMillis() {
         return durationInMillis;
     }

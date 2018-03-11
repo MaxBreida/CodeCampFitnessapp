@@ -33,8 +33,6 @@ import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
-import java.util.UUID;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -269,7 +267,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         User currentUser = DBQueryHelper.findUser();
 
         currentSquat.setUser(currentUser);
-        currentSquat.setId(UUID.randomUUID());
+        currentSquat.setRandomId();
         currentSquat.setCurrentDate(Util.getCurrentDateAsString());
         currentSquat.setCalories(calcCalories());
         currentSquat.setDurationInMillis(duration);

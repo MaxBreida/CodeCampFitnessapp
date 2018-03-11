@@ -33,8 +33,6 @@ import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 
-import java.util.UUID;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -200,7 +198,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
         // set pushup object
         pushUp.setUser(user);
-        pushUp.setId(UUID.randomUUID());
+        pushUp.setRandomId();
         pushUp.setDurationInMillis(duration);
         pushUp.setPushPerMin(calcPushupsPerMinute(duration));
         pushUp.setRepeats(count);

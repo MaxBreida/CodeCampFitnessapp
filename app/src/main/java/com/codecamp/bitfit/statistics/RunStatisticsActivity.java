@@ -9,7 +9,6 @@ import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.Util;
 
 import java.util.List;
-import java.util.UUID;
 
 public class RunStatisticsActivity extends ListActivity {
 
@@ -43,7 +42,7 @@ public class RunStatisticsActivity extends ListActivity {
     protected  void createDummyRun(double distance, long durationAsSeconds){
         Run dummyRun = new Run();
 
-        dummyRun.setId(UUID.randomUUID());
+        dummyRun.setRandomId();
         dummyRun.setCurrentDate(Util.getCurrentDateAsString());
         dummyRun.setDurationInMillis(1000*durationAsSeconds);
         dummyRun.setCalories(100);
