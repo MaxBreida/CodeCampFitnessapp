@@ -291,7 +291,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int genderUrlFormat = 1;
-                if (user.getGender() != "männlich") {
+                if (user.isFemale()) {
                     genderUrlFormat = 0;
                 }
 

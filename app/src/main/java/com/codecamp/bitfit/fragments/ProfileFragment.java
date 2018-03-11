@@ -147,9 +147,9 @@ public class ProfileFragment extends Fragment {
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), R.layout.profile_gender_picker_text_view, genderList);
         genderSpinner.setAdapter(genderAdapter);
 
-        if(user.getGender().equals(getString(R.string.gender_male))) {
+        if(user.isMale()) {
             genderSpinner.setSelection(GENDER_MALE_POSITION);
-        } else if(user.getGender().equals(getString(R.string.gender_female))) {
+        } else if(user.isFemale()) {
             genderSpinner.setSelection(GENDER_FEMALE_POSITION);
         }
     }
