@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
+import com.codecamp.bitfit.database.Run;
 import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.codecamp.bitfit.util.CountUpTimer;
@@ -49,6 +50,7 @@ import java.util.List;
 
 import static android.content.Context.POWER_SERVICE;
 import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
+import static com.codecamp.bitfit.util.Util.roundTwoDecimals;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,18 +59,27 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 // TODO: test offline functionality, implement if necessary
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
+    // Map related global variables
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
     LocationManager lm; // location manager that keeps track of current location
+
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
+
+    // Activities and views related global variables
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
+
+    // userdata and database related global variables
     boolean allowDataUpdate = false; // determines whether or not the database can update automatically
+    Run database; // Object that allows writing to the database
+    User user;
     long runDuration = 0;
+    float runningDistance = 0;
 
     // run duration timer and a timer for saving the data of a run to the database
-    CountUpTimer runDurationTimer, SaveDataTimer;
+    CountUpTimer runDurationTimer, saveDataTimer;
 
     public static RunFragment getInstance() {
 
@@ -100,6 +111,15 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
         // TODO: else unexpected error notifications
 
+        // get the current user
+        user = DBQueryHelper.findUser();
+
+        // initialize the database
+        database = new Run();
+        database.setUser(user);
+        database.setRandomId();
+        database.setCurrentDate();
+
         // setting up map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mapReady);
@@ -122,10 +142,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // tell mainactivity that the workout is stopped
                 callback.workoutInProgress(false);
 
+                updateDatabase();
+
+                // change button design
                 setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
 
+                // stop the timers
                 runDurationTimer.stop();
+                saveDataTimer.stop();
 
+                // deactivate location updated and release wakelock
                 lm.removeUpdates(locListener);
                 wakeLock.release();
             }
@@ -141,8 +167,13 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     setupRunDurationTimer((TextView) dataCard.findViewById(R.id.textview_run_duration));
                 else
                     runDurationTimer.reset();
-
                 runDurationTimer.start();
+
+                if(saveDataTimer == null)
+                    setupDataSavingInterval();
+                else
+                    saveDataTimer.reset();
+                saveDataTimer.start();
 
                 startRunIfAllIsSet();
             }
@@ -175,7 +206,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     LocationListener locListener = new LocationListener() {
 
-        float runningDistance = 0;
         Location previousLoc = null;
 
         @Override
@@ -190,6 +220,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     runningDistance += location.distanceTo(previousLoc);
                     TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
                     distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
+                    if(allowDataUpdate)
+                        updateDatabase();
                 }
                 else{
                     LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -210,26 +242,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             }
         }
 
-        private double getCurrentCalories() {
-            // TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
-            // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
-            // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
-            // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
-            User user = DBQueryHelper.findUser();
-            boolean m = user.isMale();
-            double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
-            double heartRate = avgSpeed * (46 / 8.04672) + 80;
-            double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
-            double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
-            double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
-            heartRateParameter -= ((m) ? 55.0969 : 20.4022);
-            double cals = ageParameter - weightParameter + heartRateParameter;
-            cals *= (runDuration / (4.184 * 60000));
-            // this formula might not be suited for very short runs, preventing negative calorie values:
-            if(cals < 0) cals = 0;
-            return cals;
-        }
-
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {}
         @Override
@@ -237,6 +249,25 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         @Override
         public void onProviderDisabled(String s) {}
     };
+
+    private double getCurrentCalories() {
+        // TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
+        // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
+        // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
+        // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
+        boolean m = user.isMale();
+        double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
+        double heartRate = avgSpeed * (46 / 8.04672) + 80;
+        double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
+        double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
+        double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
+        heartRateParameter -= ((m) ? 55.0969 : 20.4022);
+        double cals = ageParameter - weightParameter + heartRateParameter;
+        cals *= (runDuration / (4.184 * 60000));
+        // this formula might not be suited for very short runs, preventing negative calorie values:
+        if(cals < 0) cals = 0;
+        return cals;
+    }
 
     OnMapReadyCallback mapReady = new OnMapReadyCallback() {
         @Override
@@ -311,8 +342,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     /** Since writing to the database every second, or on every data change would be too much,
      * it's only being done every minute (on the next data change), that way we go rather easy
      * on the device's storage unit, which has a limited lifespan in terms of write actions. */
-    public void setupDataSavingInterval(){ // TODO: BOOKMARK, continue here with the database implementation
-        SaveDataTimer = new CountUpTimer(60000) { // 60000 millisecs = every minute
+    public void setupDataSavingInterval(){
+        saveDataTimer = new CountUpTimer(60000) { // 60000 millisecs = every minute
             int previousAmountOfPoints = 0;
             @Override
             public void onTick(long elapsedTime) {
@@ -328,10 +359,15 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     public void updateDatabase() {
-        // since it's going to be updated now we can block all other update attempts for now,
-        // this actually prevents simultaneous write conflicts as well
-        allowDataUpdate = false;
+        allowDataUpdate = false;/* since it's going to be updated now we can block all other update
+                    attempts for now, this actually prevents simultaneous write conflicts as well */
+        saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
 
+        // TODO: check for issues with the saving, the values seem to be a little bit off
+        database.setDistanceInKm(runningDistance);
+        database.setDurationInMillis(runDuration);
+        database.setCalories(roundTwoDecimals(getCurrentCalories())); // TODO: do the rounding in the database class
+        database.save();
     }
 
     @Override
