@@ -301,30 +301,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_statistics:
-                // TODO start statistics activity.
                 activity.startActivity(new Intent(getActivity(), RunStatisticsActivity.class));
                 return true;
             case R.id.action_share:
-                // TODO ask which sharing method the user wants and use the right one:
-                if(true) { // picture of view method
-                    // TODO lots of testing + persistent cardview values
-                    Util.shareViewOnClick(getActivity(),
-                            dataCard,
-                            String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
-                }
-                else{ // link method TODO if we use this, the link needs to be checked (can't be too long)
-                    StringBuilder googleMapsLink = new StringBuilder("https://www.google.com/maps/dir/");
-                    for (int i = 0; i < points.size(); i++) {
-                        googleMapsLink.append(points.get(i).latitude).append(",").append(points.get(i).longitude).append("/");
-                    }
-
-                    ShareLinkContent content1 = new ShareLinkContent.Builder()
-                            .setContentUrl(Uri.parse(googleMapsLink.toString() + "data=!3m1!4b1!4m2!4m1!3e2"))
-                            .setQuote("")
-                            .build();
-
-                    ShareDialog.show(activity, content1);
-                }
+                Util.shareViewOnClick(getActivity(),
+                        dataCard,
+                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
