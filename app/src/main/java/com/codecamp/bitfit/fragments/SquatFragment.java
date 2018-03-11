@@ -44,11 +44,8 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private int squatCtr;
     private Squat currentSquat;
     //Time variables
-    private long startTime;
-    private long finishTime;
     private long elapsedTime;
-    private long pauseTime;
-    private long resumeTime;
+
 
     //Boolean variable to store if the workout was started, if not: no need to evaluate sensors
     private boolean workoutStarted;
@@ -161,7 +158,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                     workoutStarted = true;
                     callback.workoutInProgress(true);
                     squatTimer.start();
-                    startTime = System.currentTimeMillis();
                     container.setVisibility(View.VISIBLE);
                     sqFinishButton.setVisibility(View.VISIBLE);
                 }
@@ -178,7 +174,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             public void onClick(View view) {
                 if(quitState.equals(QuitButtonStates.STOP_CLICK)){
                     squatTimer.stop();
-                    pauseTime = System.currentTimeMillis();
                     workoutStarted = false;
 
                     sqResumeButton.setVisibility(View.VISIBLE);
@@ -205,8 +200,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 resumeTextView.setVisibility(View.INVISIBLE);
                 quitTextView.setVisibility(View.INVISIBLE);
 
-                squatTimer.start();
-                resumeTime = System.currentTimeMillis();
+                squatTimer.resume();
             }
         });
 
@@ -242,11 +236,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private void stopWorkout() {
         callback.workoutInProgress(false);
 
-        // TODO: use the countUpTimer for this:
-        // System.currentTimeMillis isn't suited for timers and gotta use our optimized countUpTimer for this anyways
-        // for more information: https://developer.android.com/reference/android/os/SystemClock.html
-        // I would suggest just using the global elapsedTime variable (which gets updated every second) for this
-        finishTime = System.currentTimeMillis();
         currentSquat = createSquatObj();
         // save workout to database and make Toast to confirm saving
         currentSquat.save();
@@ -261,7 +250,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private Squat createSquatObj(){
         // TODO: I need to check if this is really giving right values
         // I had one workout where a time about 25300000:44 was saved (it wasn't that long ;D)
-        long duration = finishTime-startTime-(resumeTime-pauseTime); //duration in milliseconds
 
         //Set attributes of the squat object
         User currentUser = DBQueryHelper.findUser();
@@ -270,8 +258,8 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         currentSquat.setRandomId();
         currentSquat.setCurrentDate();
         currentSquat.setCalories(calcCalories());
-        currentSquat.setDurationInMillis(duration);
-        currentSquat.setSquatPerMin(calcSquatsPerMinute(duration));
+        currentSquat.setDurationInMillis(elapsedTime);
+        currentSquat.setSquatPerMin(calcSquatsPerMinute(elapsedTime));
         currentSquat.setRepeats(squatCtr);
 
         return currentSquat;
@@ -370,8 +358,8 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 return true;
             case R.id.action_share:
                 // TODO lots of testing + persistent cardview values, rethink where sharing would best be placed
-                // My opinion: Sharing should be possible from the "Finish workout?" screen
-                //(which is not yet created), from here you'd share a not yet finished workout
+                // My opinion: Sharing should be possible from the "Finish workout?" screen,
+                // from here you'd share a not yet finished workout
                 shareFragmentViewOnClick(getView().findViewById(R.id.container_squat_counter));
                 return true;
             default:
