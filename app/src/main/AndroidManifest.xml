@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- TODO: check if this is still required for something (initially it was needed for the sharing)-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- location services for the running fragment -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- wake lock to keep the running app on in the background once the screen is turned off -->
 
     <application

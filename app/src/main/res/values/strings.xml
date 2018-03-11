@@ -69,5 +69,9 @@
     <string name="current_month">Aktueller Monat</string>
     <string name="last_7_workouts">Letzte 7 Workouts</string>
     <string name="history">Verlauf</string>
+    <string name="need_permission">Berechtigung benötigt!</string>
+    <string name="need_permission_storage_message">Diese App braucht die Berechtigung um das Share-Feature nutzen zu können. Du kannst die Berechtigung in den Einstellungen erteilen.</string>
+    <string name="settings">Einstellungen</string>
+    <string name="cancel">Abbrechen</string>
 
 </resources>
