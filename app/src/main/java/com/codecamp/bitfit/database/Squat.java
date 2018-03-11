@@ -14,13 +14,10 @@ import java.util.UUID;
  */
 
 @Table(database = AppDatabase.class)
-public class Squat extends Workout {
+public class Squat extends WorkoutWithRepetitions {
 
     @Column
     double squatPerMin;
-
-    @Column
-    int repeats;
 
     //Getter and Setter
     public Double getSquatPerMin() {
@@ -29,13 +26,5 @@ public class Squat extends Workout {
 
     public void setSquatPerMin(Double squatPerMin) {
         this.squatPerMin = squatPerMin;
-    }
-
-    public int getRepeats() {
-        return repeats;
-    }
-
-    public void setRepeats(int repeats) {
-        this.repeats = repeats;
     }
 }

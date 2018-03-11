@@ -360,7 +360,9 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 // TODO lots of testing + persistent cardview values, rethink where sharing would best be placed
                 // My opinion: Sharing should be possible from the "Finish workout?" screen,
                 // from here you'd share a not yet finished workout
-                shareFragmentViewOnClick(getView().findViewById(R.id.container_squat_counter));
+                Util.shareViewOnClick(getActivity(),
+                        getView().findViewById(R.id.container_squat_counter),
+                        String.format("Ich habe bei meinem letzten Workout %d Squats geschafft!", squatCtr));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
