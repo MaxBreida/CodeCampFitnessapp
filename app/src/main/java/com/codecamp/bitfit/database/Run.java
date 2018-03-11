@@ -1,5 +1,6 @@
 package com.codecamp.bitfit.database;
 
+import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
@@ -22,7 +23,7 @@ public class Run extends Workout {
     }
 
     public void setDistanceInKm(float distance) {
-        this.distance = distance;
+        this.distance = Util.roundTwoDecimals(distance);
     }
 
     public double getAverageKmh() {
