@@ -1,6 +1,8 @@
 package com.codecamp.bitfit.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -64,6 +66,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private TextView resumeTextView;
     private TextView quitTextView;
     private View container;
+    private View customDialogLayout;
 
     //Use an average value for the accelerometer output
     //Variable for the length of the array for the average value
@@ -234,7 +237,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     private void stopWorkout() {
         workoutStarted = false;
-        callback.workoutInProgress(false);
 
         currentSquat = createSquatObj();
         // save workout to database and make Toast to confirm saving
@@ -244,7 +246,51 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         new SharedPrefsHelper(getContext())
                 .setLastActivity(Constants.WORKOUT_SQUATS, currentSquat.getId());
 
-        setToInitialState();
+        showWorkoutCompleteDialog();
+    }
+
+    private void showWorkoutCompleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // set the custom layout
+        customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
+        builder.setView(customDialogLayout);
+
+        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
+        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
+        TextView perminText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
+        TextView countText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
+
+        caloriesText.setText(String.format("%.2f kcal", currentSquat.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(currentSquat.getDurationInMillis())));
+        perminText.setText(String.format("%.2f S/min", currentSquat.getSquatPerMin()));
+        countText.setText(String.format("%d Squat(s)", squatCtr));
+
+        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Util.shareViewOnClick(getActivity(),
+                        customDialogLayout.findViewById(R.id.dialog_repetition_workout_content),
+                        String.format("Ich habe bei meinem letzten Workout %d Squats geschafft!", squatCtr));
+
+                // set to initial state
+                setToInitialState();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // set to initial state
+                setToInitialState();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setCancelable(false);
+        builder.create().show();
     }
 
     private Squat createSquatObj(){

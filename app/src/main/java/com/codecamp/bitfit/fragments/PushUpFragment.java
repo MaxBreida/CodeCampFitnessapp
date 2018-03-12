@@ -52,8 +52,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private TextView avgPushupsTextView;
     private FloatingActionButton resumeButton;
     private TextView finishTextView;
-    private TextView resumeTextView;
+    private View customDialogLayout;
 
+    private TextView resumeTextView;
     // fragment stuff
     private boolean workoutStarted;
     //additional boolean variable indicating that the workout was already started but is paused now
@@ -61,20 +62,19 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private int count;
     private CountUpTimer countUpTimer;
     private PushUps pushUp;
-    private long elapsedTime;
 
+    private long elapsedTime;
     // sensor stuff
     private SensorManager mSensorManager;
     private Sensor mLight;
     private float maxLightRange;
     private double minLightRange;
     private double averageLightRange;
-    private boolean lockPushUpsCount;
 
+    private boolean lockPushUpsCount;
     //Values for calorie calculation
     double weightPushed;
     double heightPushed;
-    private View customDialogLayout;
 
     //Quit button states indicate if the button was clicked the first time
     //("Stop") with possibility of resuming or second time(final quit with "SAVE")
@@ -235,7 +235,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         // Screen keep on Flag clear
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        showAlertDialog();
+        showWorkoutCompleteDialog();
     }
 
     private void persistPushupObject() {
@@ -264,7 +264,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     }
 
-    private void showAlertDialog() {
+    private void showWorkoutCompleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // set the custom layout
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
