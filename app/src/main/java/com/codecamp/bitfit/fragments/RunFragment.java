@@ -173,7 +173,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 wakeLock.acquire(36000000);
 
                 if(runDurationTimer == null)
-                    setupRunDurationTimer((TextView) dataCard.findViewById(R.id.textview_run_duration));
+                    setupRunDurationTimer(
+                            (TextView) dataCard.findViewById(R.id.textview_run_duration),
+                            (TextView) dataCard.findViewById(R.id.textview_run_speed)
+                    );
                 else
                     runDurationTimer.reset();
                 runDurationTimer.start();
@@ -247,13 +250,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 }
                 previousLoc = location;
 
-                if(location.hasSpeed()){
-                    // set speed if the location manager can provide those readings
-                    TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
-                    float curSpeed = location.getSpeed();
-                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
-                }
-
                 // set Calories
                 TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
                 calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
@@ -268,15 +264,18 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         public void onProviderDisabled(String s) {}
     };
 
+    public double getAverageSpeedInKmh() {
+        return (runningDistance / 1000.0) / (runDuration / 3600000.0);
+    }
+
     private double getCurrentCalories() {
         // TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
         // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
         // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
         // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
         boolean m = user.isMale();
-        double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
         // calculate average hear-rate with the average speed of this run:
-        double heartRate = avgSpeed * (46 / 8.04672) + 80;
+        double heartRate = getAverageSpeedInKmh() * (46 / 8.04672) + 80;
         double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
         double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
         double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
@@ -341,12 +340,13 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
     }
 
-    public void setupRunDurationTimer(final TextView view){
-        runDurationTimer = new CountUpTimer(1000, view) { // 1000 millisecs = every second
+    public void setupRunDurationTimer(final TextView time, final TextView speed){
+        runDurationTimer = new CountUpTimer(1000, time) { // 1000 millisecs = every second
             @Override
             public void onTick(long elapsedTime) {
                 runDuration = elapsedTime;
-                view.setText(Util.getMillisAsTimeString(elapsedTime));
+                time.setText(Util.getMillisAsTimeString(elapsedTime));
+                speed.setText(Util.decNumToXPrecisionString(getAverageSpeedInKmh(), 2).concat(" km/h"));
             }
         };
     }
