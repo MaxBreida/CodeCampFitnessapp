@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -158,7 +157,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 updateDatabase();
 
                 // change button design
-                setButton(false, Color.parseColor("#008800"), R.drawable.ic_play_arrow_white_48dp);
+                setButton(
+                        false,
+                        getResources().getColor(R.color.darkerGreen),
+                        R.drawable.ic_play_arrow_white_48dp
+                );
 
                 // stop the timers
                 runDurationTimer.stop();
@@ -173,7 +176,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // tell mainactivity that a workout is in progress
                 callback.workoutInProgress(true);
 
-                setButton(true, Color.parseColor("#BB0000"), R.drawable.ic_stop_white_48dp);
+                setButton(
+                        true,
+                        getResources().getColor(R.color.red),
+                        R.drawable.ic_stop_white_48dp
+                );
 
                 wakeLock.acquire(36000000);
 
@@ -296,7 +303,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
-            PolylineOptions lineOptions = new PolylineOptions().color(Color.RED).width(3);
+            PolylineOptions lineOptions = new PolylineOptions()
+                    .color(getResources().getColor(R.color.red))
+                    .width(4);
             line = mMap.addPolyline(lineOptions);
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
