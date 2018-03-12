@@ -143,7 +143,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         if(checkPermission())
             startStop.setOnClickListener(startStopButListener);
         else
-            startStop.setVisibility(View.INVISIBLE);
+            startStop.setVisibility(View.GONE); // remove the start button if there are no location
+                                            // permissions, since the run can't be tracked anyways
     }
 
     View.OnClickListener startStopButListener = new View.OnClickListener() {
