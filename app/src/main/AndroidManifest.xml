@@ -4,8 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- location services for the running fragment -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- wake lock to keep the running fragment on in the background once the screen is turned off -->
 
+    <!-- wake lock to keep the running fragment on in the background once the screen is turned off -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -58,26 +58,14 @@
             android:name=".statistics.PushupHistoryActivity"
             android:label="PushUp Verlauf"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".statistics.SquatHistoryActivity"
-            android:label="Squat Verlauf"
-            android:screenOrientation="portrait"/>
-
-        <!-- Provider Facebook add to App -->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-
         <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:name=".statistics.SquatHistoryActivity"
+            android:label="Squat Verlauf"
+            android:screenOrientation="portrait" />
 
-        <provider
-            android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider2029588297311884"
-            android:exported="true" />
-
+        <activity android:name=".statistics.RunHistoryActivity"
+            android:label="Laufen Verlauf"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
