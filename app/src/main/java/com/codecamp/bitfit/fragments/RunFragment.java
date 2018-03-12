@@ -3,8 +3,9 @@ package com.codecamp.bitfit.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,10 +16,8 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +40,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.POWER_SERVICE;
 import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
@@ -147,7 +153,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 runDurationTimer.stop();
                 saveDataTimer.stop();
 
-                // deactivate location updated and release wakelock
+                // deactivate location updates and release wakelock
                 lm.removeUpdates(locListener);
                 wakeLock.release();
             }
@@ -189,6 +195,15 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     Criteria criteria = new Criteria();
                     criteria.setAccuracy(Criteria.ACCURACY_FINE);
                     lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
+                    /* sets the location manager up to execute onLocationChanged on specific conditions:
+                     * 1st parameter determines the minimal time (in milliseconds) of a location update
+                     * 2nd parameter sets the minimal distance that you have to travel to trigger an update
+                     * 3rd parameter is the criteria for choosing the location provider (GPS / Network)
+                     * 4th parameter sets the location listener, which determines the code that is executed
+                     *      on a change of the location
+                     * 5th and last parameter sets a looper, used to execute the Messages(Runnables) in a queue
+                     *      but we don't need that feature
+                     */
                 }
             }
         }
@@ -253,6 +268,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
         boolean m = user.isMale();
         double avgSpeed = (runningDistance / 1000.0) / (runDuration / 3600000.0);
+        // calculate average hear-rate with the average speed of this run:
         double heartRate = avgSpeed * (46 / 8.04672) + 80;
         double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
         double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
@@ -278,31 +294,71 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     };
 
     private boolean checkPermission() {
-        if(permissionGranted())
-            return true;
-        else{
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            return false;
-        }
-    }
+        Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        // permission was granted
 
-    private boolean permissionGranted() {
-        return ContextCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED;
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (response.isPermanentlyDenied()) {
+                            // navigate user to app settings
+                            // showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        // continue to ask user for permission
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_statistics:
-                activity.startActivity(new Intent(getActivity(), RunStatisticsActivity.class));
+                activity.startActivity(new Intent(activity, RunStatisticsActivity.class));
                 return true;
             case R.id.action_share:
-                Util.shareViewOnClick(getActivity(),
-                        dataCard,
-                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
+                mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+                    /**
+                     * provides a screenshot of the map
+                     * @param bitMap the screenshot
+                     */
+                    @Override
+                    public void onSnapshotReady(Bitmap bitMap) {
+                        // get the View object of the map:
+                        View mapView = mainView.findViewById(R.id.map);
+                        // get a finished bitmap picture of the CardView with the run stats:
+                        Bitmap stats = Util.viewToBitmap(dataCard);
+                        // create a new empty bitmap with the size of the main view of the run fragment:
+                        Bitmap bitmap = Bitmap.createBitmap(mainView.getWidth(),
+                                mainView.getHeight(),
+                                Bitmap.Config.ARGB_8888
+                        );
+
+                        // make a canvas for that bitmap and place the map and stats bitmap on it
+                        // the same way it is placed on the main view, it basically recreates
+                        // what we see on screen:
+                        Canvas canvas = new Canvas(bitmap);
+                        canvas.drawBitmap(stats, dataCard.getLeft(), dataCard.getTop(), null);
+                        canvas.drawBitmap(bitMap, mapView.getLeft(), mapView.getTop(), null);
+
+                        // call the share
+                        Util.shareBitmap(activity,
+                                bitmap,
+                                String.format(Locale.US,"Ich habe bei meinem letzten Lauftraining "
+                                        + "%.2fkm zurückgelegt!", runningDistance)
+                        );
+                    }
+                });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
