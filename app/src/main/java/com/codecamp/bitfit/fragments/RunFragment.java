@@ -407,17 +407,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void showWorkoutCompleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // set the custom layout
-        customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
-        builder.setView(customDialogLayout);
-
-        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_calories);
-        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_duration);
-        TextView speedText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_speed);
-        TextView distanceText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_distance);
-        workoutCompleteImageView = customDialogLayout.findViewById(R.id.placeholder_dialog_run_workout_map);
-
+        final Bitmap[] bitmap = new Bitmap[1];
         mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             /**
              * provides a screenshot of the map
@@ -425,17 +415,13 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
              */
             @Override
             public void onSnapshotReady(Bitmap bitMap) {
-                workoutCompleteImageView.setImageBitmap(bitMap);
+                bitmap[0] = bitMap;
             }
         });
 
+        customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
 
-        caloriesText.setText(String.format("%.2f kcal", database.getCalories()));
-        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(database.getDurationInMillis())));
-        speedText.setText(String.format("%.2f km/h", database.getAverageKmh()));
-        distanceText.setText(String.format("%.2f km", runningDistance / 1000));
-
-        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(getActivity(),
@@ -447,9 +433,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // set to initial state
@@ -457,9 +443,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setCancelable(false);
-        builder.create().show();
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), database, bitmap[0], customDialogLayout, positive, negative);
+        dialog.show();
     }
 }
