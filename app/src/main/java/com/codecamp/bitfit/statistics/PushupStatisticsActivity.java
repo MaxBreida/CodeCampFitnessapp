@@ -47,7 +47,8 @@ public class PushupStatisticsActivity extends RepetitionsStatisticsActivity {
 
             barChart = findViewById(R.id.last_month_chart);
             lineChart = findViewById(R.id.last_seven_workouts_chart);
-            currentData = WorkoutData.REPETITIONS;
+            currentBarChartData = WorkoutData.REPETITIONS;
+            currentLineChartData = WorkoutData.REPETITIONS;
 
             fillBarchart();
             fillLinechart();
@@ -76,7 +77,7 @@ public class PushupStatisticsActivity extends RepetitionsStatisticsActivity {
 
                 @Override
                 public void onChartSingleTapped(MotionEvent me) {
-                    currentData = currentData.next();
+                    currentBarChartData = currentBarChartData.next();
                     fillBarchart();
                 }
 
@@ -118,7 +119,7 @@ public class PushupStatisticsActivity extends RepetitionsStatisticsActivity {
 
                 @Override
                 public void onChartSingleTapped(MotionEvent me) {
-                    currentData = currentData.next();
+                    currentLineChartData = currentLineChartData.next();
                     fillLinechart();
                 }
 

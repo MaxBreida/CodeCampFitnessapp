@@ -1,12 +1,8 @@
 package com.codecamp.bitfit.statistics;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.codecamp.bitfit.R;
-import com.codecamp.bitfit.database.PushUps;
-import com.codecamp.bitfit.database.Workout;
 import com.codecamp.bitfit.database.WorkoutWithRepetitions;
 import com.codecamp.bitfit.util.Util;
 import com.github.mikephil.charting.charts.BarChart;
@@ -37,12 +33,14 @@ import java.util.List;
 public class RepetitionsStatisticsActivity extends AppCompatActivity {
     protected BarChart barChart;
     protected LineChart lineChart;
-    protected WorkoutData currentData;
+    protected WorkoutData currentBarChartData;
+    protected WorkoutData currentLineChartData;
     protected List<? extends WorkoutWithRepetitions> allWorkouts;
 
     protected enum WorkoutData{
         REPETITIONS,
-        CALORIES;
+        CALORIES,
+        DURATION;
 
         /**
          * https://stackoverflow.com/questions/17006239/whats-the-best-way-to-implement-next-and-previous-on-an-enum-type#17006263
@@ -65,10 +63,12 @@ public class RepetitionsStatisticsActivity extends AppCompatActivity {
             boolean entryAdded = false;
 
             float data = 0;
-            if(currentData.equals(WorkoutData.REPETITIONS))
+            if(currentBarChartData.equals(WorkoutData.REPETITIONS))
                 data = workout.getRepeats();
-            else if (currentData.equals(WorkoutData.CALORIES))
+            else if (currentBarChartData.equals(WorkoutData.CALORIES))
                 data = (float) workout.getCalories();
+            else if (currentBarChartData.equals(WorkoutData.DURATION))
+                data = (float) workout.getDurationInMillis();
 
             if(workoutDate.getMonth() == currentMonth) {
                 // if entries is empty add one entry
@@ -101,11 +101,14 @@ public class RepetitionsStatisticsActivity extends AppCompatActivity {
         dataSet.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                if(currentData.equals(WorkoutData.REPETITIONS)) {
+                if(currentBarChartData.equals(WorkoutData.REPETITIONS)) {
                     return String.valueOf((int) value);
                 }
-                else if (currentData.equals(WorkoutData.CALORIES)) {
+                else if (currentBarChartData.equals(WorkoutData.CALORIES)) {
                     return String.format("%.2f", value);
+                }
+                else if (currentBarChartData.equals(WorkoutData.DURATION)) {
+                    return Util.getMillisAsTimeString((long) value);
                 }
                 // shouldnt come this far
                 return null;
@@ -113,13 +116,17 @@ public class RepetitionsStatisticsActivity extends AppCompatActivity {
         });
 
         // set bar color
-        if(currentData.equals(WorkoutData.REPETITIONS)) {
-            dataSet.setColor(getResources().getColor(R.color.lightBlue));
+        if(currentBarChartData.equals(WorkoutData.REPETITIONS)) {
+            dataSet.setColor(getResources().getColor(R.color.colorPrimary));
             dataSet.setLabel("Wiederholungen pro Tag");
         }
-        else if (currentData.equals(WorkoutData.CALORIES)) {
+        else if (currentBarChartData.equals(WorkoutData.CALORIES)) {
             dataSet.setColor(getResources().getColor(R.color.orange));
-            dataSet.setLabel("Verbrauchte Kalorien pro Tag");
+            dataSet.setLabel("Verbrauchte Kalorien pro Tag in kcal");
+        }
+        else if (currentBarChartData.equals(WorkoutData.DURATION)) {
+            dataSet.setColor(getResources().getColor(R.color.lightBlue));
+            dataSet.setLabel("Dauer pro Tag in Minuten");
         }
 
         BarData barData = new BarData(dataSet);
@@ -183,10 +190,13 @@ public class RepetitionsStatisticsActivity extends AppCompatActivity {
         for(WorkoutWithRepetitions workout: lastSevenWorkouts) {
 
             float data = 0;
-            if(currentData.equals(WorkoutData.REPETITIONS))
+            if(currentLineChartData.equals(WorkoutData.REPETITIONS))
                 data = workout.getRepeats();
-            else if (currentData.equals(WorkoutData.CALORIES))
+            else if (currentLineChartData.equals(WorkoutData.CALORIES))
                 data = (float) workout.getCalories();
+            else if (currentLineChartData.equals(WorkoutData.DURATION))
+                data = (float) workout.getDurationInMillis();
+
 
             entries.add(new Entry(counter, data));
             counter++;
@@ -196,24 +206,31 @@ public class RepetitionsStatisticsActivity extends AppCompatActivity {
         dataSet.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                if(currentData.equals(WorkoutData.REPETITIONS)) {
+                if(currentLineChartData.equals(WorkoutData.REPETITIONS)) {
                     return String.valueOf((int) value);
                 }
-                else if (currentData.equals(WorkoutData.CALORIES)) {
+                else if (currentLineChartData.equals(WorkoutData.CALORIES)) {
                     return String.format("%.2f", value);
+                }
+                else if (currentLineChartData.equals(WorkoutData.DURATION)) {
+                    return Util.getMillisAsTimeString((long) value);
                 }
                 // shouldnt come this far
                 return null;
             }
         });
         // set line color and label
-        if(currentData.equals(WorkoutData.REPETITIONS)) {
-            dataSet.setColor(getResources().getColor(R.color.lightBlue));
+        if(currentLineChartData.equals(WorkoutData.REPETITIONS)) {
+            dataSet.setColor(getResources().getColor(R.color.colorPrimary));
             dataSet.setLabel("Wiederholungen pro Workout");
         }
-        else if (currentData.equals(WorkoutData.CALORIES)) {
+        else if (currentLineChartData.equals(WorkoutData.CALORIES)) {
             dataSet.setColor(getResources().getColor(R.color.orange));
-            dataSet.setLabel("Verbrauchte Kalorien pro Workout");
+            dataSet.setLabel("Verbrauchte Kalorien pro Workout in kcal");
+        }
+        else if (currentLineChartData.equals(WorkoutData.DURATION)) {
+            dataSet.setColor(getResources().getColor(R.color.lightBlue));
+            dataSet.setLabel("Dauer pro Workout in Minuten");
         }
         dataSet.setLineWidth(3);
         dataSet.setValueTextSize(12);
