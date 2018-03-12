@@ -45,23 +45,23 @@ class RunAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup parent) {
-        View rowView = mInflater.inflate(R.layout.activity_run_statistics, parent, false);
+        view = mInflater.inflate(R.layout.history_run_item, parent, false);
 
-        TextView dateTextView = (TextView) rowView.findViewById(R.id.textview_runitem_date);
-        TextView durationTextView = (TextView) rowView.findViewById(R.id.textview_runitem_duration);
-        TextView distanceTextView = (TextView) rowView.findViewById(R.id.textview_runitem_distance);
-        TextView caloriesTextView = (TextView) rowView.findViewById(R.id.textview_runitem_calories);
-        TextView speedTextView = (TextView) rowView.findViewById(R.id.textview_runitem_speed);
+        TextView dateTextView = view.findViewById(R.id.textview_runitem_date);
+        TextView durationTextView = view.findViewById(R.id.textview_runitem_duration);
+        TextView distanceTextView = view.findViewById(R.id.textview_runitem_distance);
+        TextView caloriesTextView = view.findViewById(R.id.textview_runitem_calories);
+        TextView speedTextView = view.findViewById(R.id.textview_runitem_speed);
 
         Run run = (Run) getItem(i);
 
-        dateTextView.setText(" " + run.getCurrentDate());
-        durationTextView.setText("Dauer: " + Util.getMillisAsTimeString(run.getDurationInMillis()));
-        distanceTextView.setText("Distanz: " + Util.roundTwoDecimals(run.getDistanceInKm()));
-        caloriesTextView.setText("Verbrauchte Kalorien: " + run.getCalories());
-        speedTextView.setText("Geschwindigkeit: " + Util.roundTwoDecimals(run.getAverageKmh()));
+        dateTextView.setText(run.getCurrentDate());
+        durationTextView.setText(String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
+        distanceTextView.setText(String.format("%.2f km", run.getDistanceInKm()));
+        caloriesTextView.setText(String.format("%s kcal", run.getCalories()));
+        speedTextView.setText(String.format("%.2f km/h", run.getAverageKmh()));
 
-        return rowView;
+        return view;
     }
 
 }
