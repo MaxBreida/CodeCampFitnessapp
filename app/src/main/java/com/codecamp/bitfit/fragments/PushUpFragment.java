@@ -239,10 +239,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     private void persistPushupObject() {
-        // TODO: use the countUpTimer for this:
-        // System.currentTimeMillis isn't suited for timers and gotta use our optimized countUpTimer for this anyways
-        // for more information: https://developer.android.com/reference/android/os/SystemClock.html
-        // I would suggest just using the global elapsedTime variable (which gets updated every second) for this
 
         // set pushup object
         pushUp.setUser(user);

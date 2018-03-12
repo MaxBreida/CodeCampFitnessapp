@@ -74,6 +74,10 @@ public class HomeFragment extends Fragment {
     }
 
     // TODO check for code repetition, looks quite repetitive at some points
+    // => it is repetetive, but with at least differences in some values, I don't know
+    // if it would be much more effective with methods which would need many parameters and contain
+    //big switch-case-statements
+
 
     private void lastActivity() {
         // get last activity from shared prefs

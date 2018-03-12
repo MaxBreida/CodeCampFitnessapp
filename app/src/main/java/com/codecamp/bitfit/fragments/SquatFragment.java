@@ -189,8 +189,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 }
             }
         });
-
-        // TODO make CountUpTimer not be resetted
+        
         resumeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
