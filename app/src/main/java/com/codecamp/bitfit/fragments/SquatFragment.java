@@ -249,22 +249,10 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     }
 
     private void showWorkoutCompleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // set the custom layout
+
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
-        builder.setView(customDialogLayout);
 
-        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
-        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
-        TextView perminText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
-        TextView countText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
-
-        caloriesText.setText(String.format("%.2f kcal", currentSquat.getCalories()));
-        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(currentSquat.getDurationInMillis())));
-        perminText.setText(String.format("%.2f S/min", currentSquat.getSquatPerMin()));
-        countText.setText(String.format("%d Squat(s)", squatCtr));
-
-        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(getActivity(),
@@ -276,9 +264,9 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // set to initial state
@@ -286,10 +274,10 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setCancelable(false);
-        builder.create().show();
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), currentSquat, null, customDialogLayout, positive, negative);
+        dialog.show();
     }
 
     private Squat createSquatObj(){

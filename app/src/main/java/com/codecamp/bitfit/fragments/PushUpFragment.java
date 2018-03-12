@@ -259,22 +259,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     private void showWorkoutCompleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // set the custom layout
+
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
-        builder.setView(customDialogLayout);
 
-        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
-        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
-        TextView perminText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
-        TextView countText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
-
-        caloriesText.setText(String.format("%.2f kcal", pushUp.getCalories()));
-        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
-        perminText.setText(String.format("%.2f P/min", pushUp.getPushPerMin()));
-        countText.setText(String.format("%d Push-Up(s)", count));
-
-        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(getActivity(),
@@ -286,9 +274,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // set to initial state
@@ -296,10 +284,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
                 callback.setNavigationItem();
             }
-        });
+        };
 
-        builder.setCancelable(false);
-        builder.create().show();
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), pushUp, null, customDialogLayout, positive, negative);
+        dialog.show();
     }
 
     private double calcPushupsPerMinute(long duration) {

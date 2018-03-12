@@ -1,13 +1,17 @@
 package com.codecamp.bitfit.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
@@ -188,4 +192,81 @@ public class Util {
             activity.startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
         }
     }
+
+    /**
+     * Creates an AlertDialog to be shown after a workout.
+     *
+     * @param activity the activity for context
+     * @param workout the workout to be shared
+     * @param bitmap if its runfragment, else null because we dont use it anyways
+     * @param customDialogLayout the contentview
+     * @param positiveListener listener for positive button
+     * @param negativeListener listener for negative button
+     * @return WorkoutCompleteDialog
+     */
+    public static AlertDialog getWorkoutCompleteDialog(Activity activity,
+                                                Workout workout,
+                                                Bitmap bitmap,
+                                                View customDialogLayout,
+                                                DialogInterface.OnClickListener positiveListener,
+                                                DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        // set the textview contents
+        if(workout instanceof Run) {
+            setTextViews((Run) workout, customDialogLayout, bitmap);
+        } else if (workout instanceof PushUps){
+            setTextViews((PushUps) workout, customDialogLayout);
+        } else {
+            setTextViews((Squat) workout, customDialogLayout);
+        }
+
+        builder.setView(customDialogLayout);
+        builder.setPositiveButton("Workout Teilen", positiveListener);
+        builder.setNegativeButton("Schließen", negativeListener);
+        builder.setCancelable(false);
+        return builder.create();
+    }
+
+    // helper methods for getWorkoutCompleteDialog method
+    private static void setTextViews(Squat squat, View customDialog) {
+        TextView caloriesText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_calories);
+        TextView durationText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_duration);
+        TextView perminText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_permin);
+        TextView countText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_repeats);
+
+        caloriesText.setText(String.format("%.2f kcal", squat.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(squat.getDurationInMillis())));
+        perminText.setText(String.format("%.2f S/min", squat.getSquatPerMin()));
+        countText.setText(String.format("%d Squat(s)", squat.getRepeats()));
+    }
+
+    private static void setTextViews(PushUps pushUp, View customDialog) {
+        TextView caloriesText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_calories);
+        TextView durationText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_duration);
+        TextView perminText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_permin);
+        TextView countText = customDialog.findViewById(R.id.textview_dialog_repetition_workout_repeats);
+
+        caloriesText.setText(String.format("%.2f kcal", pushUp.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
+        perminText.setText(String.format("%.2f P/min", pushUp.getPushPerMin()));
+        countText.setText(String.format("%d Push-Up(s)", pushUp.getRepeats()));
+
+    }
+
+    private static void setTextViews(Run run, View customDialog, Bitmap bitmap) {
+        TextView caloriesText = customDialog.findViewById(R.id.textview_dialog_run_workout_calories);
+        TextView durationText = customDialog.findViewById(R.id.textview_dialog_run_workout_duration);
+        TextView speedText = customDialog.findViewById(R.id.textview_dialog_run_workout_speed);
+        TextView distanceText = customDialog.findViewById(R.id.textview_dialog_run_workout_distance);
+        ImageView imageView = customDialog.findViewById(R.id.placeholder_dialog_run_workout_map);
+
+        caloriesText.setText(String.format("%.2f kcal", run.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
+        speedText.setText(String.format("%.2f km/h", run.getAverageKmh()));
+        distanceText.setText(String.format("%.2f km", run.getDistanceInKm() / 1000));
+        imageView.setImageBitmap(bitmap);
+
+    }
+
 }
