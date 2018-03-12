@@ -323,7 +323,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         token.continuePermissionRequest();
                     }
                 }).check();
-        return true;
+        return false;
     }
 
     @Override
