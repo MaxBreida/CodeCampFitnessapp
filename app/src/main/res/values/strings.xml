@@ -8,11 +8,6 @@
     <string name="squat_tab">Squats</string>
     <string name="profile_tab">Profile</string>
 
-    <!-- facebook -->
-    <string name="facebook_app_id">2029588297311884</string>
-    <string name="fb_login_protocol_scheme">fb2029588297311884</string>
-    <string name="fb_android_hash_key">IF7piqtBrepbr0kQg79zjvHgTpE=</string>
-
     <!-- intro -->
     <string name="intro_start_text">Hey, zum Start brauchen wir ein paar Daten von dir!</string>
     <string name="your_gender">Geschlecht</string>
