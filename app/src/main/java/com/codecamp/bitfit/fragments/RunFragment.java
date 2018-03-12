@@ -346,7 +346,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             public void onTick(long elapsedTime) {
                 runDuration = elapsedTime;
                 time.setText(Util.getMillisAsTimeString(elapsedTime));
-                speed.setText(Util.decNumToXPrecisionString(getAverageSpeedInKmh(), 2).concat(" km/h"));
+                speed.setText(
+                        Util.decNumToXPrecisionString(
+                                getAverageSpeedInKmh(), 2)
+                                .concat(" km/h"));
             }
         };
     }
@@ -377,7 +380,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // TODO: save points too
 
         // TODO: check for issues with the saving, the values seem to be a little bit off
-        database.setDistanceInKm(runningDistance / 1000);
+        database.setDistanceInMeters(runningDistance);
         database.setDurationInMillis(runDuration);
         database.setCalories(getCurrentCalories());
         database.save();

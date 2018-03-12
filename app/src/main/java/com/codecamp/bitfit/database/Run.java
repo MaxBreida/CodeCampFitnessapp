@@ -19,15 +19,15 @@ public class Run extends Workout {
 
     // Getter and Setter
     public float getDistanceInKm() {
-        return distance;
+        return distance / 1000;
     }
 
-    public void setDistanceInKm(float distance) {
+    public void setDistanceInMeters(float distance) {
         this.distance = Util.roundTwoDecimals(distance);
     }
 
     public double getAverageKmh() {
-        return (distance / 1000) * 3600000 / durationInMillis ;
+        return getDistanceInKm() * 3600000 / durationInMillis ;
         // optimized calculation for dividing durationInMillis by 1000 to get seconds,
         // by 60 to get minutes and another 60 to get hours (=) 3600000 and finally get km / h
     }
