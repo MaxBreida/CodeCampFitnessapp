@@ -252,19 +252,19 @@ public class HomeFragment extends Fragment {
 
         if (highScoreRun.getCurrentDate() != null) {
             highscoreRunCalories.setText(
-                    String.format("%s kcal", String.valueOf(highScoreRun.getCalories()))
+                    String.format("%.2f kcal", highScoreRun.getCalories())
             );
             highscoreRunDate.setText(
-                    String.format("%s", String.valueOf(highScoreRun.getCurrentDate()))
+                    highScoreRun.getCurrentDate()
             );
             highscoreRunDuration.setText(
-                    String.format("%s min", String.valueOf(highScoreRun.getDurationInMillis()))
+                    String.format("%s min", Util.getMillisAsTimeString(highScoreRun.getDurationInMillis()))
             );
             highscoreRunDistance.setText(
-                    String.format("%s m", String.valueOf(highScoreRun.getDistanceInKm()))
+                    String.format("%.2f km", highScoreRun.getDistanceInKm())
             );
             highscoreRunSpeed.setText(
-                    String.format("%s km/h", String.valueOf(highScoreRun.getAverageKmh()))
+                    String.format("%.2f km/h", highScoreRun.getAverageKmh())
             );
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
