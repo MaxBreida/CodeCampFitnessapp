@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,6 +111,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // ask for location permissions and send user back to home screen if they were not given
+        if(!checkPermission()) getLocationPermissions();
+
         // taking care of the infamous "may be null" warnings
         if(getActivity() != null)
             activity = getActivity();
@@ -192,18 +197,18 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
 
         private void startRunIfAllIsSet() {
-            if (checkPermission()) {
-                lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                    // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-                }
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                }
-                else{
-                    Criteria criteria = new Criteria();
-                    criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+            }
+            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
+            }
+            else{
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                if(checkPermission())
                     lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
                     /* sets the location manager up to execute onLocationChanged on specific conditions:
                      * 1st parameter determines the minimal time (in milliseconds) of a location update
@@ -214,7 +219,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                      * 5th and last parameter sets a looper, used to execute the Messages(Runnables) in a queue
                      *      but we don't need that feature
                      */
-                }
             }
         }
 
@@ -300,21 +304,28 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     };
 
     private boolean checkPermission() {
-        Dexter.withActivity(getActivity())
+        return ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void getLocationPermissions(){
+        Dexter.withActivity(activity)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission was granted
-                        // TODO: properly implement the permission handling
+                        // quick way for restarting the run fragment:
+                        ((MainActivity) activity).sendToTab(3);
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         if (response.isPermanentlyDenied()) {
                             // navigate user to app settings
-                            // showSettingsDialog(); TODO: send user to settings if permissions denied permanently
+                            // showSettingsDialog(); //TODO: send user to settings if permissions denied permanently
                         }
+                        // TODO: tell te user that location permissions are required to use the run workout!
                     }
 
                     @Override
@@ -323,7 +334,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         token.continuePermissionRequest();
                     }
                 }).check();
-        return true;
     }
 
     @Override
@@ -378,6 +388,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
         // TODO: save points too
+        // TODO: investigate crashes after reinstallation
 
         // TODO: check for issues with the saving, the values seem to be a little bit off
         database.setDistanceInMeters(runningDistance);
@@ -407,7 +418,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void showWorkoutCompleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         // set the custom layout
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
         builder.setView(customDialogLayout);
@@ -438,7 +449,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Util.shareViewOnClick(getActivity(),
+                Util.shareViewOnClick(activity,
                         customDialogLayout.findViewById(R.id.dialog_run_workout_content),
                         String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance / 1000));
 
