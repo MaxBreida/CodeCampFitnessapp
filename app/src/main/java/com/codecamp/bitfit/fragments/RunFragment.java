@@ -339,8 +339,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         // get a finished bitmap picture of the CardView with the run stats:
                         Bitmap stats = Util.viewToBitmap(dataCard);
                         // create a new empty bitmap with the size of the main view of the run fragment:
-                        Bitmap bitmap = Bitmap.createBitmap(mainView.getWidth(),
-                                mainView.getHeight(),
+                        Bitmap bitmap = Bitmap.createBitmap(
+                                mainView.getWidth(),
+                                mainView.getHeight() - 0, // TODO: Max, HELP PLS xD -> how to subtract height of bottom bar?
                                 Bitmap.Config.ARGB_8888
                         );
 
@@ -348,6 +349,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         // the same way it is placed on the main view, it basically recreates
                         // what we see on screen:
                         Canvas canvas = new Canvas(bitmap);
+                        canvas.drawColor(Color.parseColor("#eeeeee")); // grey // TODO: get the right background color for the bitmap sharing
                         canvas.drawBitmap(stats, dataCard.getLeft(), dataCard.getTop(), null);
                         canvas.drawBitmap(bitMap, mapView.getLeft(), mapView.getTop(), null);
 
