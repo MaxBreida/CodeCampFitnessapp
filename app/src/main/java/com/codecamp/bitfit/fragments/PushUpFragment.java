@@ -257,11 +257,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         pushUp.save();
         Toast.makeText(getActivity().getApplicationContext(), "Workout gespeichert!", Toast.LENGTH_SHORT).show();
 
-
         // set as last activity
         new SharedPrefsHelper(getContext())
                 .setLastActivity(Constants.WORKOUT_PUSHUPS, pushUp.getId());
-
     }
 
     private void showWorkoutCompleteDialog() {
@@ -396,12 +394,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
-                return true;
-            case R.id.action_share:
-                // TODO lots of testing + persistent cardview values
-                Util.shareViewOnClick(getActivity(),
-                        getView().findViewById(R.id.container_pushup_counter),
-                        String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

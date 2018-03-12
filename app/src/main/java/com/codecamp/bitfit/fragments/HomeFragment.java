@@ -132,7 +132,7 @@ public class HomeFragment extends Fragment {
             lastActivityCalories.setText(
                     String.format("%s kcal", String.valueOf(run.getCalories())));
             lastActivityDuration.setText(
-                    String.format("%s Stunden", Util.getMillisAsTimeString(run.getDurationInMillis())));
+                    String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
             lastActivityPerMinOrSpeed.setText(
                     String.format("%s km/h", String.valueOf(run.getAverageKmh())));
             perMinOrSpeedImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_speed));

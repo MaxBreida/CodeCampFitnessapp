@@ -13,10 +13,4 @@
         android:icon="@drawable/ic_show_chart_white_48dp"
         android:title="@string/action_statistics"
         app:showAsAction="always"/>
-
-    <item android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_white_48dp"
-        android:title="@string/action_share"
-        app:showAsAction="always"/>
-
 </menu>

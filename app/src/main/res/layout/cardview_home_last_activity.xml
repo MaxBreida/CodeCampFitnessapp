@@ -44,7 +44,7 @@
                     android:id="@+id/imageview_lastActivity_icon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginStart="35dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:src="@drawable/icon_last_activity"
                     android:visibility="invisible" />

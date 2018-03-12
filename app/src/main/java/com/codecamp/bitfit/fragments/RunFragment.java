@@ -1,7 +1,9 @@
 package com.codecamp.bitfit.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -11,6 +13,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -22,9 +25,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Run;
@@ -32,6 +38,7 @@ import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.statistics.RunStatisticsActivity;
 import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -72,6 +79,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     // Activities and views related global variables
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
+    private View customDialogLayout;
 
     // userdata and database related global variables
     boolean allowDataUpdate = false; // determines whether or not the database can update automatically
@@ -82,6 +90,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     // run duration timer and a timer for saving the data of a run to the database
     CountUpTimer runDurationTimer, saveDataTimer;
+    private ImageView workoutCompleteImageView;
 
     public static RunFragment getInstance() {
 
@@ -156,6 +165,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // deactivate location updates and release wakelock
                 lm.removeUpdates(locListener);
                 wakeLock.release();
+                showWorkoutCompleteDialog();
             }
             else{
                 // tell mainactivity that a workout is in progress
@@ -326,41 +336,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             case R.id.action_statistics:
                 activity.startActivity(new Intent(activity, RunStatisticsActivity.class));
                 return true;
-            case R.id.action_share:
-                mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                    /**
-                     * provides a screenshot of the map
-                     * @param bitMap the screenshot
-                     */
-                    @Override
-                    public void onSnapshotReady(Bitmap bitMap) {
-                        // get the View object of the map:
-                        View mapView = mainView.findViewById(R.id.map);
-                        // get a finished bitmap picture of the CardView with the run stats:
-                        Bitmap stats = Util.viewToBitmap(dataCard);
-                        // create a new empty bitmap with the size of the main view of the run fragment:
-                        Bitmap bitmap = Bitmap.createBitmap(
-                                mainView.getWidth(),
-                                mainView.getHeight() - 0, // TODO: Max, HELP PLS xD -> how to subtract height of bottom bar?
-                                Bitmap.Config.ARGB_8888
-                        );
-
-                        // make a canvas for that bitmap and place the map and stats bitmap on it
-                        // the same way it is placed on the main view, it basically recreates
-                        // what we see on screen:
-                        Canvas canvas = new Canvas(bitmap);
-                        canvas.drawColor(Color.parseColor("#eeeeee")); // grey // TODO: get the right background color for the bitmap sharing
-                        canvas.drawBitmap(stats, dataCard.getLeft(), dataCard.getTop(), null);
-                        canvas.drawBitmap(bitMap, mapView.getLeft(), mapView.getTop(), null);
-
-                        // call the share
-                        Util.shareBitmap(activity,
-                                bitmap,
-                                String.format(Locale.US,"Ich habe bei meinem letzten Lauftraining "
-                                        + "%.2fkm zurückgelegt!", runningDistance)
-                        );
-                    }
-                });
+            case R.id.action_instructions:
+                // TODO show instructions
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -406,6 +383,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         database.setDurationInMillis(runDuration);
         database.setCalories(getCurrentCalories());
         database.save();
+
+        // set as last workout
+        new SharedPrefsHelper(getContext())
+                .setLastActivity(Constants.WORKOUT_RUN, database.getId());
     }
 
     @Override
@@ -421,5 +402,63 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public void stopWorkoutOnFragmentChange() {
         // stop workout here
         updateDatabase();
+        showWorkoutCompleteDialog();
+    }
+
+    private void showWorkoutCompleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // set the custom layout
+        customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
+        builder.setView(customDialogLayout);
+
+        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_calories);
+        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_duration);
+        TextView speedText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_speed);
+        TextView distanceText = customDialogLayout.findViewById(R.id.textview_dialog_run_workout_distance);
+        workoutCompleteImageView = customDialogLayout.findViewById(R.id.placeholder_dialog_run_workout_map);
+
+        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+            /**
+             * provides a screenshot of the map
+             * @param bitMap the screenshot
+             */
+            @Override
+            public void onSnapshotReady(Bitmap bitMap) {
+                workoutCompleteImageView.setImageBitmap(bitMap);
+            }
+        });
+
+
+        caloriesText.setText(String.format("%.2f kcal", database.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(database.getDurationInMillis())));
+        speedText.setText(String.format("%.2f km/h", database.getAverageKmh()));
+        distanceText.setText(String.format("%.2f km", runningDistance));
+
+        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Util.shareViewOnClick(getActivity(),
+                        customDialogLayout.findViewById(R.id.dialog_run_workout_content),
+                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
+
+                // set to initial state
+                updateDatabase();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // set to initial state
+                updateDatabase();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setCancelable(false);
+        builder.create().show();
     }
 }
