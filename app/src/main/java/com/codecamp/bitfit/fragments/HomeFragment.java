@@ -1,6 +1,5 @@
 package com.codecamp.bitfit.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -284,11 +283,7 @@ public class HomeFragment extends Fragment {
                 targetView = (View) targetView.getParent();
             }
 
-            MaterialIconView shareBut = (MaterialIconView) shareButton;
-
             Util.shareViewOnClick(getActivity(), targetView, shareButton.getContentDescription().toString());
-
-            shareBut.setColor(Color.parseColor("#DDDDDD"));
         }
     };
 
