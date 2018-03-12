@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
-import com.codecamp.bitfit.OnDialogInteractionListener;
+import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Run;
 import com.codecamp.bitfit.database.User;

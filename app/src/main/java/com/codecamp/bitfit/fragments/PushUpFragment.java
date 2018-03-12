@@ -1,7 +1,9 @@
 package com.codecamp.bitfit.fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -21,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
-import com.codecamp.bitfit.OnDialogInteractionListener;
+import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.User;
@@ -72,6 +74,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     //Values for calorie calculation
     double weightPushed;
     double heightPushed;
+    private View customLayout;
 
     //Quit button states indicate if the button was clicked the first time
     //("Stop") with possibility of resuming or second time(final quit with "SAVE")
@@ -170,12 +173,12 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     finishTextView.setVisibility(View.VISIBLE);
                     resumeButton.setVisibility(View.VISIBLE);
                     resumeTextView.setVisibility(View.VISIBLE);
-                    workoutStarted = false;
                     workoutPaused = true;
                     quitState = QuitButtonStates.SAVE_CLICK;
                     pushUpButton.setEnabled(false);
                 } else {
                     stopWorkout();
+                    pushUpButton.setEnabled(true);
                 }
             }
         });
@@ -183,6 +186,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         resumeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                quitState = QuitButtonStates.STOP_CLICK;
                 finishTextView.setVisibility(View.INVISIBLE);
                 resumeButton.setVisibility(View.INVISIBLE);
                 resumeTextView.setVisibility(View.INVISIBLE);
@@ -223,7 +227,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     }
 
     private void stopWorkout() {
-        callback.workoutInProgress(false);
+        workoutStarted = false;
 
         countUpTimer.stop();
         persistPushupObject();
@@ -231,8 +235,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         // Screen keep on Flag clear
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        // set to initial state
-        setToInitialState();
+        showAlertDialog();
     }
 
     private void persistPushupObject() {
@@ -259,6 +262,50 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         new SharedPrefsHelper(getContext())
                 .setLastActivity(Constants.WORKOUT_PUSHUPS, pushUp.getId());
 
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // set the custom layout
+        customLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
+        builder.setView(customLayout);
+
+        TextView caloriesText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
+        TextView durationText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
+        TextView perminText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
+        TextView countText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
+
+        caloriesText.setText(String.format("%.2f kcal", pushUp.getCalories()));
+        durationText.setText(String.format("%s min", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
+        perminText.setText(String.format("%.2f P/min", pushUp.getPushPerMin()));
+        countText.setText(String.format("%d Push-Up(s)", count));
+
+        builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Util.shareViewOnClick(getActivity(),
+                        customLayout.findViewById(R.id.dialog_repetition_workout_content),
+                        String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
+
+                // set to initial state
+                setToInitialState();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setNegativeButton("Schließen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // set to initial state
+                setToInitialState();
+
+                callback.setNavigationItem();
+            }
+        });
+
+        builder.setCancelable(false);
+        builder.create().show();
     }
 
     private double calcPushupsPerMinute(long duration) {

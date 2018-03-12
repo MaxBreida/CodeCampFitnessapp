@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
-import com.codecamp.bitfit.OnDialogInteractionListener;
+import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.database.User;
@@ -175,7 +175,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             public void onClick(View view) {
                 if(quitState.equals(QuitButtonStates.STOP_CLICK)){
                     squatTimer.stop();
-                    workoutStarted = false;
                     resumeButton.setVisibility(View.VISIBLE);
                     resumeTextView.setVisibility(View.VISIBLE);
                     quitTextView.setVisibility(View.VISIBLE);
@@ -234,6 +233,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     }
 
     private void stopWorkout() {
+        workoutStarted = false;
         callback.workoutInProgress(false);
 
         currentSquat = createSquatObj();

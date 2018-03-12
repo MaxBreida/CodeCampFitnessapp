@@ -18,11 +18,15 @@ import com.codecamp.bitfit.fragments.SquatFragment;
 import com.codecamp.bitfit.fragments.WorkoutFragment;
 import com.codecamp.bitfit.intro.IntroActivity;
 import com.codecamp.bitfit.util.DBQueryHelper;
+import com.codecamp.bitfit.util.OnDialogInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements WorkoutFragment.OnWorkoutInProgressListener{
 
     private static final int REQUEST_CODE = 8712;
     private boolean workoutInProgress = false;
+
+    private boolean mWasSelected;
+    private int mPosition = -1;
 
     private OnDialogInteractionListener callback;
 
@@ -98,12 +102,11 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
                                 // user wants to stop workout and save, so lets do this here
                                 callback.stopWorkoutOnFragmentChange();
 
-                                // change fragment after saving workout
-                                bottomNavigation.setCurrentItem(position);
-                                changeFragment(position, wasSelected);
+                                // needed for callback of workoutCompleteDialog
+                                mWasSelected = wasSelected;
+                                mPosition = position;
 
                                 // cancel dialog
-                                workoutInProgress = false;
                                 dialog.cancel();
                             }
                         })
@@ -123,41 +126,42 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
 
             return true;
         }
+    };
 
-        private void changeFragment(int position, boolean wasSelected) {
-            // only select item if it wasn't selected before
-            if (!wasSelected) {
-                // select the fragment
-                switch (position) {
-                    case 0:
-                        HomeFragment homeFragment = HomeFragment.getInstance();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
-                        break;
-                    case 1:
-                        PushUpFragment pushUpFragment = PushUpFragment.getInstance();
-                        callback = pushUpFragment;
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, pushUpFragment).commit();
-                        break;
-                    case 2:
-                        SquatFragment squatFragment = SquatFragment.getInstance();
-                        callback = squatFragment;
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
-                        break;
-                    case 3:
-                        RunFragment runFragment = RunFragment.getInstance();
-                        callback = runFragment;
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, runFragment).commit();
-                        break;
-                    case 4:
-                        ProfileFragment profileFragment = ProfileFragment.getInstance();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, profileFragment).commit();
-                        break;
-                    default:
-                        break;
-                }
+    private void changeFragment(int position, boolean wasSelected) {
+        // only select item if it wasn't selected before
+        if (!wasSelected) {
+            // select the fragment
+            switch (position) {
+                case 0:
+                    HomeFragment homeFragment = HomeFragment.getInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, homeFragment).commit();
+                    break;
+                case 1:
+                    PushUpFragment pushUpFragment = PushUpFragment.getInstance();
+                    callback = pushUpFragment;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, pushUpFragment).commit();
+                    break;
+                case 2:
+                    SquatFragment squatFragment = SquatFragment.getInstance();
+                    callback = squatFragment;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, squatFragment).commit();
+                    break;
+                case 3:
+                    RunFragment runFragment = RunFragment.getInstance();
+                    callback = runFragment;
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, runFragment).commit();
+                    break;
+                case 4:
+                    ProfileFragment profileFragment = ProfileFragment.getInstance();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, profileFragment).commit();
+                    break;
+                default:
+                    break;
             }
         }
-    };
+    }
+
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
@@ -185,5 +189,19 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
     @Override
     public void workoutInProgress(boolean inProgress) {
         this.workoutInProgress = inProgress;
+    }
+
+    @Override
+    public void setNavigationItem() {
+        workoutInProgress = false;
+
+        if(mPosition != -1) {
+            // change fragment after saving workout
+            bottomNavigation.setCurrentItem(mPosition);
+            changeFragment(mPosition, mWasSelected);
+
+        }
+
+        mPosition = -1;
     }
 }

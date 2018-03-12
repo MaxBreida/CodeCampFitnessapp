@@ -41,5 +41,6 @@ public class WorkoutFragment extends Fragment {
      */
     public interface OnWorkoutInProgressListener {
         void workoutInProgress(boolean inProgress);
+        void setNavigationItem();
     }
 }
