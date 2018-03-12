@@ -111,9 +111,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // ask for location permissions and send user back to home screen if they were not given
-        if(!checkPermission()) getLocationPermissions();
-
         // taking care of the infamous "may be null" warnings
         if(getActivity() != null)
             activity = getActivity();
@@ -121,6 +118,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             mainView = view;
             dataCard = mainView.findViewById(R.id.run_data_cardview);
         }
+
+        // ask for location permissions and send user back to home screen if they were not given
+        if(!checkPermission()) getLocationPermissions();
 
         // get the current user
         user = DBQueryHelper.findUser();
