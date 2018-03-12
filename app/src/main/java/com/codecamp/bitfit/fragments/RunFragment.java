@@ -430,14 +430,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         caloriesText.setText(String.format("%.2f kcal", database.getCalories()));
         durationText.setText(String.format("%s min", Util.getMillisAsTimeString(database.getDurationInMillis())));
         speedText.setText(String.format("%.2f km/h", database.getAverageKmh()));
-        distanceText.setText(String.format("%.2f km", runningDistance));
+        distanceText.setText(String.format("%.2f km", runningDistance / 1000));
 
         builder.setPositiveButton("Workout Teilen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(getActivity(),
                         customDialogLayout.findViewById(R.id.dialog_run_workout_content),
-                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance));
+                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance / 1000));
 
                 // set to initial state
                 updateDatabase();
