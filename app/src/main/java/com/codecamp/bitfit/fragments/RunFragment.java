@@ -300,14 +300,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission was granted
-
+                        // TODO: properly implement the permission handling
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         if (response.isPermanentlyDenied()) {
                             // navigate user to app settings
-                            // showSettingsDialog();
+                            // showSettingsDialog(); TODO: send user to settings if permissions denied permanently
                         }
                     }
 
