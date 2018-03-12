@@ -74,7 +74,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     //Values for calorie calculation
     double weightPushed;
     double heightPushed;
-    private View customLayout;
+    private View customDialogLayout;
 
     //Quit button states indicate if the button was clicked the first time
     //("Stop") with possibility of resuming or second time(final quit with "SAVE")
@@ -267,13 +267,13 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // set the custom layout
-        customLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
-        builder.setView(customLayout);
+        customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_repetition_workout, null);
+        builder.setView(customDialogLayout);
 
-        TextView caloriesText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
-        TextView durationText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
-        TextView perminText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
-        TextView countText = customLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
+        TextView caloriesText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_calories);
+        TextView durationText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_duration);
+        TextView perminText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_permin);
+        TextView countText = customDialogLayout.findViewById(R.id.textview_dialog_repetition_workout_repeats);
 
         caloriesText.setText(String.format("%.2f kcal", pushUp.getCalories()));
         durationText.setText(String.format("%s min", Util.getMillisAsTimeString(pushUp.getDurationInMillis())));
@@ -284,7 +284,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(getActivity(),
-                        customLayout.findViewById(R.id.dialog_repetition_workout_content),
+                        customDialogLayout.findViewById(R.id.dialog_repetition_workout_content),
                         String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
 
                 // set to initial state
