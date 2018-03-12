@@ -1,4 +1,4 @@
-package com.codecamp.bitfit;
+package com.codecamp.bitfit.util;
 
 /**
  * Created by maxib on 10.03.2018.
