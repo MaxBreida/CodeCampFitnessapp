@@ -377,7 +377,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // TODO: save points too
 
         // TODO: check for issues with the saving, the values seem to be a little bit off
-        database.setDistanceInKm(runningDistance);
+        database.setDistanceInKm(runningDistance / 1000);
         database.setDurationInMillis(runDuration);
         database.setCalories(getCurrentCalories());
         database.save();
