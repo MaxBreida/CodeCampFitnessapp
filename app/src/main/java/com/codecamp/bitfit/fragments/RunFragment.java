@@ -7,13 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -25,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,7 +53,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static android.content.Context.POWER_SERVICE;
 import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
@@ -120,7 +116,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             mainView = view;
             dataCard = mainView.findViewById(R.id.run_data_cardview);
         }
-        // TODO: else unexpected error notifications
 
         // get the current user
         user = DBQueryHelper.findUser();
@@ -145,6 +140,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     View.OnClickListener startStopButListener = new View.OnClickListener() {
         FloatingActionButton startStopButton;
+
+        // TODO: add resume functionality
 
         @Override
         public void onClick(View view) {
@@ -377,6 +374,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         allowDataUpdate = false;/* since it's going to be updated now we can block all other update
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
+        // TODO: save points too
 
         // TODO: check for issues with the saving, the values seem to be a little bit off
         database.setDistanceInKm(runningDistance);
