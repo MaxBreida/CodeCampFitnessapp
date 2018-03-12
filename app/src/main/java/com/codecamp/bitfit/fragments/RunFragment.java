@@ -138,8 +138,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
-        // setting up the start / stop button
-        mainView.findViewById(R.id.button_start_stop_run).setOnClickListener(startStopButListener);
+        // setting up the start / stop button if location permissions are set
+        FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
+        if(checkPermission())
+            startStop.setOnClickListener(startStopButListener);
+        else
+            startStop.setVisibility(View.INVISIBLE);
     }
 
     View.OnClickListener startStopButListener = new View.OnClickListener() {
@@ -170,6 +174,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // deactivate location updates and release wakelock
                 lm.removeUpdates(locListener);
                 wakeLock.release();
+
                 showWorkoutCompleteDialog();
             }
             else{
@@ -334,7 +339,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                             // navigate user to app settings
                             // showSettingsDialog(); //TODO: send user to settings if permissions denied permanently
                         }
-                        // TODO: tell te user that location permissions are required to use the run workout!
+                        // TODO: tell the user that location permissions are required to use the run workout!
                     }
 
                     @Override
