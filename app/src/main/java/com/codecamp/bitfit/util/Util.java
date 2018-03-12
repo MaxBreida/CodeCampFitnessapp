@@ -141,14 +141,24 @@ public class Util {
     }
 
     /**
-     * starts the share intent menu and lets the user share his workout
+     * creates a bitmap from the view that was passed to it and then passes it to the sharing method
      * @param activity context
      * @param shareView view to get shared
-     * @param shareMessage the messsage passed with the view
+     * @param shareMessage the message passed with the view
      */
     public static void shareViewOnClick(Activity activity, View shareView, String shareMessage) {
         Bitmap bitmap = Util.viewToBitmap(shareView);
 
+        shareBitmap(activity, bitmap, shareMessage);
+    }
+
+    /**
+     * starts a sharing intent and lets the user share a bitmap picture with a predefined message
+     * @param activity context
+     * @param bitmap bitmap that shall be shared
+     * @param shareMessage the predefined message that will be shared with the picture
+     */
+    public static void shareBitmap(Activity activity, Bitmap bitmap, String shareMessage) {
         // get cache file dir
         File cachePath = new File(activity.getCacheDir(), "images");
         cachePath.mkdirs();
