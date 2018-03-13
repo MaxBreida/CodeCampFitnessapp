@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.util.Constants;
@@ -258,16 +259,46 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         speedUnit.setOnClickListener(switchSpeedUnit);
     }
 
+    // let's the user tracker set a new point it true:
+    boolean allowLocUpdate = false;
 
-    // last known position, used for initial point once workout starts
-    Location previousLoc = null;
+    // sets minimal precision for the location updates (in meters):
+    int precisionTolerance = 10;
+
+    // should the user be tracked by the map camera?
+    boolean allowUserTracking = true;
 
     LocationListener trackUser = new LocationListener(){
+
+        // last known position, used for initial point once workout starts
+        Location previousLoc = null;
+
         @Override
         public void onLocationChanged(Location loc){
             // zoom in on first found location, then just track
-            if(previousLoc != null) setMapCam(loc);
-            else setMapCam(loc, 15);
+            if(allowUserTracking)
+                if(previousLoc != null) setMapCam(loc);
+                else setMapCam(loc, 15);
+
+            if(allowLocUpdate && loc.getAccuracy() <= precisionTolerance){
+                // set a point if accuracy is good enough:
+                LatLng curPos = new LatLng(loc.getLatitude(),loc.getLongitude());
+                points.add(curPos);
+                line.setPoints(points);
+                if(previousLoc != null){
+                    runningDistance += loc.distanceTo(previousLoc);
+                    TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
+                    distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
+                    if(allowDataUpdate)
+                        updateDatabase();
+                }
+                previousLoc = loc;
+
+                // set Calories
+                TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
+                calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
+            }
+
             if(unitMode != 3 && loc.hasSpeed()){
                 // set speed if the location manager can provide those readings
                 TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
@@ -289,29 +320,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     LocationListener workoutLocListener = new LocationListener() {
 
-        int precisionTolerance = 10;
-
         @Override
-        public void onLocationChanged(Location location) {
-            if(location.getAccuracy() <= precisionTolerance){
-                // set a point if accuracy is good enough:
-                // TODO timely increasing tolerance
-                LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
-                points.add(curPos);
-                line.setPoints(points);
-                if(previousLoc != null){
-                    runningDistance += location.distanceTo(previousLoc);
-                    TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
-                    distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
-                    if(allowDataUpdate)
-                        updateDatabase();
-                }
-                previousLoc = location;
-
-                // set Calories
-                TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
-                calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
-            }
+        public void onLocationChanged(Location loc) {
+            // if the precision is already good enough, trigger an drawing update right away
+            // else let the user tracker set a drawing point on the next precise location it receives
+            if(loc.getAccuracy() <= precisionTolerance)
+                trackUser.onLocationChanged(loc);
+            else
+                allowLocUpdate = true;
         }
         @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
         @Override public void onProviderEnabled(String s) {}
@@ -364,6 +380,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             line = mMap.addPolyline(lineOptions);
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
+            mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                @Override
+                public boolean onMyLocationButtonClick() {
+                    View v = mainView.findViewById(R.id.map);
+                    allowUserTracking = !allowUserTracking;
+                    String text = "User tracking " + (allowUserTracking ? "" : "de") + "activated!";
+                    Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
         }
     };
 
