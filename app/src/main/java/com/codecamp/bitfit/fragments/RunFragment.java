@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -145,6 +144,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             // set location manager up and start tracking the user
             lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(last == null)
+                last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(last != null)
+                setMapCam(last, 10);
 
             // setting up the start / stop button
             FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
@@ -385,10 +389,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 public boolean onMyLocationButtonClick() {
                     allowUserTracking = !allowUserTracking;
                     ImageView myLocBut = mainView.findViewById(R.id.map).findViewWithTag("GoogleMapMyLocationButton");
+
+                    // color the button
                     if(allowUserTracking)
                         myLocBut.setColorFilter(getResources().getColor(R.color.transLightBlue));
                     else
                         myLocBut.clearColorFilter();
+
+                    // show toast notification that indicates the state of the tracking
                     String text = "Standort Verfolgung " + (allowUserTracking ? "" : "de") + "aktiviert!";
                     Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
                     return false; // false = run super method -> navigate to current location
