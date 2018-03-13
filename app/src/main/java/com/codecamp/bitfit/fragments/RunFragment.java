@@ -266,7 +266,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     int precisionTolerance = 10;
 
     // should the user be tracked by the map camera?
-    boolean allowUserTracking = true;
+    boolean allowUserTracking = false; // gets switched on start!
 
     LocationListener trackUser = new LocationListener(){
 
@@ -380,16 +380,23 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             line = mMap.addPolyline(lineOptions);
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
-            mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            GoogleMap.OnMyLocationButtonClickListener locButListener = new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    View v = mainView.findViewById(R.id.map);
                     allowUserTracking = !allowUserTracking;
+                    ImageView myLocBut = mainView.findViewById(R.id.map).findViewWithTag("GoogleMapMyLocationButton");
+                    if(allowUserTracking)
+                        myLocBut.setColorFilter(getResources().getColor(R.color.transLightBlue));
+                    else
+                        myLocBut.clearColorFilter();
                     String text = "User tracking " + (allowUserTracking ? "" : "de") + "activated!";
                     Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-                    return false;
+                    return false; // false = run super method -> navigate to current location
                 }
-            });
+            };
+            mMap.setOnMyLocationButtonClickListener(locButListener);
+            // if location services were enabled after the permission check, execute the onclick method once:
+            if(mMap.isMyLocationEnabled()) locButListener.onMyLocationButtonClick();
         }
     };
 
