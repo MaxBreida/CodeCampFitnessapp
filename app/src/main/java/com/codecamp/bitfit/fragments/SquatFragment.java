@@ -404,7 +404,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     //Help method for calculating an arrays average,
     //needed to calculate the average acceleration values over some time
-    //TODO: Maybe move this method to Util?
     private double getArrAvg(double[] array){
         double average = 0;
         double sum = 0;
