@@ -39,21 +39,23 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginBottom="80dp"
-        android:layout_marginStart="174dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:clickable="true"
         android:src="@drawable/ic_play_arrow_white_48dp"
         app:layout_constraintBottom_toBottomOf="@+id/button_pushup_quit"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textview_pushup_resume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="180dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
         android:text="Workout\nfortsetzen"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textview_pushup_quit"
         app:layout_constraintStart_toEndOf="@+id/button_pushup_resume" />
 
     <android.support.design.widget.FloatingActionButton
@@ -74,8 +76,8 @@
         android:id="@+id/textview_pushup_quit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:layout_marginStart="36dp"
+        android:layout_marginBottom="96dp"
+        android:layout_marginStart="16dp"
         android:text="Workout\nbeenden"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
