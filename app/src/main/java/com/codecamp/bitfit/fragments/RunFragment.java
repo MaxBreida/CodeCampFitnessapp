@@ -282,7 +282,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 else
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
             }
-            previousLoc = loc;
+            if(previousLoc == null) previousLoc = loc;
         }
         @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
         @Override public void onProviderEnabled(String s) {}
