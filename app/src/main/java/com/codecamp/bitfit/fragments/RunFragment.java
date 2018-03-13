@@ -384,6 +384,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(last == null)
                 last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(last == null)
+                last = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             if(last != null)
                 setMapCam(last, 10);
 
