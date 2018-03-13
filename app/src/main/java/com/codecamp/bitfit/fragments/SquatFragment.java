@@ -276,7 +276,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             }
         };
 
-        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), currentSquat, null, customDialogLayout, positive, negative);
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), currentSquat, customDialogLayout, positive, negative);
         dialog.show();
     }
 

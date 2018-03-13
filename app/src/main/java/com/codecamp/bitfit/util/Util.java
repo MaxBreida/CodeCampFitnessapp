@@ -120,7 +120,7 @@ public class Util {
         return  Math.round(d * 100) / 100.0f;
     }
 
-    /**
+    /** TODO: if it's not needed in any other method it can be put into the run fragment
      * Returns a given number as a string and that with a set amount of decimal places.
      * @param num the initial number
      * @param precision determines how many decimal places the returned string number should have
@@ -198,7 +198,6 @@ public class Util {
      *
      * @param activity the activity for context
      * @param workout the workout to be shared
-     * @param bitmap if its runfragment, else null because we dont use it anyways
      * @param customDialogLayout the contentview
      * @param positiveListener listener for positive button
      * @param negativeListener listener for negative button
@@ -206,7 +205,6 @@ public class Util {
      */
     public static AlertDialog getWorkoutCompleteDialog(Activity activity,
                                                 Workout workout,
-                                                Bitmap bitmap,
                                                 View customDialogLayout,
                                                 DialogInterface.OnClickListener positiveListener,
                                                 DialogInterface.OnClickListener negativeListener) {
@@ -214,7 +212,7 @@ public class Util {
 
         // set the textview contents
         if(workout instanceof Run) {
-            setTextViews((Run) workout, customDialogLayout, bitmap);
+            setTextViews((Run) workout, customDialogLayout);
         } else if (workout instanceof PushUps){
             setTextViews((PushUps) workout, customDialogLayout);
         } else {
@@ -254,18 +252,16 @@ public class Util {
 
     }
 
-    private static void setTextViews(Run run, View customDialog, Bitmap bitmap) {
+    private static void setTextViews(Run run, View customDialog) {
         TextView caloriesText = customDialog.findViewById(R.id.textview_dialog_run_workout_calories);
         TextView durationText = customDialog.findViewById(R.id.textview_dialog_run_workout_duration);
         TextView speedText = customDialog.findViewById(R.id.textview_dialog_run_workout_speed);
         TextView distanceText = customDialog.findViewById(R.id.textview_dialog_run_workout_distance);
-        ImageView imageView = customDialog.findViewById(R.id.placeholder_dialog_run_workout_map);
 
         caloriesText.setText(String.format("%.2f kcal", run.getCalories()));
         durationText.setText(String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
         speedText.setText(String.format("%.2f km/h", run.getAverageKmh()));
         distanceText.setText(String.format("%.2f km", run.getDistanceInKm() / 1000));
-        imageView.setImageBitmap(bitmap);
 
     }
 

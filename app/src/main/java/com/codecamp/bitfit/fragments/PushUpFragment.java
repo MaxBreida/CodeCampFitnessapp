@@ -286,7 +286,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             }
         };
 
-        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), pushUp, null, customDialogLayout, positive, negative);
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), pushUp, customDialogLayout, positive, negative);
         dialog.show();
     }
 

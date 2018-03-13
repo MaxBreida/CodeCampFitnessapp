@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
@@ -482,7 +483,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void showWorkoutCompleteDialog() {
-        final Bitmap[] bitmap = new Bitmap[1];
         // set the custom layout
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
         mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
@@ -492,7 +492,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
              */
             @Override
             public void onSnapshotReady(Bitmap bitMap) {
-                bitmap[0] = bitMap;
+                ImageView imageView = customDialogLayout.findViewById(R.id.placeholder_dialog_run_workout_map);
+                imageView.setImageBitmap(bitMap);
             }
         });
 
@@ -520,7 +521,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             }
         };
 
-        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), database, bitmap[0], customDialogLayout, positive, negative);
+        AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), database, customDialogLayout, positive, negative);
         dialog.show();
     }
 }
