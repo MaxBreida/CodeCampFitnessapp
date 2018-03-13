@@ -389,7 +389,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         myLocBut.setColorFilter(getResources().getColor(R.color.transLightBlue));
                     else
                         myLocBut.clearColorFilter();
-                    String text = "User tracking " + (allowUserTracking ? "" : "de") + "activated!";
+                    String text = "Kamera Tracking " + (allowUserTracking ? "" : "de") + "aktiviert!";
                     Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
                     return false; // false = run super method -> navigate to current location
                 }
