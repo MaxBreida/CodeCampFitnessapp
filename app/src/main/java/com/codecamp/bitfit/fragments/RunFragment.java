@@ -350,7 +350,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
         heartRateParameter -= ((m) ? 55.0969 : 20.4022);
         double cals = ageParameter - weightParameter + heartRateParameter;
-        cals *= (runDuration / (4.184 * 60000));
+        cals *= (runDuration / (4.184 * 60000000));
         // this formula might not be suited for very short runs, preventing negative calorie values:
         if(cals < 0) cals = 0;
         return cals;
