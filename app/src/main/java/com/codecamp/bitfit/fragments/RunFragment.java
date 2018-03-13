@@ -62,7 +62,6 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
  * A simple {@link Fragment} subclass.
  */
 
-// TODO: test offline functionality, implement if necessary
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
     // Map related global variables
@@ -73,10 +72,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
 
+    boolean workoutActive = false; // true = workout in progress and vice versa
+
     // Activities and views related global variables
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
-    private View customDialogLayout;
+    View customDialogLayout;
 
     // userdata and database related global variables
     boolean allowDataUpdate = false; // determines whether or not the database can update automatically
@@ -143,14 +144,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             // set location manager up and start tracking the user
             lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
-            /* sets the location manager up to execute onLocationChanged on specific conditions:
-             * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
-             * 2nd parameter sets the minimal time (in milliseconds) of a location update
-             * 3rd parameter sets the minimal distance (in meters) that you have to travel to trigger an update
-             * 4th parameter sets the location listener, which determines the code that is executed
-             *      on a change of the location
-             */
 
             // setting up the start / stop button
             FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
@@ -170,6 +163,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             if(startStopButton.isActivated()){
                 // tell mainactivity that the workout is stopped
                 callback.workoutInProgress(false);
+                workoutActive = false;
 
                 updateDatabase();
 
@@ -193,6 +187,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             else{
                 // tell mainactivity that a workout is in progress
                 callback.workoutInProgress(true);
+                workoutActive = true;
 
                 setButton(
                         true,
@@ -270,6 +265,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     LocationListener trackUser = new LocationListener(){
         @Override
         public void onLocationChanged(Location loc){
+            // zoom in on first found location, then just track
             if(previousLoc != null) setMapCam(loc);
             else setMapCam(loc, 15);
             if(unitMode != 3 && loc.hasSpeed()){
@@ -283,7 +279,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 else
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
             }
-            if(previousLoc == null) previousLoc = loc;
+            // saves the last known position before a workout is started
+            if(!workoutActive) previousLoc = loc;
         }
         @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
         @Override public void onProviderEnabled(String s) {}
@@ -467,12 +464,36 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        // if there's no workout in progress release wake lock if held and remove listener
+        if(!workoutActive) {
+            if (wakeLock.isHeld()) wakeLock.release();
+            lm.removeUpdates(trackUser);
+            lm.removeUpdates(workoutLocListener);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         // Set title bar
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
+
+        // set up user tracker if location permissions are given
+        if(checkPermission())
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
+            /* sets the location manager up to execute onLocationChanged on specific conditions:
+             * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
+             * 2nd parameter sets the minimal time (in milliseconds) of a location update
+             * 3rd parameter sets the minimal distance (in meters) that you have to travel to trigger an update
+             * 4th parameter sets the location listener, which determines the code that is executed
+             *      on a change of the location
+             */
+
     }
 
     @Override
@@ -487,8 +508,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
         mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             /**
-             * provides a screenshot of the map
-             * @param bitMap the screenshot
+             * provides a bitmap image of the map
+             * @param bitMap the image
              */
             @Override
             public void onSnapshotReady(Bitmap bitMap) {
