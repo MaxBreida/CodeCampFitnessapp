@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -529,9 +530,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
 
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         // set up user tracker if location permissions are given
         if(checkPermission())
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
+            //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
+            lm.requestLocationUpdates(1000, 0, criteria, trackUser, null);
             /* sets the location manager up to execute onLocationChanged on specific conditions:
              * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
              * 2nd parameter sets the minimal time (in milliseconds) of a location update
