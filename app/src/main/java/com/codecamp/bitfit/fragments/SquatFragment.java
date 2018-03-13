@@ -70,7 +70,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     //Use an average value for the accelerometer output
     //Variable for the length of the array for the average value
-    private int arrayLength = 10;
+    private int arrayLength = 7;
     //array for storing the sensor value
     private double[] azValues = new double[arrayLength];
     // counter for how full the array is yet
@@ -78,12 +78,14 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     //average value, calculated later
     private double azAvg;
 
+    //enum Type to distinguish in which part of the squat movement the user is
     enum SquatStates {
-            SQUAT_DOWN,
-            STAND_UP,
-            COUNT
+            SQUAT_DOWN, //State when the user is "squatting down",
+            STAND_UP,   //State when the user is "standing up",
+            COUNT   // Counting state, is only active for a short time
     }
     private SquatStates squatState;
+
 
     //Quit button states indicate if the button was clicked the first time
     //("Stop") with possibility of resuming or second time(final quit with "SAVE")
@@ -346,12 +348,17 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                     case SQUAT_DOWN:
                         if(azAvg>0){
                             // Linear acceleration sensor has a slight negative offset
+                            // To this offset the Acceleration of the squat itself is added
+                            // when the acceleration gets positive: user has passed the "down"
+                            // position and starts to go upwards
                             squatState = SquatStates.STAND_UP;
                         }
                         break;
                     case STAND_UP:
                         if(azAvg<0){
-                            // While standing up: acceleration is positive
+                            // While standing up: acceleration is positive, when it gets negative again:
+                            // user is going down again, but before going into this state we must count
+                            // the squat
                             squatState = SquatStates.COUNT;
                         }
 
@@ -362,6 +369,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                         squatButton.setText(String.valueOf(squatCtr));
                         avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
                         caloriesTextView.setText(String.valueOf(calcCalories()));
+                        // go back to state SQUAT_DOWN after that
                         squatState=SquatStates.SQUAT_DOWN;
                         break;
                     }
@@ -396,6 +404,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     //Help method for calculating an arrays average,
     //needed to calculate the average acceleration values over some time
+    //TODO: Maybe move this method to Util?
     private double getArrAvg(double[] array){
         double average = 0;
         double sum = 0;
