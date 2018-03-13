@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.MainActivity;
@@ -84,10 +83,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     User user;
     long runDuration = 0;
     float runningDistance = 0;
+    int unitMode = 1; // determines whether the speed should be displayed in current
+                // kmh, avg. kmh or m/s 1 = current km/h, 2 = m/s, 3 = average km/h
 
     // run duration timer and a timer for saving the data of a run to the database
     CountUpTimer runDurationTimer, saveDataTimer;
-    private ImageView workoutCompleteImageView;
 
     public static RunFragment getInstance() {
 
@@ -118,33 +118,44 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             dataCard = mainView.findViewById(R.id.run_data_cardview);
         }
 
-        // ask for location permissions and send user back to home screen if they were not given
+        // ask for location permissions if not already given
         if(!checkPermission()) getLocationPermissions();
+        else {
+            // get the current user
+            user = DBQueryHelper.findUser();
 
-        // get the current user
-        user = DBQueryHelper.findUser();
+            // initialize the database
+            database = new Run();
+            database.setUser(user);
+            database.setRandomId();
+            database.setCurrentDate();
 
-        // initialize the database
-        database = new Run();
-        database.setUser(user);
-        database.setRandomId();
-        database.setCurrentDate();
+            // setting up map fragment
+            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMapAsync(mapReady);
 
-        // setting up map fragment
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(mapReady);
+            // setting wakelock
+            PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
-        // setting wakelock
-        PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
+            setUpSpeedUnitSwitcher();
 
-        // setting up the start / stop button if location permissions are set
-        FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
-        if(checkPermission())
+            // set location manager up and start tracking the user
+            lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
+            /* sets the location manager up to execute onLocationChanged on specific conditions:
+             * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
+             * 2nd parameter sets the minimal time (in milliseconds) of a location update
+             * 3rd parameter sets the minimal distance (in meters) that you have to travel to trigger an update
+             * 4th parameter sets the location listener, which determines the code that is executed
+             *      on a change of the location
+             */
+
+            // setting up the start / stop button
+            FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
             startStop.setOnClickListener(startStopButListener);
-        else
-            startStop.setVisibility(View.GONE); // remove the start button if there are no location
-                                            // permissions, since the run can't be tracked anyways
+            startStop.setVisibility(View.VISIBLE);
+        }
     }
 
     View.OnClickListener startStopButListener = new View.OnClickListener() {
@@ -173,7 +184,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 saveDataTimer.stop();
 
                 // deactivate location updates and release wakelock
-                lm.removeUpdates(locListener);
+                lm.removeUpdates(workoutLocListener);
                 wakeLock.release();
 
                 showWorkoutCompleteDialog();
@@ -205,33 +216,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     saveDataTimer.reset();
                 saveDataTimer.start();
 
-                startRunIfAllIsSet();
-            }
-        }
-
-        private void startRunIfAllIsSet() {
-            lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-
-            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-            }
-            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-            }
-            else{
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_FINE);
-                if(checkPermission())
-                    lm.requestLocationUpdates(500, 10, criteria, locListener, null);
-                    /* sets the location manager up to execute onLocationChanged on specific conditions:
-                     * 1st parameter determines the minimal time (in milliseconds) of a location update
-                     * 2nd parameter sets the minimal distance that you have to travel to trigger an update
-                     * 3rd parameter is the criteria for choosing the location provider (GPS / Network)
-                     * 4th parameter sets the location listener, which determines the code that is executed
-                     *      on a change of the location
-                     * 5th and last parameter sets a looper, used to execute the Messages(Runnables) in a queue
-                     *      but we don't need that feature
-                     */
+                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                    // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+                }
+                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
+                }
+                else{
+                    if(checkPermission())
+                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, workoutLocListener);
+                }
             }
         }
 
@@ -242,16 +236,69 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
     };
 
-    LocationListener locListener = new LocationListener() {
+    /**
+     * sets up a clickable text view that switches the method of displaying the speed on click
+     */
+    private void setUpSpeedUnitSwitcher() {
+        TextView speedUnit = dataCard.findViewById(R.id.textview_run_speed);
+        View.OnClickListener switchSpeedUnit = new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                switch(unitMode){
+                    case 1: // state 2 -> m/s
+                        ((TextView)view).setText("-.-m/s");
+                        break;
+                    case 2: // state 3 -> average km/h
+                        ((TextView)view).setText(getAverageSpeedString());
+                        break;
+                    default: // state 1 -> km/h
+                        ((TextView)view).setText("-.-km/h");
+                        unitMode = 0;
+                        break;
+                }
+                unitMode++;
+            }
+        };
+        speedUnit.setOnClickListener(switchSpeedUnit);
+    }
 
-        Location previousLoc = null;
+
+    // last known position, used for initial point once workout starts
+    Location previousLoc = null;
+
+    LocationListener trackUser = new LocationListener(){
+        @Override
+        public void onLocationChanged(Location loc){
+            if(previousLoc != null) setMapCam(loc);
+            else setMapCam(loc, 15);
+            if(unitMode != 3 && loc.hasSpeed()){
+                // set speed if the location manager can provide those readings
+                TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
+                float curSpeed = loc.getSpeed();
+                if(unitMode == 1) {
+                    curSpeed *= 3.6f;
+                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
+                }
+                else
+                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
+            }
+            previousLoc = loc;
+        }
+        @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
+        @Override public void onProviderEnabled(String s) {}
+        @Override public void onProviderDisabled(String s) {}
+    };
+
+    LocationListener workoutLocListener = new LocationListener() {
+
+        int precisionTolerance = 10;
 
         @Override
         public void onLocationChanged(Location location) {
-            if(location != null && location.getAccuracy() <= 10){ // precision tolerance = 10 meters
-                // set a point if accuracy is good enough
+            if(location.getAccuracy() <= precisionTolerance){
+                // set a point if accuracy is good enough:
+                // TODO timely increasing tolerance
                 LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
                 points.add(curPos);
                 line.setPoints(points);
                 if(previousLoc != null){
@@ -261,10 +308,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     if(allowDataUpdate)
                         updateDatabase();
                 }
-                else{
-                    LatLng firstLocLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocLatLng, 15));
-                }
                 previousLoc = location;
 
                 // set Calories
@@ -272,17 +315,25 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
             }
         }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {}
-        @Override
-        public void onProviderEnabled(String s) {}
-        @Override
-        public void onProviderDisabled(String s) {}
+        @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
+        @Override public void onProviderEnabled(String s) {}
+        @Override public void onProviderDisabled(String s) {}
     };
 
+    private void setMapCam(Location loc, float zoom) {
+        LatLng pos = new LatLng(loc.getLatitude(), loc.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
+    }
+    private void setMapCam(Location loc){
+        setMapCam(loc, mMap.getCameraPosition().zoom);
+    }
+
     public double getAverageSpeedInKmh() {
-        return (runningDistance / 1000.0) / (runDuration / 3600000.0);
+        return (runDuration != 0)? (runningDistance / 1000.0) / (runDuration / 3600000.0) : 0;
+        //return 0 if run duration is 0 to avoid division by zero
+    }
+    public String getAverageSpeedString() {
+        return "Ø " + decNumToXPrecisionString(getAverageSpeedInKmh(), 1) + "km/h";
     }
 
     private double getCurrentCalories() {
@@ -371,10 +422,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             public void onTick(long elapsedTime) {
                 runDuration = elapsedTime;
                 time.setText(Util.getMillisAsTimeString(elapsedTime));
-                speed.setText(
-                        Util.decNumToXPrecisionString(
-                                getAverageSpeedInKmh(), 2)
-                                .concat(" km/h"));
+                if(unitMode == 3)
+                    speed.setText(getAverageSpeedString());
             }
         };
     }
