@@ -40,6 +40,12 @@ public class User extends BaseModel {
     @Column
     String gender;
 
+    List<PushUps> pushUps;
+
+    List<Squat> squats;
+
+    List<Run> runs;
+
     //Getter and Setter
     public UUID getId() {
         return id;
@@ -101,9 +107,7 @@ public class User extends BaseModel {
         return age + 1900;
     }
 
-
     // One to Many relataion, if you have more than one User
-    List<PushUps> pushUps;
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "pushUps")
     public List<PushUps> getMyPushUps() {
         if (pushUps == null || pushUps.isEmpty()) {
@@ -115,7 +119,6 @@ public class User extends BaseModel {
         return pushUps;
     }
 
-    List<Squat> squats;
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "squats")
     public List<Squat> getMySquats() {
         if (squats == null || squats.isEmpty()) {
@@ -127,7 +130,6 @@ public class User extends BaseModel {
         return squats;
     }
 
-    List<Run> runs;
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "runs")
     public List<Run> getMyRuns() {
         if (runs == null || runs.isEmpty()) {
