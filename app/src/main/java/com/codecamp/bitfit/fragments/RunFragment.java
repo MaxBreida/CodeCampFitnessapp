@@ -222,7 +222,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 Criteria criteria = new Criteria();
                 criteria.setAccuracy(Criteria.ACCURACY_FINE);
                 if(checkPermission())
-                    lm.requestLocationUpdates(1000, 25, criteria, locListener, null);
+                    lm.requestLocationUpdates(500, 10, criteria, locListener, null);
                     /* sets the location manager up to execute onLocationChanged on specific conditions:
                      * 1st parameter determines the minimal time (in milliseconds) of a location update
                      * 2nd parameter sets the minimal distance that you have to travel to trigger an update
@@ -248,7 +248,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         @Override
         public void onLocationChanged(Location location) {
-            if(location != null && location.getAccuracy() <= 25){ // precision tolerance = 25 meters
+            if(location != null && location.getAccuracy() <= 10){ // precision tolerance = 10 meters
                 // set a point if accuracy is good enough
                 LatLng curPos = new LatLng(location.getLatitude(),location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(curPos));
@@ -358,7 +358,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 activity.startActivity(new Intent(activity, RunStatisticsActivity.class));
                 return true;
             case R.id.action_instructions:
-                // TODO show instructions
+                // TODO show instructions or maybe leave them out and delete button => not really necessary here
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
