@@ -189,7 +189,7 @@ public class Util {
             shareIntent.setDataAndType(contentUri, activity.getContentResolver().getType(contentUri));
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            activity.startActivity(Intent.createChooser(shareIntent, "Teile deinen Workout via..."));
+            activity.startActivity(Intent.createChooser(shareIntent, "Teile deinen Status via..."));
         }
     }
 
