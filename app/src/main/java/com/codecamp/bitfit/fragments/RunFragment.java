@@ -142,13 +142,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             setUpSpeedUnitSwitcher();
 
-            // set location manager up and start tracking the user
+            // set location manager up
             lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-            Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(last == null)
-                last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(last != null)
-                setMapCam(last, 10);
 
             // setting up the start / stop button
             FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
@@ -384,6 +379,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             line = mMap.addPolyline(lineOptions);
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
+
+            // set camera to last known position
+            Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(last == null)
+                last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(last != null)
+                setMapCam(last, 10);
+
             GoogleMap.OnMyLocationButtonClickListener locButListener = new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
