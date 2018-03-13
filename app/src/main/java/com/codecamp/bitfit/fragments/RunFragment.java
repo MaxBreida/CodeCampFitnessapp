@@ -531,7 +531,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 .setActionBarTitle(getString(R.string.run));
 
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
         // set up user tracker if location permissions are given
         if(checkPermission())
             //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
