@@ -165,11 +165,21 @@
                         android:id="@+id/textview_run_speed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0km/h"
+                        android:text="-:-km/h"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
                 </LinearLayout>
             </RelativeLayout>
+            <!-- TODO: not too pretty, there's certainly a better solution?-->
+            <TextView
+                android:id="@+id/textview_tap_to_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(tap to switch unit)"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/relative3"
+                app:layout_constraintRight_toRightOf="@id/relative3"
+                android:textSize="10sp" />
 
             <RelativeLayout
                 android:id="@+id/relative4"
@@ -228,5 +238,6 @@
         app:backgroundTint="#080"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
