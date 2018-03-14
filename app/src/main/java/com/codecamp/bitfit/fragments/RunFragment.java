@@ -65,6 +65,8 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
+    boolean debugMode = true; // TODO: Remove?
+
     // Map related global variables
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
@@ -322,6 +324,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         @Override
         public void onLocationChanged(Location loc){
+            if(debugMode){
+                TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
+                tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
+            }
+
             // zoom in on first found location, then just track
             if(allowUserTracking)
                 if(previousLoc != null) setMapCam(loc);
