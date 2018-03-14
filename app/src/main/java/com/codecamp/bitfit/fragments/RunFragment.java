@@ -81,6 +81,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
     View customDialogLayout;
+    TextView distanceText;
+    TextView speedText;
     FloatingActionButton startPauseButton;
     FloatingActionButton stopButton;
 
@@ -117,12 +119,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // taking care of the infamous "may be null" warnings
+        // taking care of the infamous "may be null" warnings & setting views
         if(getActivity() != null)
             activity = getActivity();
         if(getView() != null) {
             mainView = view;
             dataCard = mainView.findViewById(R.id.run_data_cardview);
+            distanceText = dataCard.findViewById(R.id.textview_run_distance);
+            speedText = dataCard.findViewById(R.id.textview_run_speed);
         }
 
         // because it is just being created we set it to inactive
@@ -204,7 +208,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     // move button down on first click:
                     setupRunDurationTimer(
                             (TextView) dataCard.findViewById(R.id.textview_run_duration),
-                            (TextView) dataCard.findViewById(R.id.textview_run_speed)
+                            speedText
                     );
                     runDurationTimer.start();
                 }
@@ -281,30 +285,26 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
      * sets up a clickable text view that switches the method of displaying the speed on click
      */
     private void setUpSpeedUnitSwitcher() {
-        TextView speedUnit = dataCard.findViewById(R.id.textview_run_speed);
         View.OnClickListener switchSpeedUnit = new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 switch(unitMode){
                     case 1: // state 2 -> m/s
-                        ((TextView)view).setText("-.-m/s");
+                        ((TextView)view).setText("-.--m/s");
                         break;
                     case 2: // state 3 -> average km/h
                         ((TextView)view).setText(getAverageSpeedString());
                         break;
                     default: // state 1 -> km/h
-                        ((TextView)view).setText("-.-km/h");
+                        ((TextView)view).setText("-.--km/h");
                         unitMode = 0;
                         break;
                 }
                 unitMode++;
             }
         };
-        speedUnit.setOnClickListener(switchSpeedUnit);
+        speedText.setOnClickListener(switchSpeedUnit);
     }
-
-    // sets minimal precision for the location updates (in meters):
-    int precisionTolerance = 10;
 
     // should the user be tracked by the map camera?
     boolean allowUserTracking = false; // gets switched on start!
@@ -314,26 +314,30 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // last known position, used for initial point once workout starts
         Location previousLoc = null;
 
+        // sets minimal precision for the location updates (in meters):
+        final float initialTolerance = 10;
+        float precisionTolerance = initialTolerance;
+
         @Override
         public void onLocationChanged(Location loc){
             if(debugMode){
                 TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
                 tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
             }
-
-            // zoom in on first found location, then just track
+            
+            // zoom in on first found location, then just track if it's allowed
             if(allowUserTracking)
                 if(previousLoc != null) setMapCam(loc);
                 else setMapCam(loc, 15);
 
-            if(loc.getAccuracy() <= precisionTolerance){
-                // set a point if accuracy is good enough:
+            float distToPrevLoc = (previousLoc == null)? 11 : loc.distanceTo(previousLoc);
+            // set a point if accuracy is good enough and last point is at least 10m away
+            if(distToPrevLoc > 10 && loc.getAccuracy() <= precisionTolerance){
                 LatLng curPos = new LatLng(loc.getLatitude(),loc.getLongitude());
                 points.add(curPos);
                 line.setPoints(points);
                 if(previousLoc != null){
-                    runningDistance += loc.distanceTo(previousLoc);
-                    TextView distanceText = dataCard.findViewById(R.id.textview_run_distance);
+                    runningDistance += distToPrevLoc;
                     distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
                     if(allowDataUpdate)
                         updateDatabase();
@@ -343,11 +347,22 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // set Calories
                 TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
                 calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
+
+                // reset tolerance to initial value
+                precisionTolerance = initialTolerance;
             }
+            // increase tolerance drastically if the previous point is more than 100 meters away:
+            else if(distToPrevLoc > 100 && distToPrevLoc > precisionTolerance + 25)
+                precisionTolerance += 5;
+            // increase tolerance quickly if this is the first location (1 meter every update):
+            else if(previousLoc == null)
+                precisionTolerance++;
+            // increases tolerance by 0.17 meters on every location update:
+            else
+                precisionTolerance += 0.17f;
 
             if(workoutActive && unitMode != 3 && loc.hasSpeed()){
                 // set speed if the location manager can provide those readings
-                TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
                 float curSpeed = loc.getSpeed();
                 if(unitMode == 1) {
                     curSpeed *= 3.6f;

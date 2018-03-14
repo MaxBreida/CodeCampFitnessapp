@@ -166,7 +166,7 @@
                         android:id="@+id/textview_run_speed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-:-km/h"
+                        android:text="-.--km/h"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
                 </LinearLayout>
