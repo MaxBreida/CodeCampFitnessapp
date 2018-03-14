@@ -327,44 +327,37 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // Search for light sensor, only start at workoutstart
-        // TODO calibration
-        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+        // Search for light sensor, only start at work out start
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT)
             if (event.values != null && workoutStarted && !workoutPaused) {
-                // calculation light range
+                // calculation light range and and update maxLightRange
                 if (maxLightRange < event.values[0]) {
-
-                    if(maxLightRange < 400) {
+                    //difference in parameter between poorly and well lit room
+                    if (maxLightRange < 400) {
                         maxLightRange = (event.values[0]);
                         minLightRange = (double) event.values[0] / 2;
                         averageLightRange = (double) event.values[0] / 4;
                         averageLightRange = averageLightRange * 3;
-                        //Toast.makeText(getActivity().getApplicationContext(), "unter", Toast.LENGTH_SHORT).show();
-
                     } else {
                         maxLightRange = (event.values[0]);
                         minLightRange = (double) event.values[0] / 3;
                         averageLightRange = (double) event.values[0] / 2;
-                        //Toast.makeText(getActivity().getApplicationContext(), "drüber", Toast.LENGTH_SHORT).show();
                     }
-
                 }
 
-                // Count++ if is unlock
-                if (minLightRange > event.values[0] && lockPushUpsCount == false) {
+                // A lock for not to count too early
+                // Unlock if you go down for a push and averageLightRange is under yours true light range.
+                // If true light range is under minLightRange and is unlock, count++
+                if (minLightRange > event.values[0] && !lockPushUpsCount) {
                     lockPushUpsCount = true;
                     count++;
                     pushUpButton.setText(String.valueOf(count));
                     avgPushupsTextView.setText(String.valueOf(calcPushupsPerMinute(elapsedTime)));
                     caloriesTextView.setText(String.valueOf(calcCalories()));
-                }
-
-                // Lock
-                if (averageLightRange < event.values[0] && lockPushUpsCount == true) {
+                } else if (averageLightRange < event.values[0] && lockPushUpsCount) {
                     lockPushUpsCount = false;
                 }
             }
-        }
     }
 
     @Override
