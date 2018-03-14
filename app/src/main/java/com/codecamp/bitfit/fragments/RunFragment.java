@@ -65,6 +65,8 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
+    boolean debugMode = true; // TODO: Remove?
+
     // Map related global variables
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
@@ -126,6 +128,13 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // because it is just being created we set it to inactive
         workoutActive = false;
 
+        // setting wakelock element for later acquirement
+        PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
+
+        // set location manager up
+        lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
         // ask for location permissions if not already given
         if(!checkPermission()) getLocationPermissions();
         else {
@@ -138,14 +147,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(mapReady);
 
-            // setting wakelock
-            PowerManager powerManager = (PowerManager) activity.getSystemService(POWER_SERVICE);
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
-
             setUpSpeedUnitSwitcher();
-
-            // set location manager up
-            lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
             // setting up the start / pause button
             startPauseButton = mainView.findViewById(R.id.button_start_pause_run);
@@ -322,6 +324,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         @Override
         public void onLocationChanged(Location loc){
+            if(debugMode){
+                TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
+                tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
+            }
+
             // zoom in on first found location, then just track
             if(allowUserTracking)
                 if(previousLoc != null) setMapCam(loc);
@@ -571,6 +578,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         moveStartButtonDown(false);
         allowLocUpdate = false;
         firstClick = true;
+        database = null;
         initializeDatabaseObject();
     }
 
@@ -587,7 +595,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         // if there's no workout in progress release wake lock if held and remove listener
         if(!workoutActive) {
-            if (wakeLock.isHeld()) wakeLock.release();
+            if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
             lm.removeUpdates(trackUser);
             lm.removeUpdates(workoutLocListener);
         }
