@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,6 +19,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,6 +79,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
     View customDialogLayout;
+    FloatingActionButton startPauseButton;
+    FloatingActionButton stopButton;
 
     // userdata and database related global variables
     boolean allowDataUpdate = false; // determines whether or not the database can update automatically
@@ -121,17 +123,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             dataCard = mainView.findViewById(R.id.run_data_cardview);
         }
 
+        // because it is just being created we set it to inactive
+        workoutActive = false;
+
         // ask for location permissions if not already given
         if(!checkPermission()) getLocationPermissions();
         else {
             // get the current user
             user = DBQueryHelper.findUser();
 
-            // initialize the database
-            database = new Run();
-            database.setUser(user);
-            database.setRandomId();
-            database.setCurrentDate();
+            initializeDatabaseObject();
 
             // setting up map fragment
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -146,34 +147,40 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             // set location manager up
             lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
-            // setting up the start / stop button
-            FloatingActionButton startStop = mainView.findViewById(R.id.button_start_stop_run);
-            startStop.setOnClickListener(startStopButListener);
-            startStop.setVisibility(View.VISIBLE);
+            // setting up the start / pause button
+            startPauseButton = mainView.findViewById(R.id.button_start_pause_run);
+            startPauseButton.setOnClickListener(startPauseButListener);
+            startPauseButton.setVisibility(View.VISIBLE);
+            // stop button:
+            stopButton = mainView.findViewById(R.id.button_stop_run);
+            stopButton.setOnClickListener(stopButtonListener);
         }
     }
 
-    View.OnClickListener startStopButListener = new View.OnClickListener() {
-        FloatingActionButton startStopButton;
-
-        // TODO: add resume functionality
-
+    // is it the first click on the start button?
+    boolean firstClick = true;
+    View.OnClickListener startPauseButListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            startStopButton = (FloatingActionButton) view;
-            if(startStopButton.isActivated()){
+            if(startPauseButton.isActivated()){
                 // tell mainactivity that the workout is stopped
                 callback.workoutInProgress(false);
                 workoutActive = false;
 
+                // could be intense TODO start a new line after a pause when the distance ist too far
+
                 updateDatabase();
 
-                // change button design
-                setButton(
+                // change button design and move it
+                setStartButtonDesign(
                         false,
                         getResources().getColor(R.color.darkerGreen),
                         R.drawable.ic_play_arrow_white_48dp
                 );
+                moveStartButtonLeft(true);
+
+                // show and animate stop button:
+                makeStopButtonAppear(true);
 
                 // stop the timers
                 runDurationTimer.stop();
@@ -182,42 +189,55 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 // deactivate location updates and release wakelock
                 lm.removeUpdates(workoutLocListener);
                 wakeLock.release();
-
-                showWorkoutCompleteDialog();
             }
             else{
                 // tell mainactivity that a workout is in progress
                 callback.workoutInProgress(true);
                 workoutActive = true;
 
-                setButton(
-                        true,
-                        getResources().getColor(R.color.red),
-                        R.drawable.ic_stop_white_48dp
-                );
-
+                // acquire wakelock with a 10 hour timeout, some runs could last that long i guess
                 wakeLock.acquire(36000000);
 
-                if(runDurationTimer == null)
+                // start timers:
+                if(runDurationTimer == null) {
+                    // move button down on first click:
                     setupRunDurationTimer(
                             (TextView) dataCard.findViewById(R.id.textview_run_duration),
                             (TextView) dataCard.findViewById(R.id.textview_run_speed)
                     );
+                    runDurationTimer.start();
+                }
+                else if(firstClick)
+                    runDurationTimer.start();
                 else
-                    runDurationTimer.reset();
-                runDurationTimer.start();
+                    runDurationTimer.resume();
 
                 if(saveDataTimer == null)
                     setupDataSavingInterval();
                 else
-                    saveDataTimer.reset();
-                saveDataTimer.start();
+                    saveDataTimer.start();
+
+                // change button design and move it
+                setStartButtonDesign(
+                        true,
+                        getResources().getColor(R.color.red),
+                        R.drawable.ic_pause_white
+                );
+                if(firstClick){
+                    moveStartButtonDown(true);
+                    firstClick = false;
+                }
+                else {
+                    moveStartButtonLeft(false);
+                    // hide stop button again
+                    makeStopButtonAppear(false);
+                }
 
                 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                    // TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
+                    // quick and easy TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
                 }
                 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    // TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
+                    // quick and easy TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
                 }
                 else{
                     if(checkPermission())
@@ -225,13 +245,40 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 }
             }
         }
+    };
 
-        private void setButton(boolean active, int color, int resId){
-            startStopButton.setActivated(active);
-            startStopButton.setBackgroundTintList(ColorStateList.valueOf(color));
-            startStopButton.setImageResource(resId);
+    private void setStartButtonDesign(boolean active, int color, int resId){
+        startPauseButton.setActivated(active);
+        startPauseButton.setBackgroundTintList(ColorStateList.valueOf(color));
+        startPauseButton.setImageResource(resId);
+    }
+    private void moveStartButtonLeft(boolean go){
+        startPauseButton.animate().rotationBy((go) ? -360 : 360);
+        startPauseButton.animate().xBy(toDp((go) ? -50 : 50));
+    }
+    private void moveStartButtonDown(boolean go){
+        startPauseButton.animate().yBy(toDp((go) ? 19 : -19));
+    }
+    private void makeStopButtonAppear(boolean go) {
+        stopButton.animate().rotationBy((go) ? 360 : -360);
+        stopButton.animate().alpha((go) ? 1.0f : 0);
+        stopButton.setClickable(go);
+        stopButton.animate().xBy(toDp((go) ? 50 : -50));
+    }
+
+    View.OnClickListener stopButtonListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            showWorkoutCompleteDialog();
         }
     };
+
+    private float toDp(float dp){
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics()
+        );
+    }
 
     /**
      * sets up a clickable text view that switches the method of displaying the speed on click
@@ -335,8 +382,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     };
 
     private void setMapCam(Location loc, float zoom) {
-        LatLng pos = new LatLng(loc.getLatitude(), loc.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
+        if(mMap != null && loc != null){
+            LatLng pos = new LatLng(loc.getLatitude(), loc.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
+        }
     }
     private void setMapCam(Location loc){
         setMapCam(loc, mMap.getCameraPosition().zoom);
@@ -351,7 +400,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private double getCurrentCalories() {
-        // TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
+        // fuck this formula TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
         // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
         // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
         // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
@@ -381,14 +430,17 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
 
-            // set camera to last known position
-            Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(last == null)
-                last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(last == null)
-                last = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            if(last != null)
-                setMapCam(last, 10);
+            // set camera to last known position, testing all location providers from precise to coarse
+            String[] locationProviders = {
+                    LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER
+            };
+            for (String locP : locationProviders) {
+                Location last = lm.getLastKnownLocation(locP);
+                if(last != null) {
+                    setMapCam(last, 10);
+                    break;
+                }
+            }
 
             GoogleMap.OnMyLocationButtonClickListener locButListener = new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
@@ -436,7 +488,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                             // navigate user to app settings
                             // showSettingsDialog(); //TODO: send user to settings if permissions denied permanently
                         }
-                        // TODO: tell the user that location permissions are required to use the run workout!
+                        // quick and easy TODO: tell the user that location permissions are required to use the run workout!
                     }
 
                     @Override
@@ -454,7 +506,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 activity.startActivity(new Intent(activity, RunStatisticsActivity.class));
                 return true;
             case R.id.action_instructions:
-                // TODO show instructions or maybe leave them out and delete button => not really necessary here
+                // need to discuss TODO show instructions or maybe leave them out and delete button => not really necessary here
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -496,10 +548,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         allowDataUpdate = false;/* since it's going to be updated now we can block all other update
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
-        // TODO: save points too
+        // could get intense TODO: save points too
         // TODO: investigate crashes after reinstallation
 
-        // TODO: check for issues with the saving, the values seem to be a little bit off
+        // TODO: check for rounding issues
         database.setDistanceInMeters(runningDistance);
         database.setDurationInMillis(runDuration);
         database.setCalories(getCurrentCalories());
@@ -508,6 +560,25 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // set as last workout
         new SharedPrefsHelper(getContext())
                 .setLastActivity(Constants.WORKOUT_RUN, database.getId());
+    }
+
+    private void fullReset() {
+        lm.removeUpdates(workoutLocListener);
+        runningDistance = 0;
+        points.clear();
+        makeStopButtonAppear(false);
+        moveStartButtonLeft(false);
+        moveStartButtonDown(false);
+        allowLocUpdate = false;
+        firstClick = true;
+        initializeDatabaseObject();
+    }
+
+    private void initializeDatabaseObject() {
+        database = new Run();
+        database.setUser(user);
+        database.setRandomId();
+        database.setCurrentDate();
     }
 
     @Override
@@ -530,12 +601,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-        // set up user tracker if location permissions are given
+                // set up user tracker if location permissions are given
         if(checkPermission())
             //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
-            lm.requestLocationUpdates(1000, 0, criteria, trackUser, null);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000, 0, trackUser);
             /* sets the location manager up to execute onLocationChanged on specific conditions:
              * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
              * 2nd parameter sets the minimal time (in milliseconds) of a location update
@@ -556,7 +625,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     private void showWorkoutCompleteDialog() {
         // set the custom layout
         customDialogLayout = getLayoutInflater().inflate(R.layout.dialog_content_run_workout, null);
-        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+        if (mMap != null)
+            mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             /**
              * provides a bitmap image of the map
              * @param bitMap the image
@@ -576,7 +646,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance / 1000));
 
                 // set to initial state
-                updateDatabase();
+                fullReset();
 
                 callback.setNavigationItem();
             }
@@ -586,7 +656,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // set to initial state
-                updateDatabase();
+                fullReset();
 
                 callback.setNavigationItem();
             }
