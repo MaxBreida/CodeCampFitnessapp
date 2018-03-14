@@ -70,5 +70,6 @@
     <string name="need_permission_storage_message">Diese App braucht die Berechtigung um das Share-Feature nutzen zu können. Du kannst die Berechtigung in den Einstellungen erteilen.</string>
     <string name="settings">Einstellungen</string>
     <string name="cancel">Abbrechen</string>
+    <string name="clicktext">Durch Tippen auf die Diagramme kannst du jeweils andere Werte betrachten</string>
 
 </resources>

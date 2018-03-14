@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment {
     // => it is repetetive, but with at least differences in some values, I don't know
     // if it would be much more effective with methods which would need many parameters and contain
     //big switch-case-statements
+    // TODO fix last activity not being rounded (it's a running activity I've got here)
 
 
     private void lastActivity() {
