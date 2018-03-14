@@ -189,7 +189,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 saveDataTimer.stop();
 
                 // deactivate location updates and release wakelock
-                lm.removeUpdates(workoutLocListener);
                 wakeLock.release();
             }
             else{
@@ -240,10 +239,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 }
                 if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     // quick and easy TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                }
-                else{
-                    if(checkPermission())
-                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, workoutLocListener);
                 }
             }
         }
@@ -308,9 +303,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         speedUnit.setOnClickListener(switchSpeedUnit);
     }
 
-    // let's the user tracker set a new point it true:
-    boolean allowLocUpdate = false;
-
     // sets minimal precision for the location updates (in meters):
     int precisionTolerance = 10;
 
@@ -334,7 +326,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 if(previousLoc != null) setMapCam(loc);
                 else setMapCam(loc, 15);
 
-            if(allowLocUpdate && loc.getAccuracy() <= precisionTolerance){
+            if(loc.getAccuracy() <= precisionTolerance){
                 // set a point if accuracy is good enough:
                 LatLng curPos = new LatLng(loc.getLatitude(),loc.getLongitude());
                 points.add(curPos);
@@ -353,7 +345,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
             }
 
-            if(unitMode != 3 && loc.hasSpeed()){
+            if(workoutActive && unitMode != 3 && loc.hasSpeed()){
                 // set speed if the location manager can provide those readings
                 TextView speedText = dataCard.findViewById(R.id.textview_run_speed);
                 float curSpeed = loc.getSpeed();
@@ -364,24 +356,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 else
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
             }
-            // saves the last known position before a workout is started
-            if(!workoutActive) previousLoc = loc;
-        }
-        @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
-        @Override public void onProviderEnabled(String s) {}
-        @Override public void onProviderDisabled(String s) {}
-    };
-
-    LocationListener workoutLocListener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location loc) {
-            // if the precision is already good enough, trigger an drawing update right away
-            // else let the user tracker set a drawing point on the next precise location it receives
-            if(loc.getAccuracy() <= precisionTolerance)
-                trackUser.onLocationChanged(loc);
-            else
-                allowLocUpdate = true;
         }
         @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
         @Override public void onProviderEnabled(String s) {}
@@ -570,13 +544,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void fullReset() {
-        lm.removeUpdates(workoutLocListener);
         runningDistance = 0;
         points.clear();
         makeStopButtonAppear(false);
         moveStartButtonLeft(false);
         moveStartButtonDown(false);
-        allowLocUpdate = false;
         firstClick = true;
         database = null;
         initializeDatabaseObject();
@@ -597,7 +569,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         if(!workoutActive) {
             if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
             lm.removeUpdates(trackUser);
-            lm.removeUpdates(workoutLocListener);
         }
     }
 
@@ -611,7 +582,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
                 // set up user tracker if location permissions are given
         if(checkPermission())
-            //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, trackUser);
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000, 0, trackUser);
             /* sets the location manager up to execute onLocationChanged on specific conditions:
              * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
