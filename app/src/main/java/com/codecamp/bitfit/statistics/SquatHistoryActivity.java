@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import com.codecamp.bitfit.R;
-import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.util.DBQueryHelper;
 
+
+import java.util.Collections;
 import java.util.List;
 
 public class SquatHistoryActivity extends AppCompatActivity {
@@ -19,6 +20,8 @@ public class SquatHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_squat_history);
 
         List<Squat> allSquats = DBQueryHelper.findAllSquats();
+        Collections.reverse(allSquats);
+
         SquatAdapter squatAdapter = new SquatAdapter(this, allSquats);
 
         ListView listView = findViewById(R.id.listview_squat_history);
