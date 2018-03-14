@@ -152,6 +152,10 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
         //Call initialization method
         setToInitialState();
+        //Show instructions dialog if the user does squats for the first time
+        if(DBQueryHelper.findAllSquats().isEmpty()){
+            showInstructions();
+        }
 
         //Create listener for squat workout start
         squatButton.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +238,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         //Factor for the height pushed = size/4, approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion
         heightPushed = (double) user.getSizeInCM() / (100 * 4);
         //Divide by 100 to get from cm to meter and divide by 4 to adjust the value to body proportions
+
     }
 
     private void stopWorkout() {
@@ -389,10 +394,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_instructions:
-                new InstructionsDialog(getContext(),
-                        getString(R.string.squats),
-                        getActivity().getDrawable(R.drawable.squat_instruction),
-                        getString(R.string.squat_instructions)).show();
+                showInstructions();
                 return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), SquatStatisticsActivity.class));
@@ -400,6 +402,13 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void showInstructions(){
+        new InstructionsDialog(getContext(),
+                getString(R.string.squats),
+                getActivity().getDrawable(R.drawable.squat_instruction),
+                getString(R.string.squat_instructions)).show();
     }
 
     //Help method for calculating an arrays average,
