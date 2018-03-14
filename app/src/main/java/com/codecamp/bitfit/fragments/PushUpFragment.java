@@ -138,6 +138,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         // set button to start state
         setToInitialState();
 
+        // show Instructions if the user does PushUps for the first time
+        if(DBQueryHelper.findAllPushUps().isEmpty()){
+            showInstructionsDialog();
+        }
+
         pushUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,10 +376,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_instructions:
-                new InstructionsDialog(getContext(),
-                        getString(R.string.pushups),
-                        getActivity().getDrawable(R.drawable.push_up_instruction),
-                        getString(R.string.pushup_instructions)).show();
+                showInstructionsDialog();
                 return true;
             case R.id.action_statistics:
                 getActivity().startActivity(new Intent(getActivity(), PushupStatisticsActivity.class));
@@ -382,6 +384,13 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void showInstructionsDialog(){
+        new InstructionsDialog(getContext(),
+                getString(R.string.pushups),
+                getActivity().getDrawable(R.drawable.push_up_instruction),
+                getString(R.string.pushup_instructions)).show();
     }
 
     public void setElapsedTime(long elapsedTime) {

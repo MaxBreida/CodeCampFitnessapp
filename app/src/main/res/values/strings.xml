@@ -48,8 +48,9 @@
     <string name="home">Home</string>
     <string name="squat_instructions">Nimm das Smartphone mit dem Display nach oben in die Hand und führe die Übung ansonsten wie im Bild gezeigt durch</string>
     <string name="ok">Alles klar!</string>
-    <string name="pushup_instructions">Lege das Smartphone mit dem Bildschirm nach oben auf den Boden und führe die Übung wie im Bild gezeigt durch.\n\n
-        Falls deine Pushups nicht erkannt werden kannst du mit der Nase auf das Display tippen.</string>
+    <string name="pushup_instructions">Begib dich in die Liegestützposition und lege das Smartphone mit dem Bildschirm nach oben vor dich auf den Boden. Drücke dann auf Start
+        und führe die Übung wie im Bild gezeigt durch.\n\n
+        Bei ungeeigneten Lichtverhältnissen kann es sein, dass die Push-Ups nicht richtig erkannt werden, dann kannst du auch mit der Nase auf das Display tippen.</string>
     <string name="saved_successfully">Änderungen erfolgreich gespeichert!</string>
     <string name="durationInMillis">Dauer</string>
     <string name="pushups_per_min">Push-Ups/min</string>
