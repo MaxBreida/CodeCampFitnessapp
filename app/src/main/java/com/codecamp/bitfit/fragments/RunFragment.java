@@ -2,15 +2,12 @@ package com.codecamp.bitfit.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -39,6 +36,11 @@ import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,6 +48,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -71,7 +74,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
-    LocationManager lm; // location manager that keeps track of current location
+    FusedLocationProviderClient fusedLocProvider;
 
     PowerManager.WakeLock wakeLock; // a wakelock to keep the device running for location updates
 
@@ -137,7 +140,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"RunTracking");
 
         // set location manager up
-        lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        fusedLocProvider = LocationServices.getFusedLocationProviderClient(activity);
 
         // ask for location permissions if not already given
         if(!checkPermission()) getLocationPermissions();
@@ -238,12 +241,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     makeStopButtonAppear(false);
                 }
 
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                //if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                     // quick and easy TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-                }
-                if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                //}
+                //if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     // quick and easy TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                }
+                //}
             }
         }
     };
@@ -309,7 +312,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     // should the user be tracked by the map camera?
     boolean allowUserTracking = false; // gets switched on start!
 
-    LocationListener trackUser = new LocationListener(){
+    LocationCallback locationCallback = new LocationCallback() {
 
         // last known position, used for initial point once workout starts
         Location previousLoc = null;
@@ -319,12 +322,21 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         float precisionTolerance = initialTolerance;
 
         @Override
-        public void onLocationChanged(Location loc){
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult == null) {
+                return;
+            }
+            for (Location location : locationResult.getLocations()) {
+                    checkIfSuitedForPoint(location);
+            }
+        }
+
+        public void checkIfSuitedForPoint(Location loc){
             if(debugMode){
                 TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
                 tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
             }
-            
+
             // zoom in on first found location, then just track if it's allowed
             if(allowUserTracking)
                 if(previousLoc != null) setMapCam(loc);
@@ -372,9 +384,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
             }
         }
-        @Override public void onStatusChanged(String s, int i, Bundle bundle) {}
-        @Override public void onProviderEnabled(String s) {}
-        @Override public void onProviderDisabled(String s) {}
     };
 
     private void setMapCam(Location loc, float zoom) {
@@ -426,17 +435,17 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
 
-            // set camera to last known position, testing all location providers from precise to coarse
-            String[] locationProviders = {
-                    LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER
-            };
-            for (String locP : locationProviders) {
-                Location last = lm.getLastKnownLocation(locP);
-                if(last != null) {
-                    setMapCam(last, 10);
-                    break;
-                }
-            }
+            // zoom to last known location, if available
+            fusedLocProvider.getLastLocation()
+                    .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                setMapCam(location, 10);
+                            }
+                        }
+                    });
 
             GoogleMap.OnMyLocationButtonClickListener locButListener = new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
@@ -582,8 +591,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         // if there's no workout in progress release wake lock if held and remove listener
         if(!workoutActive) {
-            if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
-            lm.removeUpdates(trackUser);
+            if (wakeLock != null && wakeLock.isHeld())
+                wakeLock.release();
+            fusedLocProvider.removeLocationUpdates(locationCallback);
         }
     }
 
@@ -596,16 +606,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 .setActionBarTitle(getString(R.string.run));
 
                 // set up user tracker if location permissions are given
-        if(checkPermission())
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000, 0, trackUser);
-            /* sets the location manager up to execute onLocationChanged on specific conditions:
-             * 1st parameter sets the location provider that should be used to get updates (GPS / Network)
-             * 2nd parameter sets the minimal time (in milliseconds) of a location update
-             * 3rd parameter sets the minimal distance (in meters) that you have to travel to trigger an update
-             * 4th parameter sets the location listener, which determines the code that is executed
-             *      on a change of the location
-             */
-
+        if(checkPermission()) {
+            LocationRequest mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            fusedLocProvider.requestLocationUpdates(
+                    mLocationRequest,
+                    locationCallback,
+                    null /* Looper */);
+        }
     }
 
     @Override
