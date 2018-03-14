@@ -91,6 +91,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:padding="3dp"
                             android:src="@drawable/icon_distance"/>
 
                         <TextView
@@ -124,6 +125,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:padding="1dp"
                             android:src="@drawable/icon_calories"/>
 
                         <TextView
