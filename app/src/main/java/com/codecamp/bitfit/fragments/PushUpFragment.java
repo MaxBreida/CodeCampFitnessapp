@@ -224,7 +224,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         //values for calorie calculation
         // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
-        weightPushed = user.getWeightInKG()*0.5;
+        weightPushed = user.getWeightInKG()*0.7;
         //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion,
         //upper arm length is about 1 1/2 fields => 3/8*size
         heightPushed =  ((double) user.getSizeInCM() * 3) / (100 * 8);
