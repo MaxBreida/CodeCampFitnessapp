@@ -27,7 +27,6 @@ import net.steamcrafted.materialiconlib.MaterialIconView;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-    // TODO: Switch to HomeFragment everytime a workout was saved (also because map drawing in Runs is resetted then)
     // initialized user
     private User user = DBQueryHelper.findUser();
 
@@ -73,11 +72,6 @@ public class HomeFragment extends Fragment {
         initializeShareButton(R.id.button_share_highscore_run, "Ha, schneller als Sonic!");
         initializeShareButton(R.id.button_share_last_activity, "War wiedermal fleißig!");
     }
-
-    // TODO check for code repetition, looks quite repetitive at some points
-    // => it is repetetive, but with at least differences in some values, I don't know
-    // if it would be much more effective with methods which would need many parameters and contain
-    //big switch-case-statements
 
 
     private void lastActivity() {

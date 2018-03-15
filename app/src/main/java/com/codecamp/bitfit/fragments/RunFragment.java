@@ -73,8 +73,6 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
-    boolean debugMode = false; // TODO: Remove before finishing/handing project for correction
-
     // Map related global variables
     PolylineOptions lineOptions; // options for the line that's being drawn
     Polyline line; // the line that represents the running track
@@ -285,7 +283,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
     };
 
-    // TODO implement buttons in other fragments
     private void moveStartButtonDown(boolean go){
         startPauseButton.setClickable(false);
         startPauseButton.animate().yBy(toDp((go) ? 19 : -19));
@@ -354,10 +351,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
 
         void checkIfSuitedForPointDrawing(Location loc){
-            if(debugMode){
-                TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
-                tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
-            }
 
             // zoom in on first found location, then just track if it's allowed
             if(allowUserTracking)
@@ -434,7 +427,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // to be flawed, we will just use the good old and probably most efficient MET based
         // formula for different speeds:
         // Kcal ~= METS * weight in kg * running duration in hours
-        double milesPerHour = (runDuration>0)?(runDistance*0.6213711922373339)/(runDuration/3600000):0;
+        double milesPerHour = (runDuration>0)?(runDistance*0.6213711922373339)/(runDuration/3600000.0):0;
         double mets = 1.5; // base value that's suitable for standing and very slow walking speeds too
         // rough approximation for mets:
         if(milesPerHour >= 1)
