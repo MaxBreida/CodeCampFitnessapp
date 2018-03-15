@@ -6,6 +6,7 @@ package com.codecamp.bitfit.util;
 
 import android.content.Context;
 
+import com.codecamp.bitfit.database.LastPoints;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.Run;
@@ -140,4 +141,11 @@ public class DBQueryHelper {
             default: return null;
         }
     }
+
+    public static LastPoints getLastPoints(){
+        LastPoints query = SQLite.select()
+                .from(LastPoints.class)
+                .querySingle();
+        return query;
+    };
 }

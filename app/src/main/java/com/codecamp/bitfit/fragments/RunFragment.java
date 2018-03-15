@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
+import com.codecamp.bitfit.database.LastPoints;
 import com.codecamp.bitfit.util.Constants;
 import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
@@ -65,6 +66,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import static android.content.Context.POWER_SERVICE;
 import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
@@ -80,7 +82,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     // Map related global variables
     PolylineOptions lineOptions; // options for the line that's being drawn
     Polyline line; // the line that represents the running track
-    List<LatLng> points = new ArrayList<>(); // a list of points of the running track
+    List<LatLng> points = new ArrayList<>(); // a list of points of the current running track
+    List<Double> allPoints = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
     FusedLocationProviderClient fusedLocProvider;
 
@@ -191,6 +194,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 workoutActive = false;
 
                 // starts a new line after pausing
+                for (LatLng cur : points) {
+                    allPoints.add(cur.latitude);
+                    allPoints.add(cur.longitude);
+                }
+                allPoints.add(null);
+                LastPoints pointBase = DBQueryHelper.getLastPoints();
+                pointBase.setPoints(allPoints);
+                pointBase.save();
                 points.clear();
                 if(mMap != null) line = mMap.addPolyline(lineOptions);
                 previousLoc = null;
@@ -287,6 +298,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
     };
 
+    // TODO implement buttons in other fragments
     private void setStartButtonDesign(boolean active, int color, int resId){
         startPauseButton.setActivated(active);
         startPauseButton.setBackgroundTintList(ColorStateList.valueOf(color));
@@ -459,7 +471,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         double cals = ageParameter - weightParameter + heartRateParameter;
         cals *= (runDuration / (4.184 * 60000000));
         // this formula might not be suited for very short runs, preventing negative calorie values:
-        if(cals < 0) cals = 0;
+        if(cals <= 0) cals = 0;
         return cals;
     }
 
