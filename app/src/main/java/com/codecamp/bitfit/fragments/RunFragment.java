@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.codecamp.bitfit.MainActivity;
 import com.codecamp.bitfit.util.Constants;
+import com.codecamp.bitfit.util.InstructionsDialog;
 import com.codecamp.bitfit.util.OnDialogInteractionListener;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Run;
@@ -154,6 +155,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // ask for location permissions if not already given
         if(!checkPermission()) getLocationPermissions();
         else {
+            //Show instructions dialog if the user does squats for the first time
+            if(DBQueryHelper.findAllRuns().isEmpty()){
+                showInstructions();
+            }
+
             // get the current user
             user = DBQueryHelper.findUser();
 
@@ -542,11 +548,19 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 activity.startActivity(new Intent(activity, RunStatisticsActivity.class));
                 return true;
             case R.id.action_instructions:
-                // need to discuss TODO show instructions or maybe leave them out and delete button => not really necessary here
+                showInstructions();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    //TODO text ändern
+    public void showInstructions(){
+        new InstructionsDialog(getContext(),
+                getString(R.string.run),
+                getActivity().getDrawable(R.drawable.run_instruction),
+                "Your text could stand here!").show();
     }
 
     public void setupRunDurationTimer(final TextView time, final TextView speed){
