@@ -70,7 +70,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
     //Use an average value for the accelerometer output
     //Variable for the length of the array for the average value
-    private int arrayLength = 7;
+    private int arrayLength = 10;
     //array for storing the sensor value
     private double[] azValues = new double[arrayLength];
     // counter for how full the array is yet
@@ -231,7 +231,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         quitState = QuitButtonStates.STOP_CLICK;
         squatCtr = 0;
         //values for calorie calculation
-        // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
         //Using factor 0.5 instead of 0.7 at PushUp because there you push more of your weight than when you're doing a squat
         weightPushed = user.getWeightInKG()*0.5;
@@ -288,9 +287,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     }
 
     private Squat createSquatObj(){
-        // TODO: I need to check if this is really giving right values
-        // I had one workout where a time about 25300000:44 was saved (it wasn't that long ;D)
-
         //Set attributes of the squat object
         User currentUser = DBQueryHelper.findUser();
 

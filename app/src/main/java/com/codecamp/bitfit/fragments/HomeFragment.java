@@ -27,6 +27,7 @@ import net.steamcrafted.materialiconlib.MaterialIconView;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
+    // TODO: Switch to HomeFragment everytime a workout was saved (also because map drawing in Runs is resetted then)
     // initialized user
     private User user = DBQueryHelper.findUser();
 
@@ -77,7 +78,6 @@ public class HomeFragment extends Fragment {
     // => it is repetetive, but with at least differences in some values, I don't know
     // if it would be much more effective with methods which would need many parameters and contain
     //big switch-case-statements
-    // TODO fix last activity not being rounded (it's a running activity I've got here)
 
 
     private void lastActivity() {
