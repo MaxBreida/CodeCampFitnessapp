@@ -366,47 +366,52 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     setMapCam(loc, 15);
                 }
 
-            float distToPrevLoc = (previousLoc == null)? 11 : loc.distanceTo(previousLoc);
+            if(workoutActive) {
+                drawNewPointAndAddDistance(loc);
+
+                if (unitMode != 3 && loc.hasSpeed()) { //unitMode != 3: no average speed
+                    // set speed if the location manager can provide those readings
+                    float curSpeed = loc.getSpeed();
+                    if (unitMode == 1) { //unitMode 1: km/h
+                        curSpeed *= 3.6f;
+                        speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
+                    } else    // unitMode 2: m/s
+                        speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
+                }
+            }
+        }
+
+        private void drawNewPointAndAddDistance(Location loc) {
+            float distToPrevLoc = (previousLoc == null) ? 11 : loc.distanceTo(previousLoc);
             // set a point if accuracy is good enough and last point is at least 10m away
-            if(distToPrevLoc > 10 && loc.getAccuracy() <= precisionTolerance){
-                LatLng curPos = new LatLng(loc.getLatitude(),loc.getLongitude());
+            if (distToPrevLoc > 10 && loc.getAccuracy() <= precisionTolerance) {
+                LatLng curPos = new LatLng(loc.getLatitude(), loc.getLongitude());
                 points.add(curPos);
-                if(line != null && !points.isEmpty()) line.setPoints(points);
-                if(previousLoc != null){
+                if (line != null && !points.isEmpty()) line.setPoints(points);
+                if (previousLoc != null) {
                     runDistance += distToPrevLoc;
-                    distanceText.setText(decNumToXPrecisionString(runDistance /1000, 2));
-                    if(allowDataUpdate)
+                    distanceText.setText(decNumToXPrecisionString(runDistance / 1000, 2));
+                    if (allowDataUpdate)
                         updateDatabase();
                 }
                 previousLoc = loc;
 
                 // set Calories
                 TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
-                calsText.setText(decNumToXPrecisionString(getCurrentCalories(),1));
+                calsText.setText(decNumToXPrecisionString(getCurrentCalories(), 1));
 
                 // reset tolerance to initial value
                 precisionTolerance = initialTolerance;
             }
-            // increase tolerance drastically if the previous point is more than 100 meters away:
-            else if(distToPrevLoc > 100 && distToPrevLoc > precisionTolerance + 25)
+            else if (distToPrevLoc > 100 && distToPrevLoc > precisionTolerance + 25)
                 precisionTolerance += 5;
-            // increase tolerance quickly if this is the first location (1 meter every update):
-            else if(previousLoc == null)
+                // increase tolerance drastically if the previous point is more than 100 meters away
+            else if (previousLoc == null)
                 precisionTolerance++;
-            // increases tolerance by 0.17 meters on every location update:
+                // increase tolerance quickly if this is the first location (1 meter every update)
             else
                 precisionTolerance += 0.17f;
-
-            if(workoutActive && unitMode != 3 && loc.hasSpeed()){ //unitMode != 3: no average speed
-                // set speed if the location manager can provide those readings
-                float curSpeed = loc.getSpeed();
-                if(unitMode == 1) { //unitMode 1: km/h
-                    curSpeed *= 3.6f;
-                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
-                }
-                else    // unitMode 2: m/s
-                    speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
-            }
+            // increases tolerance by 0.17 meters on every location update:
         }
     };
 
