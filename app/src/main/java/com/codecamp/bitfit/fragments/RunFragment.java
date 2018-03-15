@@ -101,7 +101,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     Run database; // Object that allows writing to the database
     User user;
     long runDuration = 0;
-    float runningDistance = 0;
+    float runDistance = 0;
     int unitMode = 1; // determines whether the speed should be displayed in current
                 // kmh, avg. kmh or m/s 1 = current km/h, 2 = m/s, 3 = average km/h
 
@@ -381,8 +381,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 points.add(curPos);
                 line.setPoints(points);
                 if(previousLoc != null){
-                    runningDistance += distToPrevLoc;
-                    distanceText.setText(decNumToXPrecisionString(runningDistance/1000, 2));
+                    runDistance += distToPrevLoc;
+                    distanceText.setText(decNumToXPrecisionString(runDistance /1000, 2));
                     if(allowDataUpdate)
                         updateDatabase();
                 }
@@ -429,7 +429,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     public double getAverageSpeedInKmh() {
-        return (runDuration != 0)? (runningDistance / 1000.0) / (runDuration / 3600000.0) : 0;
+        return (runDuration != 0)? (runDistance / 1000.0) / (runDuration / 3600000.0) : 0;
         //return 0 if run duration is 0 to avoid division by zero
     }
     public String getAverageSpeedString() {
@@ -437,19 +437,28 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private double getCurrentCalories() {
-        // fuck this formula TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
-        // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
-        // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
-        // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
+        // VO2max = 0.21 * (age * (m) ? 1 : 0) - 0.84 * (bmi) - 8.41(timeForMile) + 0.34(timrForMile*timeForMile) + 108.94
+        // source: https://www.livestrong.com/article/343028-how-to-calculate-vo2-max-from-running/
+
+        // Female: ((-59.3954 + (0.45 x HR) + (0.380 * VO2max) + (0.103 * kg) + (0.274 * A))/4.184) * minutes
+        // Male: ((-95.7735 + (0.634 * HR) + (0.404 * VO2max) + (0.394 * kg) + (0.271 * A))/4.184) * minutes
+        // source: http://www.shapesense.com/fitness-exercise/calculators/heart-rate-based-calorie-burn-calculator.shtml
+
         boolean m = user.isMale();
+        double bmi = user.getWeightInKG() / Math.pow(Util.getHeightInMeters(user.getSizeInCM()), 2);
+        double timeForMile = (runDistance == 0) ? 0 : runDuration / (60 * runDistance * 0.621371192237334);
+        // calculate VO2max
+        double vo2max = 0.21 * (user.getAge() * ((m) ? 1 : 0)) - 0.84 * (bmi) - 8.41 *
+                (timeForMile) + 0.34 * (timeForMile * timeForMile) + 108.94;
+        double vo2Parameter = vo2max * ((m) ? 0.404 : 0.380);
         // calculate average hear-rate with the average speed of this run:
         double heartRate = getAverageSpeedInKmh() * (46 / 8.04672) + 80;
-        double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
-        double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
+        double ageParameter = user.getAge() * ((m) ? 0.271 : 0.274);
+        double weightParameter = user.getWeightInKG() * ((m) ? 0.394 : 0.103);
         double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
-        heartRateParameter -= ((m) ? 55.0969 : 20.4022);
-        double cals = ageParameter - weightParameter + heartRateParameter;
-        cals *= (runDuration / (4.184 * 60000000));
+        heartRateParameter -= ((m) ? 95.7735 : 59.3954);
+        double cals = (ageParameter + weightParameter + heartRateParameter + vo2Parameter) / 4.184;
+        cals *= (runDuration * 60);
         // this formula might not be suited for very short runs, preventing negative calorie values:
         if(cals < 0) cals = 0;
         return cals;
@@ -607,8 +616,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
         // could get intense TODO: save points too
 
-        // TODO: check for rounding issues
-        database.setDistanceInMeters(runningDistance);
+        database.setDistanceInMeters(runDistance);
         database.setDurationInMillis(runDuration);
         database.setCalories(getCurrentCalories());
         database.save();
@@ -619,7 +627,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void fullReset() {
-        runningDistance = 0;
+        runDistance = 0;
         points.clear();
         makeStopButtonAppear(false);
         moveStartButtonLeft(false);
@@ -693,7 +701,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             public void onClick(DialogInterface dialog, int which) {
                 Util.shareViewOnClick(activity,
                         customDialogLayout.findViewById(R.id.dialog_run_workout_content),
-                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runningDistance / 1000));
+                        String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runDistance / 1000));
 
                 // set to initial state
                 fullReset();
