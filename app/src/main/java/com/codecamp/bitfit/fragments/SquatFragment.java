@@ -206,7 +206,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 } else if(quitState.equals(QuitButtonStates.SAVE_CLICK)){
                     setButtonDesign(
                             true,
-                            getResources().getColor(R.color.colorAccent),
+                            getResources().getColor(R.color.red),
                             R.drawable.ic_pause_white,
                             resumeButton
                     );
@@ -226,7 +226,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
                 setButtonDesign(
                         true,
-                        getResources().getColor(R.color.colorAccent),
+                        getResources().getColor(R.color.red),
                         R.drawable.ic_pause_white,
                         resumeButton
                 );

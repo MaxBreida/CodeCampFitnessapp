@@ -198,7 +198,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 } else {
                     setButtonDesign(
                             true,
-                            getResources().getColor(R.color.colorAccent),
+                            getResources().getColor(R.color.red),
                             R.drawable.ic_pause_white,
                             resumeButton
                     );
@@ -218,7 +218,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 quitState = QuitButtonStates.STOP_CLICK;
                 setButtonDesign(
                         true,
-                        getResources().getColor(R.color.colorAccent),
+                        getResources().getColor(R.color.red),
                         R.drawable.ic_pause_white,
                         resumeButton
                 );
