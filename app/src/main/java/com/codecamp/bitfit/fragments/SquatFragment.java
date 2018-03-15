@@ -284,21 +284,27 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                         customDialogLayout.findViewById(R.id.dialog_repetition_workout_content),
                         String.format("Ich habe bei meinem letzten Workout %d Squats geschafft!", squatCtr));
 
-                // go to selected tab or home
-                callback.setNavigationItem();
+                resetAndNavigateToNewTabIfClicked();
             }
         };
 
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // go to selected tab or home
-                callback.setNavigationItem();
+                resetAndNavigateToNewTabIfClicked();
             }
         };
 
         AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), currentSquat, customDialogLayout, positive, negative);
         dialog.show();
+    }
+
+    /**
+     * set to initial state & go to tab if one was clicked before ending the workout
+     */
+    private void resetAndNavigateToNewTabIfClicked(){
+        setToInitialState();
+        callback.setNavigationItem();
     }
 
     private Squat createSquatObj(){

@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
             if (mPosition != -1) {
                 // change fragment after saving workout
                 sendToTab(mPosition, mWasSelected);
-            } else sendToTab(0);
+            }
 
             mPosition = -1;
         }
