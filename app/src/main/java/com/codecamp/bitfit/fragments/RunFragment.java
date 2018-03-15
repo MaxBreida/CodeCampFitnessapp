@@ -563,7 +563,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         }
     }
 
-    //TODO text ändern
     public void showInstructions(){
         new InstructionsDialog(getContext(),
                 getString(R.string.run),
