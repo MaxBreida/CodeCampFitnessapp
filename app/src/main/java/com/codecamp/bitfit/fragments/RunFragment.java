@@ -693,21 +693,27 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         customDialogLayout.findViewById(R.id.dialog_run_workout_content),
                         String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runDistance / 1000));
 
-                // go to selected tab or home
-                callback.setNavigationItem();
+                resetAndNavigateToNewTabIfClicked();
             }
         };
 
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // go to selected tab or home
-                callback.setNavigationItem();
+                resetAndNavigateToNewTabIfClicked();
             }
         };
 
         AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), database, customDialogLayout, positive, negative);
         dialog.show();
+    }
+
+    /**
+     * set to initial state & go to tab if one was clicked before ending the workout
+     */
+    private void resetAndNavigateToNewTabIfClicked(){
+        fragmentReset();
+        callback.setNavigationItem();
     }
 
     /**
