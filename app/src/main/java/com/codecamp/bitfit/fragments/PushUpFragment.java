@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -143,7 +141,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             showInstructionsDialog();
         }
 
-        setResumeButtonDesign();
+        setResumeButtonDesign(resumeButton);
 
         pushUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,27 +175,29 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             public void onClick(View v) {
                 if(quitState.equals(QuitButtonStates.STOP_CLICK)){
                     countUpTimer.stop();
-                    setFinishButtonDesign(
+                    setButtonDesign(
                             true,
                             getResources().getColor(R.color.red),
-                            R.drawable.ic_stop_white_48dp
+                            R.drawable.ic_stop_white_48dp,
+                            finishButton
                     );
-                    moveFinishButtonLeft(true);
+                    moveButtonLeft(true, finishButton);
                     resumeButton.setVisibility(View.VISIBLE);
                     // show and animate stop button:
-                    makeResumeButtonAppear(true);
+                    makeButtonAppear(true, resumeButton);
                     workoutPaused = true;
                     quitState = QuitButtonStates.SAVE_CLICK;
                     pushUpButton.setEnabled(false);
                 } else {
-                    setFinishButtonDesign(
+                    setButtonDesign(
                             true,
                             getResources().getColor(R.color.colorAccent),
-                            R.drawable.ic_pause_white
+                            R.drawable.ic_pause_white,
+                            finishButton
                     );
-                    moveFinishButtonLeft(false);
+                    moveButtonLeft(false, finishButton);
                     // show and animate stop button:
-                    makeResumeButtonAppear(false);
+                    makeButtonAppear(false, resumeButton);
                     resumeButton.setVisibility(View.INVISIBLE);
                     finishButton.setVisibility(View.INVISIBLE);
                     stopWorkout();
@@ -210,60 +210,20 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
             @Override
             public void onClick(View v) {
                 quitState = QuitButtonStates.STOP_CLICK;
-                setFinishButtonDesign(
+                setButtonDesign(
                         true,
                         getResources().getColor(R.color.colorAccent),
-                        R.drawable.ic_pause_white
+                        R.drawable.ic_pause_white,
+                        finishButton
                 );
-                moveFinishButtonLeft(false);
+                moveButtonLeft(false, finishButton);
                 // show and animate stop button:
-                makeResumeButtonAppear(false);
+                makeButtonAppear(false, resumeButton);
                 countUpTimer.resume();
                 workoutPaused = false;
                 pushUpButton.setEnabled(true);
             }
         });
-    }
-
-    private void setFinishButtonDesign(boolean active, int color, int resId){
-        finishButton.setActivated(active);
-        finishButton.setBackgroundTintList(ColorStateList.valueOf(color));
-        finishButton.setImageResource(resId);
-    }
-
-    private void setResumeButtonDesign(){
-        resumeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
-    }
-
-    private void moveFinishButtonLeft(boolean go){
-        finishButton.setClickable(false);
-        finishButton.animate().rotationBy((go) ? -360 : 360);
-        finishButton.animate().xBy(toDp((go) ? -50 : 50));
-        finishButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finishButton.setClickable(true);
-            }
-        }, 300);
-    }
-    private void makeResumeButtonAppear(boolean go) {
-        resumeButton.setClickable(false);
-        resumeButton.animate().rotationBy((go) ? 360 : -360);
-        resumeButton.animate().alpha((go) ? 1.0f : 0);
-        resumeButton.animate().xBy(toDp((go) ? 50 : -50));
-        resumeButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                resumeButton.setClickable(true);
-            }
-        }, 300);
-    }
-
-    private float toDp(float dp){
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics()
-        );
     }
 
     private void setToInitialState() {

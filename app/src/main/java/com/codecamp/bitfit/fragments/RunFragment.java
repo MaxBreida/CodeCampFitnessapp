@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -17,12 +16,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -197,15 +194,16 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 updateDatabase();
 
                 // change button design and move it
-                setStartButtonDesign(
+                setButtonDesign(
                         false,
                         getResources().getColor(R.color.darkerGreen),
-                        R.drawable.ic_play_arrow_white_48dp
+                        R.drawable.ic_play_arrow_white_48dp,
+                        startPauseButton
                 );
-                moveStartButtonLeft(true);
+                moveButtonLeft(true, startPauseButton);
 
                 // show and animate stop button:
-                makeStopButtonAppear(true);
+                makeButtonAppear(true, stopButton);
 
                 // stop the timers
                 runDurationTimer.stop();
@@ -245,19 +243,20 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     saveDataTimer.start();
 
                 // change button design and move it
-                setStartButtonDesign(
+                setButtonDesign(
                         true,
                         getResources().getColor(R.color.red),
-                        R.drawable.ic_pause_white
+                        R.drawable.ic_pause_white,
+                        startPauseButton
                 );
                 if(firstClick){
                     moveStartButtonDown(true);
                     firstClick = false;
                 }
                 else {
-                    moveStartButtonLeft(false);
+                    moveButtonLeft(false, startPauseButton);
                     // hide stop button again
-                    makeStopButtonAppear(false);
+                    makeButtonAppear(false, stopButton);
                 }
             }
         }
@@ -287,23 +286,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     };
 
     // TODO implement buttons in other fragments
-    private void setStartButtonDesign(boolean active, int color, int resId){
-        startPauseButton.setActivated(active);
-        startPauseButton.setBackgroundTintList(ColorStateList.valueOf(color));
-        startPauseButton.setImageResource(resId);
-    }
-    private void moveStartButtonLeft(boolean go){
-        startPauseButton.setClickable(false);
-        startPauseButton.animate().rotationBy((go) ? -360 : 360);
-        startPauseButton.animate().xBy(toDp((go) ? -50 : 50));
-        startPauseButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startPauseButton.setClickable(true);
-            }
-        }, 300);
-    }
-
     private void moveStartButtonDown(boolean go){
         startPauseButton.setClickable(false);
         startPauseButton.animate().yBy(toDp((go) ? 19 : -19));
@@ -314,19 +296,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             }
         }, 300);
     }
-    private void makeStopButtonAppear(boolean go) {
-        stopButton.setClickable(false);
-        stopButton.animate().rotationBy((go) ? 360 : -360);
-        stopButton.animate().alpha((go) ? 1.0f : 0);
-        stopButton.animate().xBy(toDp((go) ? 50 : -50));
-        stopButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopButton.setClickable(true);
-            }
-        }, 300);
-
-    }
 
     View.OnClickListener stopButtonListener = new View.OnClickListener(){
         @Override
@@ -335,13 +304,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             showWorkoutCompleteDialog();
         }
     };
-
-    private float toDp(float dp){
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics()
-        );
-    }
 
     /**
      * sets up a clickable text view that switches the method of displaying the speed on click
