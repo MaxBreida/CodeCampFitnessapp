@@ -603,6 +603,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void fragmentReset() {
+        saveDataTimer.stop();
+        saveDataTimer = null;
         runDistance = 0;
         points.clear();
         mMap.clear();
