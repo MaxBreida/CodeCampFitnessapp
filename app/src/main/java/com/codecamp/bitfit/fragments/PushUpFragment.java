@@ -73,7 +73,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
     private double averageLightRange;
 
     //lock stuff
-    private Boolean lock;
     private boolean lockPushUpsCount;
 
     //Values for calorie calculation
@@ -225,7 +224,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         maxLightRange = 0;
         minLightRange = 0;
         averageLightRange = 0;
-        lock = false;
         //values for calorie calculation
         // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
@@ -332,7 +330,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
 
     // Lock for not do two push with sensor + button in same time
     void countLock() {
-        if(!lock){
+        if(!lockPushUpsCount){
             count++;
         }
     }
@@ -361,7 +359,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 // If true light range is under minLightRange and is unlock, lock and count++
                 // Unlock if you push up and averageLightRange is under yours true light range.
                 if (minLightRange > event.values[0] && !lockPushUpsCount) {
-                    lock = true;
                     lockPushUpsCount = true;
                     count++;
                     pushUpButton.setText(String.valueOf(count));
@@ -369,7 +366,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                     caloriesTextView.setText(String.valueOf(calcCalories()));
                 } else if (averageLightRange < event.values[0] && lockPushUpsCount) {
                     lockPushUpsCount = false;
-                    lock = false;
+
                 }
             }
     }
