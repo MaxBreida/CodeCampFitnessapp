@@ -89,6 +89,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     FragmentActivity activity; // avoid using getActivity() all the time
     View mainView, dataCard; // avoid using getView() each time it's needed and comfy access to data
     View customDialogLayout;
+    TextView durationText;
     TextView distanceText;
     TextView speedText;
     TextView calsText;
@@ -142,6 +143,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             distanceText = dataCard.findViewById(R.id.textview_run_distance);
             speedText = dataCard.findViewById(R.id.textview_run_speed);
             calsText =  dataCard.findViewById(R.id.textview_run_calories);
+            durationText = dataCard.findViewById(R.id.textview_run_calories);
         }
 
         // because it is just being created we set it to inactive
@@ -233,7 +235,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 if(runDurationTimer == null) {
                     // move button down on first click:
                     setupRunDurationTimer(
-                            (TextView) dataCard.findViewById(R.id.textview_run_duration),
+                            durationText,
                             speedText
                     );
                     runDurationTimer.start();
@@ -606,6 +608,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         mMap.clear();
         distanceText.setText("0.00");
         calsText.setText("0.0");
+        durationText.setText("0:00");
         makeButtonAppear(false, stopButton);
         moveButtonLeft(false, startPauseButton);
         moveStartButtonDown(false);

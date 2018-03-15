@@ -41,9 +41,8 @@
         android:layout_marginBottom="92dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@color/green"
-        android:clickable="true"
         android:src="@drawable/ic_play_arrow_white_48dp"
+        app:backgroundTint="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -58,6 +57,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:src="@drawable/ic_pause_white"
+        app:backgroundTint="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
