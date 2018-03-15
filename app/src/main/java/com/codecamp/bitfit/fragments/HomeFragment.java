@@ -138,11 +138,9 @@ public class HomeFragment extends Fragment {
                     String.format("%s kcal", String.valueOf(run.getCalories())));
             lastActivityDuration.setText(
                     String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
-            lastActivityPerMinOrSpeed.setText(
-                    String.format("%s km/h", String.valueOf(run.getAverageKmh())));
+            lastActivityPerMinOrSpeed.setText(run.getAverageKmhString());
             perMinOrSpeedImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_speed));
-            lastActivityRepeatsOrDistance.setText(
-                    String.format("%s km", String.valueOf(run.getDistanceInKm())));
+            lastActivityRepeatsOrDistance.setText(run.getDistanceInKmString());
             repeatsOrDistanceImageView.setImageDrawable(getResources().getDrawable(R.drawable.icon_distance));
             lastActivityDate.setText(
                     String.format("%s", run.getCurrentDate()));
@@ -265,12 +263,8 @@ public class HomeFragment extends Fragment {
             highscoreRunDuration.setText(
                     String.format("%s min", Util.getMillisAsTimeString(highScoreRun.getDurationInMillis()))
             );
-            highscoreRunDistance.setText(
-                    String.format("%.2f km", highScoreRun.getDistanceInKm())
-            );
-            highscoreRunSpeed.setText(
-                    String.format("%.2f km/h", highScoreRun.getAverageKmh())
-            );
+            highscoreRunDistance.setText(highScoreRun.getDistanceInKmString());
+            highscoreRunSpeed.setText(highScoreRun.getAverageKmhString());
         } else {
             noHighscoreText.setVisibility(View.VISIBLE);
             content.setVisibility(View.INVISIBLE);

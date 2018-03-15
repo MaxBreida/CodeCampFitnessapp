@@ -22,6 +22,10 @@ public class Run extends Workout {
         return distance / 1000;
     }
 
+    public String getDistanceInKmString() {
+        return Util.decNumToXPrecisionString(getDistanceInKm(), 2) + " km";
+    }
+
     public void setDistanceInMeters(float distance) {
         this.distance = Util.roundTwoDecimals(distance);
     }
@@ -30,5 +34,9 @@ public class Run extends Workout {
         return getDistanceInKm() * 3600000 / durationInMillis ;
         // optimized calculation for dividing durationInMillis by 1000 to get seconds,
         // by 60 to get minutes and another 60 to get hours (=) 3600000 and finally get km / h
+    }
+
+    public String getAverageKmhString(){
+        return Util.decNumToXPrecisionString(getAverageKmh(),2) + " km/h";
     }
 }

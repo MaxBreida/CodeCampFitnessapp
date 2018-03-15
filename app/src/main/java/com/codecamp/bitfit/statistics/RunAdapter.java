@@ -57,9 +57,9 @@ class RunAdapter extends BaseAdapter {
 
         dateTextView.setText(run.getCurrentDate());
         durationTextView.setText(String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
-        distanceTextView.setText(String.format("%.2f km", run.getDistanceInKm()));
+        distanceTextView.setText(run.getDistanceInKmString());
         caloriesTextView.setText(String.format("%s kcal", run.getCalories()));
-        speedTextView.setText(String.format("%.2f km/h", run.getAverageKmh()));
+        speedTextView.setText(run.getAverageKmhString());
 
         return view;
     }

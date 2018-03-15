@@ -260,8 +260,8 @@ public class Util {
 
         caloriesText.setText(String.format("%.2f kcal", run.getCalories()));
         durationText.setText(String.format("%s min", Util.getMillisAsTimeString(run.getDurationInMillis())));
-        speedText.setText(String.format("%.2f km/h", run.getAverageKmh()));
-        distanceText.setText(String.format("%.2f km", run.getDistanceInKm()));
+        speedText.setText(run.getAverageKmhString());
+        distanceText.setText(run.getDistanceInKmString());
 
     }
 
