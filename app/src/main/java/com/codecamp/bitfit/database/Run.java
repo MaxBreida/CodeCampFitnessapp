@@ -2,11 +2,7 @@ package com.codecamp.bitfit.database;
 
 import com.codecamp.bitfit.util.Util;
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
-import java.util.UUID;
 
 /**
  * Created by Witali Schmidt on 13.02.2018.

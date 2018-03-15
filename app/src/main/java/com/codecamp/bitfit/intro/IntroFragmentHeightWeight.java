@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.util.CustomEditText;
