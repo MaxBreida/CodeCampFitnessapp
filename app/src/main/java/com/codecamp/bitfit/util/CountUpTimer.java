@@ -7,6 +7,7 @@ package com.codecamp.bitfit.util;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.widget.TextView;
 
 /**
  * Simple timer class which count up until stopped.
@@ -17,9 +18,15 @@ public abstract class CountUpTimer {
     private final long interval;
     private long base;
     private long stopTime;
+    private TextView textView;
 
     public CountUpTimer(long interval) {
         this.interval = interval;
+    }
+
+    public CountUpTimer(long interval, TextView textView) {
+        this.interval = interval;
+        this.textView = textView;
     }
 
     public void start() {
@@ -44,6 +51,9 @@ public abstract class CountUpTimer {
     }
 
     public abstract void onTick(long elapsedTime);
+//    public void onTick(long elapsedTime){
+//        textView.setText(Util.getMillisAsTimeString(elapsedTime));
+//    }
 
     private static final int MSG = 1;
 

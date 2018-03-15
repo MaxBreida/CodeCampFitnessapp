@@ -11,6 +11,7 @@ import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.Squat;
 import com.codecamp.bitfit.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

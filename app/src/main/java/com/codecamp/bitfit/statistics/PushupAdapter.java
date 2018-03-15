@@ -10,7 +10,17 @@ import android.widget.TextView;
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
 import com.codecamp.bitfit.util.Util;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**

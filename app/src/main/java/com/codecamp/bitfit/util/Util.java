@@ -2,6 +2,7 @@ package com.codecamp.bitfit.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,13 +10,20 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codecamp.bitfit.R;
 import com.codecamp.bitfit.database.PushUps;
+import com.codecamp.bitfit.database.PushUps_Table;
 import com.codecamp.bitfit.database.Squat;
+import com.codecamp.bitfit.database.Squat_Table;
 import com.codecamp.bitfit.database.Run;
+import com.codecamp.bitfit.database.Run_Table;
+import com.codecamp.bitfit.database.User;
 import com.codecamp.bitfit.database.Workout;
+import com.raizlabs.android.dbflow.sql.language.Method;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,8 +33,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import static com.raizlabs.android.dbflow.sql.language.Method.max;
 
 /**
  * Created by MaxBreida on 14.02.18.
