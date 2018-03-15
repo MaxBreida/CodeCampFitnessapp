@@ -181,10 +181,10 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                             R.drawable.ic_stop_white_48dp,
                             finishButton
                     );
-                    moveButtonLeft(true, finishButton);
+                    moveButtonLeft(true, resumeButton);
                     resumeButton.setVisibility(View.VISIBLE);
                     // show and animate stop button:
-                    makeButtonAppear(true, resumeButton);
+                    makeButtonAppear(true, finishButton);
                     workoutPaused = true;
                     quitState = QuitButtonStates.SAVE_CLICK;
                     pushUpButton.setEnabled(false);
@@ -195,9 +195,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                             R.drawable.ic_pause_white,
                             finishButton
                     );
-                    moveButtonLeft(false, finishButton);
+                    moveButtonLeft(false, resumeButton);
                     // show and animate stop button:
-                    makeButtonAppear(false, resumeButton);
+                    makeButtonAppear(false, finishButton);
                     resumeButton.setVisibility(View.INVISIBLE);
                     finishButton.setVisibility(View.INVISIBLE);
                     stopWorkout();
@@ -216,9 +216,9 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                         R.drawable.ic_pause_white,
                         finishButton
                 );
-                moveButtonLeft(false, finishButton);
+                moveButtonLeft(false, resumeButton);
                 // show and animate stop button:
-                makeButtonAppear(false, resumeButton);
+                makeButtonAppear(false, finishButton);
                 countUpTimer.resume();
                 workoutPaused = false;
                 pushUpButton.setEnabled(true);
