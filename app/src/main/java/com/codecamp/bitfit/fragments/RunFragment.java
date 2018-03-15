@@ -565,7 +565,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         new InstructionsDialog(getContext(),
                 getString(R.string.run),
                 getActivity().getDrawable(R.drawable.run_instruction),
-                "Your text could stand here!").show();
+                getString(R.string.run_instructions)).show();
     }
 
     public void setupRunDurationTimer(final TextView time, final TextView speed){
