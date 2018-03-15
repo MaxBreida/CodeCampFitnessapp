@@ -429,7 +429,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     private void setMapCam(Location loc, float zoom) {
         if(mMap != null && loc != null){
             LatLng pos = new LatLng(loc.getLatitude(), loc.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, zoom));
         }
     }
     private void setMapCam(Location loc){
