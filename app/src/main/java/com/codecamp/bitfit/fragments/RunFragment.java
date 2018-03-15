@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -36,11 +37,15 @@ import com.codecamp.bitfit.util.CountUpTimer;
 import com.codecamp.bitfit.util.DBQueryHelper;
 import com.codecamp.bitfit.util.SharedPrefsHelper;
 import com.codecamp.bitfit.util.Util;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,7 +53,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -97,6 +104,12 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     float runningDistance = 0;
     int unitMode = 1; // determines whether the speed should be displayed in current
                 // kmh, avg. kmh or m/s 1 = current km/h, 2 = m/s, 3 = average km/h
+
+    // location request criteria:
+    LocationRequest locationRequest = new LocationRequest()
+            .setInterval(2000)
+            .setFastestInterval(1000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     // run duration timer and a timer for saving the data of a run to the database
     CountUpTimer runDurationTimer, saveDataTimer;
@@ -203,6 +216,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 callback.workoutInProgress(true);
                 workoutActive = true;
 
+                // provide the user with a quick way of turning on GPS if it's off
+                checkForGPS();
+
                 // acquire wakelock with a 10 hour timeout, some runs could last that long i guess
                 wakeLock.acquire(36000000);
 
@@ -240,14 +256,30 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     // hide stop button again
                     makeStopButtonAppear(false);
                 }
-
-                //if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                    // quick and easy TODO: notify user that GPS should be used for proper precision, network location services aren't suited for this purpose
-                //}
-                //if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    // quick and easy TODO: notify user that location services are off, pop up a button that allows the user to quickly navigate to the location settings
-                //}
             }
+        }
+
+        private void checkForGPS() {
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+            SettingsClient client = LocationServices.getSettingsClient(activity);
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+            task.addOnFailureListener(activity, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if (e instanceof ResolvableApiException) {
+                        // Location settings are not satisfied, but this can be fixed
+                        // by showing the user a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            ResolvableApiException resolvable = (ResolvableApiException) e;
+                            resolvable.startResolutionForResult(activity, 3341);
+                        } catch (Exception sendEx) {
+                            // Ignore the error.
+                        }
+                    }
+                }
+            });
         }
     };
 
@@ -327,11 +359,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 return;
             }
             for (Location location : locationResult.getLocations()) {
-                    checkIfSuitedForPoint(location);
+                    checkIfSuitedForPointDrawing(location);
             }
         }
 
-        public void checkIfSuitedForPoint(Location loc){
+        public void checkIfSuitedForPointDrawing(Location loc){
             if(debugMode){
                 TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
                 tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
@@ -490,10 +522,30 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         if (response.isPermanentlyDenied()) {
-                            // navigate user to app settings
-                            // showSettingsDialog(); //TODO: send user to settings if permissions denied permanently
+                            // asks if you want to navigate to this app's settings,
+                            // to remove the permanent permission denial
+                            getYesNoDialog("Das Lauf-Workout funktioniert nicht ohne Standort " +
+                                            "Bestimmung! Es scheint so als hätten Sie die " +
+                                            "Berechtigungen dafür permanent deaktiviert.\n" +
+                                            "Möchten Sie das Einstellungs Menü dieser App öffnen um " +
+                                            "diese Einstellung zu ändern?",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            sendToAppSettings();
+                                        }
+                                    }, null);
                         }
-                        // quick and easy TODO: tell the user that location permissions are required to use the run workout!
+                        // tell the user that location permissions are required to use the run workout!
+                        else getYesNoDialog("Leider funktioniert das Lauf-Workout nicht " +
+                                "ohne Berechtigungen für die Standortbestimmung!\n" +
+                                "Berechtigungs-Erteilung nochmal aufrufen?",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        getLocationPermissions();
+                                    }
+                                }, null);
                     }
 
                     @Override
@@ -554,7 +606,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
         // could get intense TODO: save points too
-        // TODO: investigate crashes after reinstallation
 
         // TODO: check for rounding issues
         database.setDistanceInMeters(runningDistance);
@@ -607,12 +658,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
                 // set up user tracker if location permissions are given
         if(checkPermission()) {
-            LocationRequest mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(5000);
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             fusedLocProvider.requestLocationUpdates(
-                    mLocationRequest,
+                    locationRequest,
                     locationCallback,
                     null /* Looper */);
         }
@@ -667,5 +714,32 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
         AlertDialog dialog = Util.getWorkoutCompleteDialog(getActivity(), database, customDialogLayout, positive, negative);
         dialog.show();
+    }
+
+    /**
+     * sends you to the android settings section for this app
+     */
+    private void sendToAppSettings() {
+        startActivity(new Intent(
+                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", activity.getPackageName(), null))
+        );
+    }
+
+    /**
+     * Build and displays a simple yes / no dialog
+     * @param msg the message that should be displayed
+     * @param yesListener listener with the method that should be called on yes click
+     * @param noListener same as yesListener for the no option
+     */
+    private void getYesNoDialog(String msg,
+                                DialogInterface.OnClickListener yesListener,
+                                DialogInterface.OnClickListener noListener)
+    {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+        alertBuilder.setMessage(msg);
+        alertBuilder.setNegativeButton("NEIN", noListener);
+        alertBuilder.setPositiveButton("JA", yesListener);
+        alertBuilder.create().show();
     }
 }
