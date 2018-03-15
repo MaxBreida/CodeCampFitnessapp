@@ -446,22 +446,17 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private double getCurrentCalories() {
-        // fuck this formula TODO: lots of testing & make sure that weight has to be put in lbs and not kg ... flawed formula, negative cals for fat people
-        // M: [(Age * 0.2017) - (Weight * 0.09036) + (Heart Rate * 0.6309) - 55.0969] * Time / 4.184
-        // F: [(Age * 0.074 ) - (Weight * 0.05741) + (Heart Rate * 0.4472) - 20.4022] * Time / 4.184
-        // HR: bpm = (46 * kmh) / 8.04672 + 80   (Detailed explanations in the documentation)
-        boolean m = user.isMale();
-        // calculate average hear-rate with the average speed of this run:
-        double heartRate = getAverageSpeedInKmh() * (46 / 8.04672) + 80;
-        double ageParameter = user.getAge() * ((m) ? 0.2017 : 0.074);
-        double weightParameter = user.getWeightInLbs() * ((m) ? 0.09036 : 0.05741);
-        double heartRateParameter = heartRate * ((m) ? 0.6309 : 0.4472);
-        heartRateParameter -= ((m) ? 55.0969 : 20.4022);
-        double cals = ageParameter - weightParameter + heartRateParameter;
-        cals *= (runDuration / (4.184 * 60000000));
-        // this formula might not be suited for very short runs, preventing negative calorie values:
-        if(cals <= 0) cals = 0;
-        return cals;
+        // since all the big formulas that consider run duration, age, gender and other factors seem
+        // to be flawed, we will just use the good old and probably most efficient MET based
+        // formula for different speeds:
+        // Kcal ~= METS * weight in kg * running duration in hours
+        double milesPerHour = (runDuration>0)?(runDistance*0.6213711922373339)/(runDuration/3600000):0;
+        double mets = 1.5; // base value that's suitable for standing and very slow walking speeds too
+        // rough approximation for mets:
+        if(milesPerHour >= 1)
+            mets *= milesPerHour;
+        return mets * user.getWeightInKG() * (runDuration / 3600000);
+
     }
 
     OnMapReadyCallback mapReady = new OnMapReadyCallback() {
@@ -621,20 +616,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // set as last workout
         new SharedPrefsHelper(getContext())
                 .setLastActivity(Constants.WORKOUT_RUN, database.getId());
-    }
-
-    private void fullReset() {
-
-        /*runDistance = 0;
-        points.clear();
-        mMap.clear();
-        makeStopButtonAppear(false);
-        moveStartButtonLeft(false);
-        moveStartButtonDown(false);
-        firstClick = true;
-        disableZooming = false;
-        database = null;
-        initializeDatabaseObject();*/ // todo del
     }
 
     private void initializeDatabaseObject() {
