@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,8 +65,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
     private TextView avgSquatsTextView;
     private TextView caloriesTextView;
     private FloatingActionButton resumeButton;
-    private TextView resumeTextView;
-    private TextView quitTextView;
     private View container;
     private View customDialogLayout;
 
@@ -132,8 +132,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         squatButton = getView().findViewById(R.id.button_squat);
         finishButton = getView().findViewById(R.id.button_squat_quit);
         resumeButton = getView().findViewById(R.id.button_squat_resume);
-        resumeTextView = getView().findViewById(R.id.textView_squat_resume);
-        quitTextView = getView().findViewById(R.id.textview_squat_quit);
 
         timeTextView = getView().findViewById(R.id.textview_cardview_time);
         avgSquatsTextView = getView().findViewById(R.id.textview_cardview_avg);
@@ -156,6 +154,8 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         if(DBQueryHelper.findAllSquats().isEmpty()){
             showInstructions();
         }
+
+        setResumeButtonDesign();
 
         //Create listener for squat workout start
         squatButton.setOnClickListener(new View.OnClickListener() {
@@ -185,12 +185,27 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 if(quitState.equals(QuitButtonStates.STOP_CLICK)){
                     squatTimer.stop();
                     resumeButton.setVisibility(View.VISIBLE);
-                    resumeTextView.setVisibility(View.VISIBLE);
-                    quitTextView.setVisibility(View.VISIBLE);
                     quitState = QuitButtonStates.SAVE_CLICK;
+                    setFinishButtonDesign(
+                            true,
+                            getResources().getColor(R.color.red),
+                            R.drawable.ic_stop_white_48dp
+                    );
+                    moveFinishButtonLeft(true);
+                    // show and animate stop button:
+                    makeResumeButtonAppear(true);
+
                     // Screen keep on Flag set
                     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 } else if(quitState.equals(QuitButtonStates.SAVE_CLICK)){
+                    setFinishButtonDesign(
+                            true,
+                            getResources().getColor(R.color.colorAccent),
+                            R.drawable.ic_pause_white
+                    );
+                    moveFinishButtonLeft(false);
+                    // show and animate stop button:
+                    makeResumeButtonAppear(false);
                     stopWorkout();
                 }
             }
@@ -202,14 +217,60 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                 quitState = QuitButtonStates.STOP_CLICK;
                 workoutStarted = true;
 
-                resumeButton.setVisibility(View.INVISIBLE);
-                resumeTextView.setVisibility(View.INVISIBLE);
-                quitTextView.setVisibility(View.INVISIBLE);
+                setFinishButtonDesign(
+                        true,
+                        getResources().getColor(R.color.colorAccent),
+                        R.drawable.ic_pause_white
+                );
+                moveFinishButtonLeft(false);
+                // show and animate stop button:
+                makeResumeButtonAppear(false);
 
                 squatTimer.resume();
             }
         });
 
+    }
+
+    private void setFinishButtonDesign(boolean active, int color, int resId){
+        finishButton.setActivated(active);
+        finishButton.setBackgroundTintList(ColorStateList.valueOf(color));
+        finishButton.setImageResource(resId);
+    }
+
+    private void setResumeButtonDesign(){
+        resumeButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+    }
+
+    private void moveFinishButtonLeft(boolean go){
+        finishButton.setClickable(false);
+        finishButton.animate().rotationBy((go) ? -360 : 360);
+        finishButton.animate().xBy(toDp((go) ? -50 : 50));
+        finishButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finishButton.setClickable(true);
+            }
+        }, 300);
+    }
+    private void makeResumeButtonAppear(boolean go) {
+        resumeButton.setClickable(false);
+        resumeButton.animate().rotationBy((go) ? 360 : -360);
+        resumeButton.animate().alpha((go) ? 1.0f : 0);
+        resumeButton.animate().xBy(toDp((go) ? 50 : -50));
+        resumeButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resumeButton.setClickable(true);
+            }
+        }, 300);
+    }
+
+    private float toDp(float dp){
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics()
+        );
     }
 
     private void setToInitialState() {
@@ -224,8 +285,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
         squatButton.setEnabled(true);
         resumeButton.setVisibility(View.INVISIBLE);
-        quitTextView.setVisibility(View.INVISIBLE);
-        resumeTextView.setVisibility(View.INVISIBLE);
 
         squatState = SquatStates.SQUAT_DOWN;
         quitState = QuitButtonStates.STOP_CLICK;

@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -123,7 +124,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     public RunFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -294,17 +294,39 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         startPauseButton.setImageResource(resId);
     }
     private void moveStartButtonLeft(boolean go){
+        startPauseButton.setClickable(false);
         startPauseButton.animate().rotationBy((go) ? -360 : 360);
         startPauseButton.animate().xBy(toDp((go) ? -50 : 50));
+        startPauseButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startPauseButton.setClickable(true);
+            }
+        }, 300);
     }
+
     private void moveStartButtonDown(boolean go){
+        startPauseButton.setClickable(false);
         startPauseButton.animate().yBy(toDp((go) ? 19 : -19));
+        startPauseButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startPauseButton.setClickable(true);
+            }
+        }, 300);
     }
     private void makeStopButtonAppear(boolean go) {
+        stopButton.setClickable(false);
         stopButton.animate().rotationBy((go) ? 360 : -360);
         stopButton.animate().alpha((go) ? 1.0f : 0);
-        stopButton.setClickable(go);
         stopButton.animate().xBy(toDp((go) ? 50 : -50));
+        stopButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopButton.setClickable(true);
+            }
+        }, 300);
+
     }
 
     View.OnClickListener stopButtonListener = new View.OnClickListener(){
