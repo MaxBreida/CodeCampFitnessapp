@@ -78,6 +78,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     boolean debugMode = true; // TODO: Remove?
 
     // Map related global variables
+    PolylineOptions lineOptions; // options for the line that's being drawn
     Polyline line; // the line that represents the running track
     List<LatLng> points = new ArrayList<>(); // a list of points of the running track
     GoogleMap mMap; // an instance of a google map client
@@ -189,7 +190,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 callback.workoutInProgress(false);
                 workoutActive = false;
 
-                // could be intense TODO start a new line after a pause when the distance ist too far
+                // starts a new line after pausing
+                points.clear();
+                if(mMap != null) line = mMap.addPolyline(lineOptions);
+                previousLoc = null;
 
                 updateDatabase();
 
@@ -344,10 +348,10 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     // should the user be tracked by the map camera?
     boolean allowUserTracking = false; // gets switched on start!
 
-    LocationCallback locationCallback = new LocationCallback() {
+    // keeps track of the last point that was used
+    Location previousLoc = null;
 
-        // last known position, used for initial point once workout starts
-        Location previousLoc = null;
+    LocationCallback locationCallback = new LocationCallback() {
 
         // sets minimal precision for the location updates (in meters):
         final float initialTolerance = 10;
@@ -363,7 +367,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             }
         }
 
-        public void checkIfSuitedForPointDrawing(Location loc){
+        void checkIfSuitedForPointDrawing(Location loc){
             if(debugMode){
                 TextView tap = mainView.findViewById(R.id.textview_tap_to_switch);
                 tap.setText(decNumToXPrecisionString(loc.getAccuracy(), 2));
@@ -379,7 +383,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             if(distToPrevLoc > 10 && loc.getAccuracy() <= precisionTolerance){
                 LatLng curPos = new LatLng(loc.getLatitude(),loc.getLongitude());
                 points.add(curPos);
-                line.setPoints(points);
+                if(line != null && !points.isEmpty()) line.setPoints(points);
                 if(previousLoc != null){
                     runDistance += distToPrevLoc;
                     distanceText.setText(decNumToXPrecisionString(runDistance /1000, 2));
@@ -460,9 +464,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
-            PolylineOptions lineOptions = new PolylineOptions()
-                    .color(getResources().getColor(R.color.red))
-                    .width(4);
+            lineOptions = new PolylineOptions().color(getResources().getColor(R.color.red)).width(6);
             line = mMap.addPolyline(lineOptions);
 
             if(checkPermission()) mMap.setMyLocationEnabled(true);
