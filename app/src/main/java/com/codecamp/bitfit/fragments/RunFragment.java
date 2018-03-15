@@ -378,7 +378,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         private void drawNewPointAndAddDistance(Location loc) {
             float distToPrevLoc = (previousLoc == null) ? 11 : loc.distanceTo(previousLoc);
             // set a point if accuracy is good enough and last point is at least 10m away
-            if (distToPrevLoc > 5 + precisionTolerance / 2 && loc.getAccuracy() <= precisionTolerance) {
+            if (distToPrevLoc > 10 && loc.getAccuracy() <= precisionTolerance) {
                 LatLng curPos = new LatLng(loc.getLatitude(), loc.getLongitude());
                 points.add(curPos);
                 if (line != null && !points.isEmpty()) line.setPoints(points);
