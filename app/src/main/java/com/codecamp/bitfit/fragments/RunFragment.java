@@ -347,6 +347,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
     // should the user be tracked by the map camera?
     boolean allowUserTracking = false; // gets switched on start!
+    boolean disableZooming = false;
 
     // keeps track of the last point that was used
     Location previousLoc = null;
@@ -375,8 +376,11 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
 
             // zoom in on first found location, then just track if it's allowed
             if(allowUserTracking)
-                if(previousLoc != null) setMapCam(loc);
-                else setMapCam(loc, 15);
+                if(disableZooming) setMapCam(loc);
+                else {
+                    disableZooming = true;
+                    setMapCam(loc, 15);
+                }
 
             float distToPrevLoc = (previousLoc == null)? 11 : loc.distanceTo(previousLoc);
             // set a point if accuracy is good enough and last point is at least 10m away
@@ -607,7 +611,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         allowDataUpdate = false;/* since it's going to be updated now we can block all other update
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
-        // could get intense TODO: save points too
+        // TODO: save points too (quite difficult, now that lines get separated on pause)
 
         database.setDistanceInMeters(runDistance);
         database.setDurationInMillis(runDuration);
@@ -626,6 +630,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         moveStartButtonLeft(false);
         moveStartButtonDown(false);
         firstClick = true;
+        disableZooming = false;
         database = null;
         initializeDatabaseObject();
     }
