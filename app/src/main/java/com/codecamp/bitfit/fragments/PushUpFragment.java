@@ -150,6 +150,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                 if (!workoutStarted) {
                     container.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
+                    resumeButton.setVisibility(View.VISIBLE);
                     workoutStarted = true;
                     countUpTimer.start();
                     callback.workoutInProgress(true);
@@ -181,6 +182,12 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                             R.drawable.ic_stop_white_48dp,
                             finishButton
                     );
+                    setButtonDesign(
+                            true,
+                            getResources().getColor(R.color.green),
+                            R.drawable.ic_play_arrow_white_48dp,
+                            resumeButton
+                    );
                     moveButtonLeft(true, resumeButton);
                     resumeButton.setVisibility(View.VISIBLE);
                     // show and animate stop button:
@@ -193,12 +200,11 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                             true,
                             getResources().getColor(R.color.colorAccent),
                             R.drawable.ic_pause_white,
-                            finishButton
+                            resumeButton
                     );
                     moveButtonLeft(false, resumeButton);
                     // show and animate stop button:
                     makeButtonAppear(false, finishButton);
-                    resumeButton.setVisibility(View.INVISIBLE);
                     finishButton.setVisibility(View.INVISIBLE);
                     stopWorkout();
                     pushUpButton.setEnabled(true);
@@ -214,7 +220,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                         true,
                         getResources().getColor(R.color.colorAccent),
                         R.drawable.ic_pause_white,
-                        finishButton
+                        resumeButton
                 );
                 moveButtonLeft(false, resumeButton);
                 // show and animate stop button:
