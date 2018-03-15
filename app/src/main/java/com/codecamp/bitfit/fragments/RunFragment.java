@@ -651,6 +651,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             if (wakeLock != null && wakeLock.isHeld())
                 wakeLock.release();
             fusedLocProvider.removeLocationUpdates(locationCallback);
+            if(saveDataTimer != null) saveDataTimer.stop();
         }
     }
 
@@ -662,12 +663,13 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         ((MainActivity) activity)
                 .setActionBarTitle(getString(R.string.run));
 
-                // set up user tracker if location permissions are given
+        // set up user tracker if location permissions are given
         if(checkPermission()) {
             fusedLocProvider.requestLocationUpdates(
                     locationRequest,
                     locationCallback,
                     null /* Looper */);
+            if(saveDataTimer != null) saveDataTimer.resume();
         }
     }
 
