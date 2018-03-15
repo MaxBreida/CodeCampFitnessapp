@@ -77,10 +77,6 @@ public class RunStatisticsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_run_statistics);
 
-        if(DBQueryHelper.findAllRuns().isEmpty()){
-            fillTableWithDummies();    //Fill table with dummy runs if the run database is empty (for testing purpose)
-        }
-
         if (!DBQueryHelper.findAllPushUps().isEmpty()) {
             allRuns = DBQueryHelper.findAllRuns();
 
@@ -393,24 +389,4 @@ public class RunStatisticsActivity extends AppCompatActivity {
         // refresh chart
         lineChart.invalidate();
     }
-
-    protected void fillTableWithDummies(){
-        createDummyRun(2000, 15*60);
-        createDummyRun(4000, 30*60);
-        createDummyRun(11000, 100*60);
-        createDummyRun(500.555f, 30*60);
-    }
-
-    protected  void createDummyRun(float distance, long durationAsSeconds){
-        Run dummyRun = new Run();
-
-        dummyRun.setRandomId();
-        dummyRun.setCurrentDate();
-        dummyRun.setDurationInMillis(1000*durationAsSeconds);
-        dummyRun.setCalories(100);
-        dummyRun.setDistanceInMeters(distance);
-
-        dummyRun.save();
-    }
-
 }
