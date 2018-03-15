@@ -284,7 +284,6 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         minLightRange = 0;
         averageLightRange = 0;
         //values for calorie calculation
-        // TODO check values and approximation for body proportions
         // calculation from http://www.science-at-home.de/wiki/index.php/Kalorienverbrauch_bei_einzelnen_Sport%C3%BCbungen_pro_Wiederholung
         weightPushed = user.getWeightInKG()*0.7;
         //Factor for the height: approximated using graphic from https://de.wikipedia.org/wiki/K%C3%B6rperproportion,
@@ -336,9 +335,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                         customDialogLayout.findViewById(R.id.dialog_repetition_workout_content),
                         String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
 
-                // set to initial state
-                setToInitialState();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };
@@ -346,9 +343,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // set to initial state
-                setToInitialState();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };
