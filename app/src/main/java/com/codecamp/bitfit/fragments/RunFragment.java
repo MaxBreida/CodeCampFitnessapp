@@ -199,9 +199,9 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                     allPoints.add(cur.longitude);
                 }
                 allPoints.add(null);
-                LastPoints pointBase = DBQueryHelper.getLastPoints();
-                pointBase.setPoints(allPoints);
-                pointBase.save();
+                //LastPoints pointBase = DBQueryHelper.getLastPoints();
+                //pointBase.setPoints(allPoints);
+                //pointBase.save();
                 points.clear();
                 if(mMap != null) line = mMap.addPolyline(lineOptions);
                 previousLoc = null;
