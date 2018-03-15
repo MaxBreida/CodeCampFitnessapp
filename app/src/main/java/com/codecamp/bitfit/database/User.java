@@ -102,7 +102,7 @@ public class User extends BaseModel {
         int curD = Integer.parseInt(df.format(curDate));
         int bDay = Integer.parseInt(df.format(birthday));
         int age = ((curD - bDay) / 10000);
-        return age + 1900;
+        return age;
     }
 
     // One to Many relataion, if you have more than one User
