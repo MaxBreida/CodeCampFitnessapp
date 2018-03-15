@@ -276,9 +276,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
                         customDialogLayout.findViewById(R.id.dialog_repetition_workout_content),
                         String.format("Ich habe bei meinem letzten Workout %d Push-Ups geschafft!", count));
 
-                // set to initial state
-                setToInitialState();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };
@@ -286,9 +284,7 @@ public class PushUpFragment extends WorkoutFragment implements SensorEventListen
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // set to initial state
-                setToInitialState();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };

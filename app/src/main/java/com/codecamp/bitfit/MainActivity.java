@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
     AHBottomNavigation.OnTabSelectedListener tabSelectListener = new AHBottomNavigation.OnTabSelectedListener() {
         @Override
         public boolean onTabSelected(final int position, final boolean wasSelected) {
-            if(workoutInProgress) {
+            if(!wasSelected && workoutInProgress) {
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Workout noch nicht beendet!")
                         .setMessage("Du hast deinen Workout noch nicht beendet. Willst du ihn jetzt beenden und speichern?")
@@ -167,10 +167,13 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
         getSupportActionBar().setTitle(title);
     }
 
-    public void sendToTab(int pos){
+    public void sendToTab(int pos, boolean selected){
         bottomNavigation.setCurrentItem(pos);
-        tabSelectListener.onTabSelected(pos,false);
-        // TODO: display "no location permission = no run workouts" if not already done in the calling fragment!
+        changeFragment(pos, selected);
+    }
+
+    public void sendToTab(int pos){
+        sendToTab(pos, false);
     }
 
     @Override
@@ -180,15 +183,15 @@ public class MainActivity extends AppCompatActivity implements WorkoutFragment.O
 
     @Override
     public void setNavigationItem() {
-        workoutInProgress = false;
+        if(!mWasSelected) {
+            workoutInProgress = false;
 
-        if(mPosition != -1) {
-            // change fragment after saving workout
-            bottomNavigation.setCurrentItem(mPosition);
-            changeFragment(mPosition, mWasSelected);
+            if (mPosition != -1) {
+                // change fragment after saving workout
+                sendToTab(mPosition, mWasSelected);
+            } else sendToTab(0);
 
+            mPosition = -1;
         }
-
-        mPosition = -1;
     }
 }

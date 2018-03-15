@@ -187,7 +187,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         public void onClick(View view) {
             if(startPauseButton.isActivated()){
                 // tell mainactivity that the workout is stopped
-                callback.workoutInProgress(false);
                 workoutActive = false;
 
                 // starts a new line after pausing
@@ -310,6 +309,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     View.OnClickListener stopButtonListener = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
+            callback.workoutInProgress(false);
             showWorkoutCompleteDialog();
         }
     };
@@ -612,7 +612,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         allowDataUpdate = false;/* since it's going to be updated now we can block all other update
                     attempts for now, this actually prevents simultaneous write conflicts as well */
         saveDataTimer.reset(); // resetting timer so that the next update can only happen after a minute
-        // TODO: save points too (quite difficult, now that lines get separated on pause)
 
         database.setDistanceInMeters(runDistance);
         database.setDurationInMillis(runDuration);
@@ -625,7 +624,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     }
 
     private void fullReset() {
-        runDistance = 0;
+
+        /*runDistance = 0;
         points.clear();
         mMap.clear();
         makeStopButtonAppear(false);
@@ -634,7 +634,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         firstClick = true;
         disableZooming = false;
         database = null;
-        initializeDatabaseObject();
+        initializeDatabaseObject();*/ // todo del
     }
 
     private void initializeDatabaseObject() {
@@ -703,9 +703,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                         customDialogLayout.findViewById(R.id.dialog_run_workout_content),
                         String.format("Ich habe bei meinem letzten Lauftraining %.2fkm zurückgelegt!", runDistance / 1000));
 
-                // set to initial state
-                fullReset();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };
@@ -713,9 +711,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         DialogInterface.OnClickListener negative = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // set to initial state
-                fullReset();
-
+                // go to selected tab or home
                 callback.setNavigationItem();
             }
         };
