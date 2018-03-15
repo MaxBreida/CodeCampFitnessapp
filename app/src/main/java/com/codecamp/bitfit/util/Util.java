@@ -120,7 +120,7 @@ public class Util {
         return  Math.round(d * 100) / 100.0f;
     }
 
-    /** TODO: if it's not needed in any other method it can be put into the run fragment
+    /**
      * Returns a given number as a string and that with a set amount of decimal places.
      * @param num the initial number
      * @param precision determines how many decimal places the returned string number should have
