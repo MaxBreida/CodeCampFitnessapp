@@ -91,6 +91,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
     View customDialogLayout;
     TextView distanceText;
     TextView speedText;
+    TextView calsText;
     FloatingActionButton startPauseButton;
     FloatingActionButton stopButton;
 
@@ -140,6 +141,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             dataCard = mainView.findViewById(R.id.run_data_cardview);
             distanceText = dataCard.findViewById(R.id.textview_run_distance);
             speedText = dataCard.findViewById(R.id.textview_run_speed);
+            calsText =  dataCard.findViewById(R.id.textview_run_calories);
         }
 
         // because it is just being created we set it to inactive
@@ -397,7 +399,6 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
                 previousLoc = loc;
 
                 // set Calories
-                TextView calsText = dataCard.findViewById(R.id.textview_run_calories);
                 calsText.setText(decNumToXPrecisionString(getCurrentCalories(), 1));
 
                 // reset tolerance to initial value
@@ -603,6 +604,8 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         runDistance = 0;
         points.clear();
         mMap.clear();
+        distanceText.setText("0.00");
+        calsText.setText("0.0");
         makeButtonAppear(false, stopButton);
         moveButtonLeft(false, startPauseButton);
         moveStartButtonDown(false);
