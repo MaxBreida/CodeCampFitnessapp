@@ -171,17 +171,7 @@
                         android:textSize="20sp" />
                 </LinearLayout>
             </RelativeLayout>
-            <!-- TODO: not too pretty, there's certainly a better solution?-->
-            <TextView
-                android:id="@+id/textview_tap_to_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tapUnits"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                app:layout_constraintRight_toRightOf="@id/relative3"
-                app:layout_constraintTop_toBottomOf="@id/relative3" />
-
+            
             <RelativeLayout
                 android:id="@+id/relative4"
                 android:layout_width="wrap_content"
