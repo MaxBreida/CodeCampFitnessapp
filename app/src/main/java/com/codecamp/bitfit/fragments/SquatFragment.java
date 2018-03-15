@@ -167,6 +167,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                     squatTimer.start();
                     container.setVisibility(View.VISIBLE);
                     finishButton.setVisibility(View.VISIBLE);
+                    resumeButton.setVisibility(View.VISIBLE);
                     squatButton.setEnabled(false);
                 }
 
@@ -190,6 +191,12 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                             R.drawable.ic_stop_white_48dp,
                             finishButton
                     );
+                    setButtonDesign(
+                            true,
+                            getResources().getColor(R.color.green),
+                            R.drawable.ic_play_arrow_white_48dp,
+                            resumeButton
+                    );
                     moveButtonLeft(true, resumeButton);
                     // show and animate stop button:
                     makeButtonAppear(true, finishButton);
@@ -201,7 +208,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                             true,
                             getResources().getColor(R.color.colorAccent),
                             R.drawable.ic_pause_white,
-                            finishButton
+                            resumeButton
                     );
                     moveButtonLeft(false, resumeButton);
                     // show and animate stop button:
@@ -221,7 +228,7 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                         true,
                         getResources().getColor(R.color.colorAccent),
                         R.drawable.ic_pause_white,
-                        finishButton
+                        resumeButton
                 );
                 moveButtonLeft(false, resumeButton);
                 // show and animate stop button:
@@ -333,7 +340,6 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
         double wayUp = ((heightPushed*weightPushed*9.81) / 4.1868) / 1000;
         double wayDown = wayUp / 2.0;
 
-        double calorie = Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
         return Util.roundTwoDecimals((wayDown + wayUp) * (double) squatCtr);
     }
 
