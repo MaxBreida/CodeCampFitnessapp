@@ -190,9 +190,9 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                             R.drawable.ic_stop_white_48dp,
                             finishButton
                     );
-                    moveButtonLeft(true, finishButton);
+                    moveButtonLeft(true, resumeButton);
                     // show and animate stop button:
-                    makeButtonAppear(true, resumeButton);
+                    makeButtonAppear(true, finishButton);
 
                     // Screen keep on Flag set
                     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -203,9 +203,9 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                             R.drawable.ic_pause_white,
                             finishButton
                     );
-                    moveButtonLeft(false, finishButton);
+                    moveButtonLeft(false, resumeButton);
                     // show and animate stop button:
-                    makeButtonAppear(false, resumeButton);
+                    makeButtonAppear(false, finishButton);
                     stopWorkout();
                 }
             }
@@ -223,9 +223,9 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
                         R.drawable.ic_pause_white,
                         finishButton
                 );
-                moveButtonLeft(false, finishButton);
+                moveButtonLeft(false, resumeButton);
                 // show and animate stop button:
-                makeButtonAppear(false, resumeButton);
+                makeButtonAppear(false, finishButton);
 
                 squatTimer.resume();
             }

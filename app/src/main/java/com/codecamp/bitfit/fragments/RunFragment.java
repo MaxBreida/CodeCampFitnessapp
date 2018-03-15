@@ -599,6 +599,19 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         };
     }
 
+    private void fragmentReset() {
+        runDistance = 0;
+        points.clear();
+        mMap.clear();
+        makeButtonAppear(false, stopButton);
+        moveButtonLeft(false, startPauseButton);
+        moveStartButtonDown(false);
+        firstClick = true;
+        disableZooming = false;
+        database = null;
+        initializeDatabaseObject();
+    }
+
     public void updateDatabase() {
         allowDataUpdate = false;/* since it's going to be updated now we can block all other update
                     attempts for now, this actually prevents simultaneous write conflicts as well */
