@@ -420,11 +420,13 @@ public class SquatFragment extends WorkoutFragment implements OnDialogInteractio
 
                         break;
                     case COUNT:
-                        squatCtr++;
-                        //Display new value for squat counter
-                        squatButton.setText(String.valueOf(squatCtr));
-                        avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
-                        caloriesTextView.setText(String.valueOf(calcCalories()));
+                        if(quitState.equals(QuitButtonStates.STOP_CLICK)) {
+                            squatCtr++;
+                            //Display new value for squat counter
+                            squatButton.setText(String.valueOf(squatCtr));
+                            avgSquatsTextView.setText(String.valueOf(calcSquatsPerMinute(elapsedTime)));
+                            caloriesTextView.setText(String.valueOf(calcCalories()));
+                        }
                         // go back to state SQUAT_DOWN after that
                         squatState=SquatStates.SQUAT_DOWN;
                         break;
