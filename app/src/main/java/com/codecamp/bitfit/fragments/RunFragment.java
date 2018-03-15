@@ -77,7 +77,7 @@ import static com.codecamp.bitfit.util.Util.decNumToXPrecisionString;
 
 public class RunFragment extends WorkoutFragment implements OnDialogInteractionListener{
 
-    boolean debugMode = true; // TODO: Remove?
+    boolean debugMode = false; // TODO: Remove before finishing/handing project for correction
 
     // Map related global variables
     PolylineOptions lineOptions; // options for the line that's being drawn
@@ -425,14 +425,14 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             else
                 precisionTolerance += 0.17f;
 
-            if(workoutActive && unitMode != 3 && loc.hasSpeed()){
+            if(workoutActive && unitMode != 3 && loc.hasSpeed()){ //unitMode != 3: no average speed
                 // set speed if the location manager can provide those readings
                 float curSpeed = loc.getSpeed();
-                if(unitMode == 1) {
+                if(unitMode == 1) { //unitMode 1: km/h
                     curSpeed *= 3.6f;
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("km/h"));
                 }
-                else
+                else    // unitMode 2: m/s
                     speedText.setText(decNumToXPrecisionString(curSpeed, 1).concat("m/s"));
             }
         }

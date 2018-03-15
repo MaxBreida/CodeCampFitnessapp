@@ -176,11 +176,11 @@
                 android:id="@+id/textview_tap_to_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(tap to switch unit)"
+                android:text="@string/tapUnits"
                 android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/relative3"
+                android:textSize="10sp"
                 app:layout_constraintRight_toRightOf="@id/relative3"
-                android:textSize="10sp" />
+                app:layout_constraintTop_toBottomOf="@id/relative3" />
 
             <RelativeLayout
                 android:id="@+id/relative4"
