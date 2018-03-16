@@ -77,7 +77,7 @@ public class RunStatisticsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_run_statistics);
 
-        if (!DBQueryHelper.findAllPushUps().isEmpty()) {
+        if (!DBQueryHelper.findAllRuns().isEmpty()) {
             allRuns = DBQueryHelper.findAllRuns();
 
             barChart = findViewById(R.id.last_month_chart);

@@ -446,7 +446,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
         // rough approximation for mets:
         if(milesPerHour >= 1)
             mets *= milesPerHour;
-        return mets * user.getWeightInKG() * (runDuration / 3600000.0);
+        return mets * user.getWeightInKG() * (runDuration / 3600000000.0);
 
     }
 
