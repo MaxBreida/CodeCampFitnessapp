@@ -71,6 +71,7 @@
     <string name="settings">Einstellungen</string>
     <string name="cancel">Abbrechen</string>
     <string name="clicktext">Durch Tippen auf die Diagramme kannst du jeweils andere Werte betrachten</string>
-    <string name="run_instructions">Wenn du auf deine Geschwindigkeit tippst, kannst du ihre Einheit ändern und dir deine Durchschnittsgeschwindigkeit anschauen.</string>
+    <string name="run_instructions">Wenn du auf deine Geschwindigkeit tippst, kannst du ihre Einheit ändern und dir deine Durchschnittsgeschwindigkeit anschauen.\n\n
+                                    Die Karte bietet im oberen rechten Rand außerdem einen Knopf, mit dem sich die Standortverfolgung an und ausschalten lässt.</string>
 
 </resources>
