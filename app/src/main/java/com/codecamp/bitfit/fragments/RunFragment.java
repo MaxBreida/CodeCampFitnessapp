@@ -143,7 +143,7 @@ public class RunFragment extends WorkoutFragment implements OnDialogInteractionL
             distanceText = dataCard.findViewById(R.id.textview_run_distance);
             speedText = dataCard.findViewById(R.id.textview_run_speed);
             calsText =  dataCard.findViewById(R.id.textview_run_calories);
-            durationText = dataCard.findViewById(R.id.textview_run_calories);
+            durationText = dataCard.findViewById(R.id.textview_run_duration);
         }
 
         // because it is just being created we set it to inactive
